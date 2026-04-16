@@ -1,0 +1,146 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy | Leviosai</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { 'void': '#0A0A0F', 'void-light': '#12121A', 'void-card': '#161622', 'electric-blue': '#5B5BF0', 'electric-purple': '#9B59D0', 'soft': '#A3A3A3', 'softer': '#737373', }, fontFamily: { display: ['"Outfit"', 'sans-serif'], body: ['"Space Grotesk"', 'sans-serif'], mono: ['"JetBrains Mono"', 'monospace'], } } } }
+    </script>
+    <style>
+        * { box-sizing: border-box; }
+        body { background-color: #0A0A0F; color: #E8E8F0; overflow-x: hidden; }
+        .bg-mesh { position: fixed; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; }
+        .bg-mesh::before { content: ''; position: absolute; top: -30%; left: -20%; width: 80%; height: 80%; background: radial-gradient(ellipse at center, rgba(91,91,240,0.06) 0%, transparent 55%); }
+        .grid-overlay { position: fixed; inset: 0; z-index: 1; pointer-events: none; background-image: linear-gradient(rgba(91,91,240,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(91,91,240,0.015) 1px, transparent 1px); background-size: 60px 60px; }
+        @keyframes orbit { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .atom-ring { animation: orbit 8s linear infinite; transform-origin: center; }
+        .atom-ring:nth-child(2) { animation-duration: 10s; animation-direction: reverse; }
+        .atom-ring:nth-child(3) { animation-duration: 12s; }
+        @keyframes fadeUp { 0% { opacity:0; transform: translateY(30px); } 100% { opacity:1; transform: translateY(0); } }
+        .anim-fade-up { opacity:0; animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) forwards; }
+        .anim-fade-in { opacity:0; animation: fadeIn 1s ease forwards; }
+        @keyframes fadeIn { 0% { opacity:0; } 100% { opacity:1; } }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0A0A0F; }
+        ::-webkit-scrollbar-thumb { background: #5B5BF0; border-radius: 2px; }
+        .legal-content h2 { font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 0.75rem; color: #E8E8F0; }
+        .legal-content p { color: #A3A3A3; font-size: 0.875rem; line-height: 1.8; margin-bottom: 1rem; }
+        .legal-content ul { color: #A3A3A3; font-size: 0.875rem; line-height: 1.8; margin-bottom: 1rem; padding-left: 1.5rem; list-style-type: disc; }
+        .legal-content li { margin-bottom: 0.25rem; }
+    </style>
+</head>
+<body class="min-h-screen w-screen relative font-body selection:bg-electric-blue/30 selection:text-white">
+    <div class="bg-mesh"></div>
+    <div class="grid-overlay"></div>
+    <div class="relative z-10 min-h-screen w-full">
+
+        <!-- NAV -->
+        <header class="fixed top-0 left-0 right-0 z-50 px-6 md:px-10 py-5 flex justify-between items-center anim-fade-in" style="animation-delay:0.1s; background: linear-gradient(to bottom, rgba(10,10,15,0.95) 0%, rgba(10,10,15,0) 100%);">
+            <a href="/" class="flex items-center gap-3">
+                <div class="w-9 h-9 relative"><svg viewBox="0 0 40 40" class="w-full h-full"><circle cx="20" cy="20" r="3" fill="#6366F1"/><ellipse cx="20" cy="20" rx="16" ry="6" fill="none" stroke="#0DD98B" stroke-width="1" opacity="0.7" class="atom-ring"/><ellipse cx="20" cy="20" rx="16" ry="6" fill="none" stroke="#A855F7" stroke-width="1" opacity="0.5" transform="rotate(60 20 20)" class="atom-ring"/><ellipse cx="20" cy="20" rx="16" ry="6" fill="none" stroke="#F97316" stroke-width="1" opacity="0.5" transform="rotate(-60 20 20)" class="atom-ring"/></svg></div>
+                <span class="font-display text-xl font-bold tracking-tight">leviosai</span>
+            </a>
+            <nav class="hidden md:flex items-center gap-6">
+                <a href="/" class="text-sm text-soft hover:text-white transition-colors">Home</a>
+            </nav>
+        </header>
+
+        <!-- CONTENT -->
+        <section class="pt-36 pb-20 px-6 md:px-10 max-w-3xl mx-auto">
+            <div class="anim-fade-up" style="animation-delay:0.2s">
+                <span class="font-mono text-[11px] text-electric-blue tracking-[0.3em] uppercase">LEGAL</span>
+                <h1 class="font-display text-4xl md:text-5xl font-extrabold tracking-tight mt-4 mb-2">Privacy Policy</h1>
+                <p class="font-mono text-[11px] text-softer mb-12">Last updated: March 31, 2026</p>
+            </div>
+
+            <div class="legal-content anim-fade-up" style="animation-delay:0.4s">
+                <p>Leviosai, Inc. ("Leviosai," "we," "us," or "our") is committed to protecting the privacy of our customers, website visitors, and users of our services. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website leviosai.io or use our products and services.</p>
+
+                <h2>1. Information We Collect</h2>
+                <p>We may collect the following types of information:</p>
+                <ul>
+                    <li><strong>Contact information:</strong> Name, email address, phone number, company name, and job title when you request a demo, submit a form, or contact us.</li>
+                    <li><strong>Business information:</strong> Trade type, number of sales reps, service area, and other details you provide about your business during onboarding.</li>
+                    <li><strong>Usage data:</strong> Information about how you interact with our website and services, including IP address, browser type, pages visited, and time spent.</li>
+                    <li><strong>Customer data:</strong> Data you input into our platform, including lead information, appointment details, permit data, and CRM records ("Customer Data").</li>
+                    <li><strong>Cookies and tracking:</strong> We use cookies and similar technologies to improve your experience. See Section 6 below.</li>
+                </ul>
+
+                <h2>2. How We Use Your Information</h2>
+                <p>We use the information we collect to:</p>
+                <ul>
+                    <li>Provide, maintain, and improve our products and services</li>
+                    <li>Process your requests, demos, and account setup</li>
+                    <li>Communicate with you about your account, updates, and support</li>
+                    <li>Send marketing communications (with your consent, where required)</li>
+                    <li>Analyze usage patterns to improve our platform</li>
+                    <li>Comply with legal obligations</li>
+                </ul>
+
+                <h2>3. Customer Data</h2>
+                <p>Customer Data that you input into our platform remains yours. We process Customer Data solely to provide our services to you and do not sell, rent, or share Customer Data with third parties for their own marketing purposes. We act as a data processor with respect to Customer Data and process it only according to your instructions and our service agreement.</p>
+
+                <h2>4. How We Share Information</h2>
+                <p>We do not sell your personal information. We may share information with:</p>
+                <ul>
+                    <li><strong>Service providers:</strong> Third-party vendors who help us operate our business (hosting, analytics, email delivery, payment processing), subject to confidentiality obligations.</li>
+                    <li><strong>Legal requirements:</strong> When required by law, regulation, or legal process.</li>
+                    <li><strong>Business transfers:</strong> In connection with a merger, acquisition, or sale of assets, your information may be transferred as part of that transaction.</li>
+                </ul>
+
+                <h2>5. Data Security</h2>
+                <p>We implement industry-standard security measures to protect your information, including encryption in transit and at rest, access controls, and regular security assessments. However, no method of transmission over the Internet is 100% secure, and we cannot guarantee absolute security.</p>
+
+                <h2>6. Cookies</h2>
+                <p>Our website uses cookies and similar tracking technologies to enhance your browsing experience, analyze site traffic, and understand where our visitors come from. You can control cookie preferences through your browser settings. Disabling cookies may affect certain features of our website.</p>
+
+                <h2>7. Your Rights</h2>
+                <p>Depending on your location, you may have the right to:</p>
+                <ul>
+                    <li>Access the personal information we hold about you</li>
+                    <li>Request correction or deletion of your personal information</li>
+                    <li>Opt out of marketing communications at any time</li>
+                    <li>Request a copy of your data in a portable format</li>
+                </ul>
+                <p>To exercise any of these rights, contact us at privacy@leviosai.io.</p>
+
+                <h2>8. Data Retention</h2>
+                <p>We retain your personal information for as long as necessary to fulfill the purposes described in this policy, unless a longer retention period is required or permitted by law. When you terminate your account, we will delete or anonymize your Customer Data within 90 days unless otherwise required by law.</p>
+
+                <h2>9. Third-Party Links</h2>
+                <p>Our website may contain links to third-party websites or services that are not operated by us. We are not responsible for the privacy practices of these third parties. We encourage you to review the privacy policies of any third-party sites you visit.</p>
+
+                <h2>10. Children's Privacy</h2>
+                <p>Our services are not directed to individuals under the age of 18. We do not knowingly collect personal information from children. If we become aware that we have collected personal information from a child, we will take steps to delete that information.</p>
+
+                <h2>11. Changes to This Policy</h2>
+                <p>We may update this Privacy Policy from time to time. We will notify you of any material changes by posting the updated policy on this page with a new "Last updated" date. Your continued use of our services after such changes constitutes acceptance of the updated policy.</p>
+
+                <h2>12. Contact Us</h2>
+                <p>If you have questions about this Privacy Policy or our data practices, please contact us at:</p>
+                <p>Leviosai, Inc.<br>Email: privacy@leviosai.io</p>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="px-6 md:px-10 py-10 border-t border-softer/10">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-3">
+                    <a href="/" class="flex items-center gap-2">
+                        <div class="w-7 h-7 relative"><svg viewBox="0 0 40 40" class="w-full h-full"><circle cx="20" cy="20" r="3" fill="#6366F1"/><ellipse cx="20" cy="20" rx="14" ry="5" fill="none" stroke="#0DD98B" stroke-width="1" opacity="0.5"/><ellipse cx="20" cy="20" rx="14" ry="5" fill="none" stroke="#A855F7" stroke-width="1" opacity="0.4" transform="rotate(60 20 20)"/><ellipse cx="20" cy="20" rx="14" ry="5" fill="none" stroke="#F97316" stroke-width="1" opacity="0.4" transform="rotate(-60 20 20)"/></svg></div>
+                        <span class="font-display text-sm font-semibold">leviosai</span>
+                    </a>
+                    <span class="text-softer text-xs ml-2">© 2026</span>
+                </div>
+                <div class="flex gap-8 font-mono text-[10px] uppercase tracking-widest text-softer">
+                    <a href="/" class="hover:text-white transition-colors">Home</a>
+                    <a href="/privacy/" class="hover:text-white transition-colors text-white">Privacy</a>
+                    <a href="/terms/" class="hover:text-white transition-colors">Terms</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body></html>

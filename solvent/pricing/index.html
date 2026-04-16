@@ -1,0 +1,470 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing — Solvent | Permit Intelligence by Leviosai</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bond': '#6366F1',
+                        'reactor': '#A855F7',
+                        'void': '#0A0A0A',
+                        'void-light': '#0E0E0E',
+                        'card': '#121212',
+                        'card-hover': '#181818',
+                        'solvent': '#0DD98B',
+                        'solvent-light': '#3DE8A0',
+                        'solvent-tile': '#5F8F8F',
+                        'text-primary': '#F2F2F2',
+                        'text-muted': '#A3A3A3',
+                        'text-dim': '#737373',
+                        'danger': '#F87171',
+                        'warning': '#FBBF24',
+                        'catalyst': '#F97316',
+                    },
+                    fontFamily: {
+                        display: ['"Outfit"', 'sans-serif'],
+                        body: ['"Space Grotesk"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * { box-sizing: border-box; }
+        body { background-color: #0A0A0A; color: #F2F2F2; overflow-x: hidden; }
+
+        .hero-mesh { position: fixed; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; }
+        .hero-mesh::before { content: ''; position: absolute; top: -25%; left: -15%; width: 70%; height: 70%; background: radial-gradient(ellipse at center, rgba(13,217,139,0.09) 0%, transparent 55%); animation: drift1 14s ease-in-out infinite alternate; }
+        .hero-mesh::after { content: ''; position: absolute; bottom: -20%; right: -10%; width: 60%; height: 60%; background: radial-gradient(ellipse at center, rgba(61,232,160,0.05) 0%, transparent 50%); animation: drift2 16s ease-in-out infinite alternate; }
+        .grid-overlay { position: fixed; inset: 0; background-image: linear-gradient(rgba(13,217,139,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(13,217,139,0.015) 1px, transparent 1px); background-size: 60px 60px; z-index: 0; pointer-events: none; }
+
+        @keyframes drift1 { 0% { transform: translate(0,0); } 100% { transform: translate(4%,6%); } }
+        @keyframes drift2 { 0% { transform: translate(0,0); } 100% { transform: translate(-5%,-4%); } }
+        @keyframes fadeUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+
+        .anim-fade-up { opacity: 0; animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .anim-fade-in { opacity: 0; animation: fadeIn 1s ease forwards; }
+
+        /* Solvent droplet logo animations */
+        @keyframes dropletFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+        @keyframes dropletPulse { 0%, 100% { opacity: 0.55; transform: scale(1); } 50% { opacity: 0.85; transform: scale(1.03); } }
+        @keyframes ripple1 { 0% { r: 4; opacity: 0.5; stroke-width: 1.2; } 100% { r: 22; opacity: 0; stroke-width: 0.2; } }
+        @keyframes ripple2 { 0% { r: 4; opacity: 0.35; stroke-width: 1; } 100% { r: 18; opacity: 0; stroke-width: 0.15; } }
+        @keyframes ripple3 { 0% { r: 3; opacity: 0.25; stroke-width: 0.8; } 100% { r: 15; opacity: 0; stroke-width: 0.1; } }
+        @keyframes innerGlow { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.75; } }
+        @keyframes causticShift { 0%, 100% { transform: translate(0,0) rotate(0deg); opacity: 0.3; } 33% { transform: translate(1px,-1px) rotate(5deg); opacity: 0.5; } 66% { transform: translate(-1px,0.5px) rotate(-3deg); opacity: 0.35; } }
+        @keyframes coreFlare { 0%, 100% { opacity: 0.15; transform: scale(1); } 50% { opacity: 0.3; transform: scale(1.1); } }
+        @keyframes microBubble1 { 0%, 100% { transform: translateY(0); opacity: 0.5; } 50% { transform: translateY(-2px); opacity: 0.8; } }
+        @keyframes microBubble2 { 0%, 100% { transform: translateY(0); opacity: 0.3; } 50% { transform: translateY(-1.5px); opacity: 0.6; } }
+        .droplet-body { animation: dropletFloat 4s ease-in-out infinite; }
+        .droplet-pulse { animation: dropletPulse 3s ease-in-out infinite; }
+        .droplet-ripple-1 { animation: ripple1 2.8s ease-out infinite; }
+        .droplet-ripple-2 { animation: ripple2 2.8s ease-out infinite 0.9s; }
+        .droplet-ripple-3 { animation: ripple3 2.8s ease-out infinite 1.8s; }
+        .droplet-inner { animation: innerGlow 2.5s ease-in-out infinite; }
+        .droplet-caustic { animation: causticShift 5s ease-in-out infinite; transform-origin: center; }
+        .droplet-core-flare { animation: coreFlare 4s ease-in-out infinite; transform-origin: center; }
+        .droplet-bubble-1 { animation: microBubble1 3s ease-in-out infinite 0.5s; }
+        .droplet-bubble-2 { animation: microBubble2 3.5s ease-in-out infinite 1.2s; }
+
+        .gradient-text { background: linear-gradient(135deg, #0DD98B 0%, #3DE8A0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+        .cta-btn { position: relative; background: linear-gradient(135deg, #0DD98B, #3DE8A0); transition: all 0.4s ease; overflow: hidden; }
+        .cta-btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, #3DE8A0, #0DD98B); opacity: 0; transition: opacity 0.4s ease; }
+        .cta-btn:hover::before { opacity: 1; }
+        .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px -8px rgba(13,217,139,0.4); }
+        .cta-btn span, .cta-btn svg { position: relative; z-index: 1; }
+
+        .cta-btn-outline { border: 1px solid rgba(13,217,139,0.3); transition: all 0.3s ease; }
+        .cta-btn-outline:hover { border-color: rgba(13,217,139,0.6); background: rgba(13,217,139,0.05); }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0A0A0A; }
+        ::-webkit-scrollbar-thumb { background: #0DD98B; border-radius: 2px; }
+
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* Tier card hover */
+        .tier-card { transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .tier-card:hover { border-color: rgba(13,217,139,0.2) !important; transform: translateY(-4px); box-shadow: 0 20px 60px -12px rgba(13,217,139,0.08); }
+
+        /* Feature check icon */
+        .feature-check { flex-shrink: 0; width: 16px; height: 16px; color: #0DD98B; margin-top: 2px; }
+
+        /* FAQ accordion */
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), padding 0.3s ease; }
+        .faq-item.open .faq-answer { max-height: 300px; padding-bottom: 20px; }
+        .faq-item.open .faq-chevron { transform: rotate(45deg); color: #0DD98B; }
+        .faq-chevron { transition: transform 0.3s ease, color 0.3s ease; }
+
+        .nav-dropdown { display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); padding-top: 12px; }
+        .nav-parent:hover .nav-dropdown { display: block; }
+        .nav-dropdown-inner { background: rgba(18,18,18,0.95); border: 1px solid rgba(115,115,115,0.15); border-radius: 12px; padding: 8px; min-width: 220px; backdrop-filter: blur(20px); }
+        .nav-dropdown a { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; transition: background 0.2s; font-size: 14px; }
+        .nav-dropdown a:hover { background: rgba(115,115,115,0.1); }
+        .nav-dd-icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+            .mobile-menu { position: fixed; inset: 0; z-index: 100; background: rgba(10,10,15,0.98); backdrop-filter: blur(20px); display: none; flex-direction: column; justify-content: center; align-items: center; gap: 2rem; }
+        .mobile-menu.open { display: flex; }
+    </style>
+</head>
+<body class="min-h-screen w-screen relative font-body selection:bg-solvent/20 selection:text-white">
+
+    <div class="hero-mesh"></div>
+    <div class="grid-overlay"></div>
+
+    <div class="relative z-10 min-h-screen w-full">
+
+        <!-- NAV (identical to solvent main page with Pricing link added) -->
+        <header class="fixed top-0 left-0 right-0 z-50 px-6 md:px-10 py-5 flex justify-between items-center anim-fade-in" style="animation-delay:0.1s; background: linear-gradient(to bottom, rgba(10,10,10,0.97) 0%, rgba(10,10,10,0) 100%);">
+            <a href="/solvent/" class="flex items-center gap-2">
+                <svg viewBox="0 0 56 56" class="w-8 h-8" style="overflow:visible;">
+                    <defs>
+                        <linearGradient id="dropMain" x1="0" y1="0" x2="0.3" y2="1">
+                            <stop offset="0%" stop-color="#3DE8A0"/>
+                            <stop offset="40%" stop-color="#0DD98B"/>
+                            <stop offset="100%" stop-color="#08A86A"/>
+                        </linearGradient>
+                        <linearGradient id="dropInner" x1="0.2" y1="0" x2="0.8" y2="1">
+                            <stop offset="0%" stop-color="#5FFFC0"/>
+                            <stop offset="100%" stop-color="#0DD98B" stop-opacity="0.4"/>
+                        </linearGradient>
+                        <linearGradient id="dropHighlight" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.5"/>
+                            <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+                        </linearGradient>
+                        <linearGradient id="dropEdge" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#3DE8A0" stop-opacity="0.8"/>
+                            <stop offset="100%" stop-color="#08A86A" stop-opacity="0.3"/>
+                        </linearGradient>
+                        <filter id="dropGlow">
+                            <feGaussianBlur stdDeviation="2" result="glow"/>
+                            <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+                        </filter>
+                    </defs>
+                    <circle class="droplet-ripple-1" cx="28" cy="44" fill="none" stroke="#0DD98B" stroke-width="1"/>
+                    <circle class="droplet-ripple-2" cx="28" cy="44" fill="none" stroke="#3DE8A0" stroke-width="0.8"/>
+                    <circle class="droplet-ripple-3" cx="28" cy="44" fill="none" stroke="#5FFFC0" stroke-width="0.5"/>
+                    <g class="droplet-body" filter="url(#dropGlow)">
+                        <path d="M28 4C28 4 11 24 11 34C11 42.8 18.6 50 28 50C37.4 50 45 42.8 45 34C45 24 28 4 28 4Z" fill="url(#dropMain)"/>
+                        <path d="M28 6C28 6 13 24.5 13 34C13 41.7 19.7 48 28 48C36.3 48 43 41.7 43 34C43 24.5 28 6 28 6Z" fill="none" stroke="url(#dropEdge)" stroke-width="0.6"/>
+                        <path d="M28 12C28 12 17 26 17 33.5C17 39.8 21.9 45 28 45C34.1 45 39 39.8 39 33.5C39 26 28 12 28 12Z" fill="url(#dropInner)" class="droplet-pulse"/>
+                        <ellipse class="droplet-core-flare" cx="28" cy="32" rx="8" ry="10" fill="url(#dropHighlight)" opacity="0.15"/>
+                        <ellipse class="droplet-inner" cx="22" cy="28" rx="4.5" ry="6" fill="white" opacity="0.35" transform="rotate(-18 22 28)"/>
+                        <ellipse cx="24" cy="24" rx="1.8" ry="2.5" fill="white" opacity="0.5" transform="rotate(-12 24 24)"/>
+                        <g class="droplet-caustic" opacity="0.3">
+                            <path d="M30 35Q33 32 35 36Q33 38 30 35Z" fill="#A8F0D4"/>
+                            <path d="M25 38Q28 36 29 39Q27 41 25 38Z" fill="#A8F0D4" opacity="0.6"/>
+                        </g>
+                        <circle class="droplet-bubble-1" cx="32" cy="36" r="1" fill="white" opacity="0.4"/>
+                        <circle class="droplet-bubble-2" cx="25" cy="40" r="0.7" fill="white" opacity="0.3"/>
+                        <circle class="droplet-bubble-1" cx="30" cy="42" r="0.5" fill="white" opacity="0.25"/>
+                        <path d="M18 43Q23 46 28 46Q33 46 38 43" fill="none" stroke="#3DE8A0" stroke-width="0.4" opacity="0.4"/>
+                    </g>
+                </svg>
+                <span class="font-display text-lg font-bold tracking-tight text-solvent">solvent</span>
+                <a href="/" class="hidden md:inline text-text-dim text-xs ml-2 hover:text-white transition-colors">by leviosai</a>
+            </a>
+            <nav class="hidden md:flex items-center gap-10">
+                <a href="/" class="text-sm text-text-muted hover:text-white transition-colors">Home</a>
+                <div class="relative nav-parent">
+                <button class="text-sm text-text-muted hover:text-white transition-colors flex items-center gap-1">Products<svg class="w-3.5 h-3.5 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+                <div class="nav-dropdown"><div class="nav-dropdown-inner">
+                    <a href="/catalyst/"><div class="nav-dd-icon" style="background:rgba(249,115,22,0.12);"><svg viewBox="0 0 24 24" class="w-4 h-4" style="color:#F97316;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><span class="text-sm text-white">Catalyst</span><p style="font-size:11px;" class="text-text-dim">Sales intelligence</p></div></a>
+                    <a href="/solvent/"><div class="nav-dd-icon" style="background:rgba(13,217,139,0.12);"><svg viewBox="0 0 24 24" class="w-4 h-4" style="color:#0DD98B;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><span class="text-sm text-white">Solvent</span><p style="font-size:11px;" class="text-text-dim">Permit Intelligence</p></div></a>
+                    <a href="/bond/"><div class="nav-dd-icon" style="background:rgba(99,102,241,0.12);"><svg viewBox="0 0 24 24" class="w-4 h-4" style="color:#6366F1;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><span class="text-sm text-white">Bond</span><p style="font-size:11px;" class="text-text-dim">AI-native CRM</p></div></a>
+                    <a href="/reactor/"><div class="nav-dd-icon" style="background:rgba(168,85,247,0.12);"><svg viewBox="0 0 24 24" class="w-4 h-4" style="color:#A855F7;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3"/></svg></div><div><span class="text-sm text-white">Reactor</span><p style="font-size:11px;" class="text-text-dim">Operations Intelligence</p></div></a>
+                </div></div>
+            </div>
+                <a href="/solvent/pricing/" class="text-sm text-white font-medium transition-colors">Pricing</a>
+                <a href="/team/" class="text-sm text-text-muted hover:text-white transition-colors">Team</a>
+                <a href="/solvent/#demo" class="cta-btn px-5 py-2.5 rounded-full text-sm font-semibold text-void"><span>Request a Demo</span></a>
+            </nav>
+            <button id="mobile-toggle" class="md:hidden flex flex-col gap-1.5 z-[110]"><span class="w-6 h-px bg-white"></span><span class="w-4 h-px bg-white"></span></button>
+        </header>
+    <div class="mobile-menu" id="mobile-menu">
+        <a href="/" class="font-display text-3xl font-bold text-white">Home</a>
+        <a href="/catalyst/" class="font-display text-2xl text-text-muted hover:text-catalyst transition-colors">Catalyst</a>
+        <a href="/solvent/" class="font-display text-2xl text-text-muted hover:text-solvent transition-colors">Solvent</a>
+        <a href="/bond/" class="font-display text-2xl text-text-muted hover:text-bond transition-colors">Bond</a>
+        <a href="/reactor/" class="font-display text-2xl text-text-muted hover:text-reactor transition-colors">Reactor</a>
+        <a href="/pricing/" class="font-display text-2xl text-text-muted hover:text-white transition-colors">Pricing</a>
+        <a href="/team/" class="font-display text-2xl text-text-muted hover:text-white transition-colors">Team</a>
+    </div>
+
+
+        <!-- HERO -->
+        <section class="pt-40 pb-16 px-6 md:px-10 max-w-5xl mx-auto text-center">
+            <div class="anim-fade-up" style="animation-delay:0.2s">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-solvent/20 bg-solvent/5 mb-8">
+                    <svg viewBox="0 0 24 24" class="w-3.5 h-3.5 text-solvent" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span class="font-mono text-[11px] text-solvent tracking-wide">PRICING</span>
+                </div>
+            </div>
+            <h1 class="font-display text-5xl md:text-7xl font-extrabold leading-[0.93] tracking-tight anim-fade-up mb-6" style="animation-delay:0.35s">Simple pricing.<br><span class="gradient-text">Pay per permit.</span></h1>
+            <p class="text-lg md:text-xl text-text-muted max-w-xl mx-auto leading-relaxed anim-fade-up" style="animation-delay:0.5s">One low platform fee, then pay only for the permits you file. No seat licenses, no hidden costs, no long-term contracts.</p>
+        </section>
+
+        <!-- PLATFORM FEE -->
+        <section class="px-6 md:px-10 max-w-5xl mx-auto pb-16">
+            <div class="reveal rounded-2xl border border-text-dim/10 bg-card p-8 md:p-12 relative overflow-hidden">
+                <!-- Top gradient line -->
+                <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-solvent via-solvent-light to-cyan-400 opacity-50"></div>
+                <!-- Glow -->
+                <div class="absolute -top-32 -right-32 w-80 h-80 bg-solvent/8 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-10 relative z-10">
+                    <div class="flex-1">
+                        <div class="font-mono text-[11px] text-solvent tracking-widest uppercase mb-3">Platform Access</div>
+                        <h2 class="font-display text-2xl md:text-3xl font-bold tracking-tight mb-3">Solvent Platform Fee</h2>
+                        <p class="text-text-muted text-[15px] leading-relaxed max-w-lg mb-6">Full access to the Solvent permitting engine — AHJ mapping, document generation, auto-submission, real-time tracking, and auto-corrections.</p>
+                        <div class="flex flex-wrap gap-2.5">
+                            <div class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white/[0.03] border border-white/[0.06] text-text-muted text-[13px]">
+                                <svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>2,400+ AHJs mapped
+                            </div>
+                            <div class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white/[0.03] border border-white/[0.06] text-text-muted text-[13px]">
+                                <svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Auto-submission
+                            </div>
+                            <div class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white/[0.03] border border-white/[0.06] text-text-muted text-[13px]">
+                                <svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Real-time tracking
+                            </div>
+                            <div class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white/[0.03] border border-white/[0.06] text-text-muted text-[13px]">
+                                <svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Auto-corrections
+                            </div>
+                            <div class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white/[0.03] border border-white/[0.06] text-text-muted text-[13px]">
+                                <svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>OS integrations
+                            </div>
+                            <div class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white/[0.03] border border-white/[0.06] text-text-muted text-[13px]">
+                                <svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Unlimited users
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center flex-shrink-0 lg:pl-8">
+                        <div class="font-display text-6xl md:text-7xl font-extrabold tracking-tighter gradient-text leading-none">$899</div>
+                        <div class="text-text-muted text-base mt-1">per month</div>
+                        <div class="font-mono text-[11px] text-solvent-tile mt-3 tracking-wide">Cancel anytime · No contracts</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PER-PERMIT TIERS -->
+        <section class="px-6 md:px-10 max-w-5xl mx-auto pb-20">
+            <div class="text-center mb-12 reveal">
+                <h2 class="font-display text-3xl md:text-4xl font-bold tracking-tight mb-3">Per-permit pricing</h2>
+                <p class="text-text-muted text-lg">Pay based on the complexity of each permit — nothing more.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 reveal">
+                <!-- SIMPLE -->
+                <div class="tier-card rounded-2xl border border-text-dim/10 bg-card p-8 text-center relative">
+                    <div class="w-14 h-14 rounded-xl bg-solvent/[0.08] border border-solvent/15 flex items-center justify-center mx-auto mb-5">
+                        <svg class="w-6 h-6 text-solvent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                    </div>
+                    <div class="font-mono text-[11px] text-solvent tracking-widest uppercase mb-2">Simple</div>
+                    <div class="font-display text-5xl font-extrabold tracking-tighter mb-1">$150</div>
+                    <div class="text-text-muted text-sm mb-6">per permit</div>
+                    <div class="h-px bg-white/[0.06] mb-6 -mx-2"></div>
+                    <p class="text-text-muted text-sm leading-relaxed mb-6">Straightforward permits with minimal documentation — basic residential repairs or simple installations.</p>
+                    <div class="space-y-3 text-left">
+                        <div class="flex items-start gap-2.5 text-sm text-text-muted"><svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Basic residential permits</div>
+                        <div class="flex items-start gap-2.5 text-sm text-text-muted"><svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Minimal supporting docs</div>
+                        <div class="flex items-start gap-2.5 text-sm text-text-muted"><svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Single AHJ submission</div>
+                        <div class="flex items-start gap-2.5 text-sm text-text-muted"><svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Auto-corrections included</div>
+                    </div>
+                </div>
+
+                <!-- STANDARD (featured) -->
+                <div class="tier-card rounded-2xl border border-solvent/25 bg-gradient-to-b from-solvent/[0.05] to-card p-8 text-center relative">
+                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-solvent to-solvent-light text-void font-mono text-[10px] font-bold tracking-widest px-4 py-1 rounded-full whitespace-nowrap">MOST COMMON</div>
+                    <div class="w-14 h-14 rounded-xl bg-solvent/[0.08] border border-solvent/15 flex items-center justify-center mx-auto mb-5">
+                        <svg class="w-6 h-6 text-solvent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+                        </svg>
+                    </div>
+                    <div class="font-mono text-[11px] text-solvent tracking-widest uppercase mb-2">Standard</div>
+                    <div class="font-display text-5xl font-extrabold tracking-tighter mb-1">$500</div>
+                    <div class="text-text-muted text-sm mb-6">per permit</div>
+                    <div class="h-px bg-white/[0.06] mb-6 -mx-2"></div>
+                    <p class="text-text-muted text-sm leading-relaxed mb-6">Multi-document permits requiring engineering plans, load calcs, or site plans — most solar and HVAC jobs.</p>
+                    <div class="space-y-3 text-left">
+                        <div class="flex items-start gap-2.5 text-sm text-text-muted"><svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Solar, HVAC, roofing permits</div>
+                        <div class="flex items-start gap-2.5 text-sm text-text-muted"><svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Engineering docs &amp; load calcs</div>
+                        <div class="flex items-start gap-2.5 text-sm text-text-muted"><svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Multi-document packages</div>
+                        <div class="flex items-start gap-2.5 text-sm text-text-muted"><svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Priority auto-corrections</div>
+                    </div>
+                </div>
+
+                <!-- COMPLEX -->
+                <div class="tier-card rounded-2xl border border-text-dim/10 bg-card p-8 text-center relative">
+                    <div class="w-14 h-14 rounded-xl bg-solvent/[0.08] border border-solvent/15 flex items-center justify-center mx-auto mb-5">
+                        <svg class="w-6 h-6 text-solvent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>
+                        </svg>
+                    </div>
+                    <div class="font-mono text-[11px] text-solvent tracking-widest uppercase mb-2">Complex</div>
+                    <div class="flex items-end gap-1 justify-center mb-1">
+                        <span class="font-display text-5xl font-extrabold tracking-tighter">$1,500</span>
+                        <span class="text-text-dim text-[1.265rem] pb-1.5">+</span>
+                    </div>
+                    <div class="text-text-muted text-sm mb-6">per permit</div>
+                    <div class="h-px bg-white/[0.06] mb-6 -mx-2"></div>
+                    <p class="text-text-muted text-sm leading-relaxed mb-6">High-complexity permits involving multiple agencies, commercial projects, or extensive engineering review.</p>
+                    <div class="space-y-3 text-left">
+                        <div class="flex items-start gap-2.5 text-sm text-text-muted"><svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Commercial &amp; multi-trade</div>
+                        <div class="flex items-start gap-2.5 text-sm text-text-muted"><svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Multiple AHJ coordination</div>
+                        <div class="flex items-start gap-2.5 text-sm text-text-muted"><svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Full engineering review</div>
+                        <div class="flex items-start gap-2.5 text-sm text-text-muted"><svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Dedicated support</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <section class="px-6 md:px-10 max-w-3xl mx-auto pb-20">
+            <h2 class="font-display text-2xl md:text-3xl font-bold tracking-tight text-center mb-10 reveal">Common questions</h2>
+
+            <div class="space-y-0 reveal">
+                <div class="faq-item border-b border-white/[0.06]">
+                    <button class="faq-question w-full text-left py-5 flex justify-between items-center text-text-primary font-body text-[15px] font-semibold hover:text-solvent transition-colors" onclick="toggleFaq(this)">
+                        What's included in the $899/mo platform fee?
+                        <svg class="faq-chevron w-5 h-5 text-text-dim flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </button>
+                    <div class="faq-answer"><p class="text-text-muted text-sm leading-relaxed">The platform fee gives your entire team unlimited access to Solvent — AHJ mapping across 2,400+ jurisdictions, document auto-generation, electronic submission, real-time status tracking, auto-corrections, and full integrations with the Leviosai OS (Catalyst, Bond, Reactor). No seat limits.</p></div>
+                </div>
+                <div class="faq-item border-b border-white/[0.06]">
+                    <button class="faq-question w-full text-left py-5 flex justify-between items-center text-text-primary font-body text-[15px] font-semibold hover:text-solvent transition-colors" onclick="toggleFaq(this)">
+                        How do I know which tier my permit falls into?
+                        <svg class="faq-chevron w-5 h-5 text-text-dim flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </button>
+                    <div class="faq-answer"><p class="text-text-muted text-sm leading-relaxed">Solvent automatically classifies each permit based on the AHJ requirements and project scope. You'll see the tier and price before submission — no surprises. Most residential solar and HVAC jobs fall into Standard.</p></div>
+                </div>
+                <div class="faq-item border-b border-white/[0.06]">
+                    <button class="faq-question w-full text-left py-5 flex justify-between items-center text-text-primary font-body text-[15px] font-semibold hover:text-solvent transition-colors" onclick="toggleFaq(this)">
+                        Are there any long-term contracts?
+                        <svg class="faq-chevron w-5 h-5 text-text-dim flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </button>
+                    <div class="faq-answer"><p class="text-text-muted text-sm leading-relaxed">No. Solvent is month-to-month. You can cancel anytime — no penalties, no lock-in. We earn your business every month.</p></div>
+                </div>
+                <div class="faq-item border-b border-white/[0.06]">
+                    <button class="faq-question w-full text-left py-5 flex justify-between items-center text-text-primary font-body text-[15px] font-semibold hover:text-solvent transition-colors" onclick="toggleFaq(this)">
+                        Do I need Solvent to use the rest of the Leviosai OS?
+                        <svg class="faq-chevron w-5 h-5 text-text-dim flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </button>
+                    <div class="faq-answer"><p class="text-text-muted text-sm leading-relaxed">Each product in the Leviosai OS works standalone. But they're built to work together — permits auto-trigger from Catalyst deals and auto-notify Reactor for crew dispatch. The more you connect, the more time you save.</p></div>
+                </div>
+                <div class="faq-item border-b border-white/[0.06]">
+                    <button class="faq-question w-full text-left py-5 flex justify-between items-center text-text-primary font-body text-[15px] font-semibold hover:text-solvent transition-colors" onclick="toggleFaq(this)">
+                        What if my AHJ isn't covered yet?
+                        <svg class="faq-chevron w-5 h-5 text-text-dim flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </button>
+                    <div class="faq-answer"><p class="text-text-muted text-sm leading-relaxed">We add new AHJs every week. If yours isn't mapped yet, let us know during your demo — we typically have new jurisdictions live within days.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="px-6 md:px-10 max-w-2xl mx-auto pb-24">
+            <div class="reveal rounded-2xl border border-text-dim/10 bg-card p-10 md:p-14 text-center relative overflow-hidden">
+                <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-solvent via-solvent-light to-cyan-400 opacity-50"></div>
+                <h3 class="font-display text-2xl md:text-3xl font-bold tracking-tight mb-3">Ready to stop chasing permits?</h3>
+                <p class="text-text-muted text-[15px] leading-relaxed mb-8">See Solvent handle permitting for your actual service area. We'll walk through your AHJs live — 30 minutes, no pressure.</p>
+                <a href="/solvent/#demo" class="cta-btn inline-flex items-center gap-3 px-8 py-4 rounded-full font-display text-sm font-semibold text-void tracking-wide"><span>Request a Demo</span><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>
+                <p class="font-mono text-[10px] text-text-dim tracking-wide mt-5">30-MIN WALKTHROUGH · YOUR AHJs · NO COMMITMENT</p>
+            </div>
+        </section>
+
+        <!-- FOOTER (identical to solvent main page) -->
+        <footer class="px-6 md:px-10 py-10 border-t border-text-dim/10">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-2">
+                    <svg viewBox="0 0 56 56" class="w-6 h-6" style="overflow:visible;">
+                        <defs>
+                            <linearGradient id="dropMainF" x1="0" y1="0" x2="0.3" y2="1">
+                                <stop offset="0%" stop-color="#3DE8A0"/>
+                                <stop offset="40%" stop-color="#0DD98B"/>
+                                <stop offset="100%" stop-color="#08A86A"/>
+                            </linearGradient>
+                            <linearGradient id="dropInnerF" x1="0.2" y1="0" x2="0.8" y2="1">
+                                <stop offset="0%" stop-color="#5FFFC0"/>
+                                <stop offset="100%" stop-color="#0DD98B" stop-opacity="0.4"/>
+                            </linearGradient>
+                        </defs>
+                        <circle class="droplet-ripple-1" cx="28" cy="44" fill="none" stroke="#0DD98B" stroke-width="0.8"/>
+                        <circle class="droplet-ripple-2" cx="28" cy="44" fill="none" stroke="#3DE8A0" stroke-width="0.5"/>
+                        <g class="droplet-body">
+                            <path d="M28 4C28 4 11 24 11 34C11 42.8 18.6 50 28 50C37.4 50 45 42.8 45 34C45 24 28 4 28 4Z" fill="url(#dropMainF)"/>
+                            <path d="M28 12C28 12 17 26 17 33.5C17 39.8 21.9 45 28 45C34.1 45 39 39.8 39 33.5C39 26 28 12 28 12Z" fill="url(#dropInnerF)" class="droplet-pulse"/>
+                            <ellipse class="droplet-inner" cx="22" cy="28" rx="4" ry="5.5" fill="white" opacity="0.3" transform="rotate(-18 22 28)"/>
+                            <ellipse cx="24" cy="24" rx="1.5" ry="2" fill="white" opacity="0.45" transform="rotate(-12 24 24)"/>
+                            <circle class="droplet-bubble-1" cx="32" cy="36" r="0.8" fill="white" opacity="0.35"/>
+                        </g>
+                    </svg>
+                    <span class="font-display text-sm font-semibold text-solvent">solvent</span>
+                    <a href="/" class="text-text-dim text-xs ml-2 hover:text-white transition-colors">leviosai</a><span class="text-text-dim text-xs">· © 2026</span>
+                </div>
+                <div class="flex gap-8 font-mono text-[10px] uppercase tracking-widest text-text-dim">
+                    <a href="/" class="hover:text-white transition-colors">Home</a>
+                    <a href="/#cta-section" class="hover:text-white transition-colors">Contact</a>
+                    <a href="/catalyst/" class="hover:text-white transition-colors">Catalyst</a>
+                    <a href="/solvent/" class="hover:text-white transition-colors">Solvent</a>
+                    <a href="/bond/" class="hover:text-white transition-colors">Bond</a>
+                    <a href="/reactor/" class="hover:text-white transition-colors">Reactor</a><a href="/privacy/" class="hover:text-white transition-colors">Privacy</a><a href="/terms/" class="hover:text-white transition-colors">Terms</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Scroll reveal
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // FAQ toggle
+        function toggleFaq(btn) {
+            const item = btn.parentElement;
+            const isOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+            if (!isOpen) item.classList.add('open');
+        }
+    </script>
+
+
+    <script>
+        // Mobile menu
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        let menuOpen = false;
+        if (mobileToggle && mobileMenu) {
+            mobileToggle.addEventListener('click', () => {
+                menuOpen = !menuOpen;
+                if (menuOpen) {
+                    mobileMenu.classList.add('open');
+                } else {
+                    mobileMenu.classList.remove('open');
+                }
+            });
+            document.querySelectorAll('#mobile-menu a').forEach(a => {
+                a.addEventListener('click', () => {
+                    menuOpen = false;
+                    mobileMenu.classList.remove('open');
+                });
+            });
+        }
+    </script>
+</body></html>

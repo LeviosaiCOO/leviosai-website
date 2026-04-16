@@ -1,0 +1,886 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalyst — The Sales intelligence | Leviosai</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'solvent': '#0DD98B',
+                        'bond': '#6366F1',
+                        'reactor': '#A855F7',
+                        'void': '#0A0A0A',
+                        'void-light': '#0E0E0E',
+                        'card': '#121212',
+                        'card-hover': '#181818',
+                        'catalyst': '#F97316',
+                        'catalyst-light': '#F59E0B',
+                        'catalyst-glow': 'rgba(249,115,22,0.12)',
+                        'text-primary': '#F2F2F2',
+                        'text-muted': '#A3A3A3',
+                        'text-dim': '#737373',
+                        'success': '#34D399',
+                        'warning': '#FBBF24',
+                    },
+                    fontFamily: {
+                        display: ['"Outfit"', 'sans-serif'],
+                        body: ['"Space Grotesk"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * { box-sizing: border-box; }
+        body { background-color: #0A0A0A; color: #F2F2F2; overflow-x: hidden; }
+
+        .hero-mesh { position: fixed; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; }
+        .hero-mesh::before { content: ''; position: absolute; top: -25%; left: -15%; width: 70%; height: 70%; background: radial-gradient(ellipse at center, rgba(249,115,22,0.10) 0%, transparent 55%); animation: drift1 14s ease-in-out infinite alternate; }
+        .hero-mesh::after { content: ''; position: absolute; bottom: -20%; right: -10%; width: 60%; height: 60%; background: radial-gradient(ellipse at center, rgba(245,158,11,0.06) 0%, transparent 50%); animation: drift2 16s ease-in-out infinite alternate; }
+        .grid-overlay { position: fixed; inset: 0; background-image: linear-gradient(rgba(249,115,22,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(249,115,22,0.02) 1px, transparent 1px); background-size: 60px 60px; z-index: 0; pointer-events: none; }
+
+        @keyframes drift1 { 0% { transform: translate(0,0); } 100% { transform: translate(4%,6%); } }
+        @keyframes drift2 { 0% { transform: translate(0,0); } 100% { transform: translate(-5%,-4%); } }
+        @keyframes fadeUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+
+        .anim-fade-up { opacity: 0; animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .anim-fade-in { opacity: 0; animation: fadeIn 1s ease forwards; }
+
+
+        .gradient-text { background: linear-gradient(135deg, #F97316 0%, #F59E0B 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+        .compare-row { transition: background-color 0.3s ease; }
+        .compare-row:hover { background-color: rgba(249,115,22,0.03); }
+
+        .cta-btn { position: relative; background: linear-gradient(135deg, #F97316, #F59E0B); transition: all 0.4s ease; overflow: hidden; }
+        .cta-btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, #F59E0B, #F97316); opacity: 0; transition: opacity 0.4s ease; }
+        .cta-btn:hover::before { opacity: 1; }
+        .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px -8px rgba(249,115,22,0.4); }
+        .cta-btn span, .cta-btn svg { position: relative; z-index: 1; }
+
+        .cta-btn-outline { border: 1px solid rgba(249,115,22,0.3); transition: all 0.3s ease; }
+        .cta-btn-outline:hover { border-color: rgba(249,115,22,0.6); background: rgba(249,115,22,0.05); }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0A0A0A; }
+        ::-webkit-scrollbar-thumb { background: #F97316; border-radius: 2px; }
+
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        .pipeline-col { min-height: 200px; }
+        .pipeline-card { background: #121212; border: 1px solid rgba(249,115,22,0.06); transition: all 0.3s ease; }
+        .pipeline-card:hover { border-color: rgba(249,115,22,0.18); transform: scale(1.02); }
+
+        .stat-glow { position: absolute; width: 150%; height: 150%; top: -25%; left: -25%; border-radius: 50%; filter: blur(50px); opacity: 0.08; pointer-events: none; background: #F97316; }
+
+        /* Range slider styling */
+        input[type="range"] { -webkit-appearance: none; appearance: none; height: 6px; border-radius: 3px; outline: none; cursor: pointer; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #F97316; border: 3px solid #0A0A0A; box-shadow: 0 0 12px rgba(249,115,22,0.4); cursor: pointer; transition: box-shadow 0.2s; }
+        input[type="range"]::-webkit-slider-thumb:hover { box-shadow: 0 0 20px rgba(249,115,22,0.6); }
+        input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #F97316; border: 3px solid #0A0A0A; box-shadow: 0 0 12px rgba(249,115,22,0.4); cursor: pointer; }
+        input[type="range"]::-moz-range-track { height: 6px; border-radius: 3px; }
+            .nav-dropdown { display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); padding-top: 12px; }
+        .nav-parent:hover .nav-dropdown { display: block; }
+        .nav-dropdown-inner { background: rgba(18,18,18,0.95); border: 1px solid rgba(115,115,115,0.15); border-radius: 12px; padding: 8px; min-width: 220px; backdrop-filter: blur(20px); }
+        .nav-dropdown a { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; transition: background 0.2s; font-size: 14px; }
+        .nav-dropdown a:hover { background: rgba(115,115,115,0.1); }
+        .nav-dd-icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+            .mobile-menu { position: fixed; inset: 0; z-index: 100; background: rgba(10,10,15,0.98); backdrop-filter: blur(20px); display: none; flex-direction: column; justify-content: center; align-items: center; gap: 2rem; }
+        .mobile-menu.open { display: flex; }
+    </style>
+</head>
+<body class="min-h-screen w-screen relative font-body selection:bg-catalyst/20 selection:text-white">
+
+    <div class="hero-mesh"></div>
+    <div class="grid-overlay"></div>
+
+    <div class="relative z-10 min-h-screen w-full">
+
+        <!-- NAV -->
+        <header class="fixed top-0 left-0 right-0 z-50 px-6 md:px-10 py-5 flex justify-between items-center anim-fade-in" style="animation-delay:0.1s; background: linear-gradient(to bottom, rgba(10,10,10,0.97) 0%, rgba(10,10,10,0) 100%);">
+            <a href="/" class="flex items-center gap-2">
+                <svg viewBox="0 0 100 100" class="w-9 h-9">
+                    <defs><linearGradient id="csLit" x1="0" y1="0" x2="0.6" y2="1"><stop offset="0%" stop-color="#FEF3C7"/><stop offset="30%" stop-color="#FCD34D"/><stop offset="70%" stop-color="#F59E0B"/><stop offset="100%" stop-color="#D97706"/></linearGradient><linearGradient id="csShd" x1="0.4" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#F59E0B"/><stop offset="40%" stop-color="#EA580C"/><stop offset="100%" stop-color="#C2410C"/></linearGradient><linearGradient id="csMid" x1="0.5" y1="0" x2="0.5" y2="1"><stop offset="0%" stop-color="#FBBF24"/><stop offset="100%" stop-color="#F97316"/></linearGradient><radialGradient id="csCore" cx="50%" cy="50%"><stop offset="0%" stop-color="#FEF3C7" stop-opacity="0.9"/><stop offset="40%" stop-color="#FCD34D" stop-opacity="0.7"/><stop offset="100%" stop-color="#F59E0B" stop-opacity="0"/></radialGradient></defs>
+                    <path d="M50 48L56 36L68 8L50 34Z" fill="url(#csLit)"/><path d="M50 48L44 36L68 8L50 34Z" fill="url(#csShd)"/><path d="M50 34L53 30L68 8L56 36Z" fill="#FEF3C7" opacity="0.25"/>
+                    <path d="M50 48L44 60L34 84L50 62Z" fill="url(#csShd)"/><path d="M50 48L56 60L34 84L50 62Z" fill="#C2410C" opacity="0.85"/>
+                    <path d="M50 48L40 42L22 26L44 48Z" fill="url(#csLit)"/><path d="M50 48L40 54L22 26L44 48Z" fill="url(#csShd)" opacity="0.9"/>
+                    <path d="M50 48L60 54L78 70L56 48Z" fill="url(#csShd)"/><path d="M50 48L60 42L78 70L56 48Z" fill="#C2410C" opacity="0.8"/>
+                    <path d="M50 48L53 40L51 20L47 40Z" fill="url(#csLit)" opacity="0.9"/><path d="M50 48L58 45L80 47L58 51Z" fill="url(#csMid)" opacity="0.8"/><path d="M50 48L53 56L51 74L47 56Z" fill="url(#csShd)" opacity="0.8"/><path d="M50 48L42 45L24 47L42 51Z" fill="url(#csMid)" opacity="0.75"/>
+                    <path d="M28 18L31 22L27 24Z" fill="#FCD34D" opacity="0.85"/><path d="M28 18L25 22L27 24Z" fill="#EA580C" opacity="0.65"/><path d="M28 10L29 17L27 17Z" fill="#FBBF24" opacity="0.7"/><path d="M22 18L27 19L27 21Z" fill="#F59E0B" opacity="0.55"/>
+                    <circle cx="50" cy="48" r="8" fill="url(#csCore)"/><circle cx="50" cy="48" r="4" fill="#FDE68A" opacity="0.6"/><circle cx="50" cy="48" r="2.2" fill="#FEF3C7" opacity="0.5"/>
+                </svg>
+                <span class="font-display text-xl font-bold tracking-tight text-catalyst">catalyst</span>
+                <a href="/" class="hidden md:inline text-text-dim text-xs ml-2 hover:text-white transition-colors">by leviosai</a>
+            </a>
+            <nav class="hidden md:flex items-center gap-10">
+                <a href="/" class="text-sm text-text-muted hover:text-white transition-colors">Home</a>
+                <div class="relative nav-parent">
+                <button class="text-sm text-text-muted hover:text-white transition-colors flex items-center gap-1">Products<svg class="w-3.5 h-3.5 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+                <div class="nav-dropdown"><div class="nav-dropdown-inner">
+                    <a href="/catalyst/"><div class="nav-dd-icon" style="background:rgba(249,115,22,0.12);"><svg viewBox="0 0 24 24" class="w-4 h-4" style="color:#F97316;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><span class="text-sm text-white">Catalyst</span><p style="font-size:11px;" class="text-text-dim">Sales intelligence</p></div></a>
+                    <a href="/solvent/"><div class="nav-dd-icon" style="background:rgba(13,217,139,0.12);"><svg viewBox="0 0 24 24" class="w-4 h-4" style="color:#0DD98B;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><span class="text-sm text-white">Solvent</span><p style="font-size:11px;" class="text-text-dim">Permit Intelligence</p></div></a>
+                    <a href="/bond/"><div class="nav-dd-icon" style="background:rgba(99,102,241,0.12);"><svg viewBox="0 0 24 24" class="w-4 h-4" style="color:#6366F1;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><span class="text-sm text-white">Bond</span><p style="font-size:11px;" class="text-text-dim">AI-native CRM</p></div></a>
+                    <a href="/reactor/"><div class="nav-dd-icon" style="background:rgba(168,85,247,0.12);"><svg viewBox="0 0 24 24" class="w-4 h-4" style="color:#A855F7;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3"/></svg></div><div><span class="text-sm text-white">Reactor</span><p style="font-size:11px;" class="text-text-dim">Operations Intelligence</p></div></a>
+                </div></div>
+            </div>
+                <a href="/pricing/" class="text-sm text-text-muted hover:text-white transition-colors">Pricing</a>
+                <a href="#demo" class="cta-btn px-5 py-2.5 rounded-full text-sm font-semibold text-void"><span>Request a Demo</span></a>
+            </nav>
+            <button id="mobile-toggle" class="md:hidden flex flex-col gap-1.5 z-[110]"><span class="w-6 h-px bg-white"></span><span class="w-4 h-px bg-white"></span></button>
+        </header>
+    <div class="mobile-menu" id="mobile-menu">
+        <a href="/" class="font-display text-3xl font-bold text-white">Home</a>
+        <a href="/catalyst/" class="font-display text-2xl text-text-muted hover:text-catalyst transition-colors">Catalyst</a>
+        <a href="/solvent/" class="font-display text-2xl text-text-muted hover:text-solvent transition-colors">Solvent</a>
+        <a href="/bond/" class="font-display text-2xl text-text-muted hover:text-bond transition-colors">Bond</a>
+        <a href="/reactor/" class="font-display text-2xl text-text-muted hover:text-reactor transition-colors">Reactor</a>
+        <a href="/pricing/" class="font-display text-2xl text-text-muted hover:text-white transition-colors">Pricing</a>
+        <a href="/team/" class="font-display text-2xl text-text-muted hover:text-white transition-colors">Team</a>
+    </div>
+
+
+        <!-- HERO -->
+        <section class="min-h-screen flex flex-col justify-center px-6 md:px-10 pt-28 pb-20 max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div class="space-y-8">
+                    <div class="anim-fade-up" style="animation-delay:0.2s">
+                        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-catalyst/20 bg-catalyst/5 mb-6">
+                            <svg viewBox="0 0 24 24" class="w-3.5 h-3.5 text-catalyst" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            <span class="font-mono text-[11px] text-catalyst tracking-wide">THE SALES INTELLIGENCE ENGINE</span>
+                        </div>
+                    </div>
+                    <h1 class="font-display text-5xl md:text-7xl font-extrabold leading-[0.93] tracking-tight anim-fade-up" style="animation-delay:0.35s">Close more<br>deals with<br><span class="gradient-text">less effort.</span></h1>
+                    <p class="text-lg md:text-xl text-text-muted max-w-lg leading-relaxed anim-fade-up" style="animation-delay:0.5s">Catalyst is your Sales Intelligence — it qualifies leads, builds proposals, and follows up automatically. Your reps focus on closing, not chasing.</p>
+                    <div class="flex flex-col sm:flex-row gap-4 pt-2 anim-fade-up" style="animation-delay:0.65s">
+                        <a href="#demo" class="cta-btn px-8 py-4 rounded-full font-display text-sm font-semibold text-void tracking-wide flex items-center gap-3"><span>Request a Demo</span><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>
+                        <a href="#features" class="cta-btn-outline px-8 py-4 rounded-full text-sm font-medium text-text-muted hover:text-white flex items-center gap-2">See How It Works<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg></a>
+                    </div>
+                </div>
+
+                <!-- Pipeline mockup -->
+                <div class="anim-fade-in" style="animation-delay:0.8s">
+                    <div class="relative rounded-2xl border border-text-dim/15 bg-card p-5 overflow-hidden">
+                        <div class="absolute -top-20 -right-20 w-60 h-60 bg-catalyst/8 rounded-full blur-3xl pointer-events-none"></div>
+                        <div class="flex items-center justify-between mb-5 relative z-10">
+                            <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-catalyst animate-pulse"></div><span class="font-mono text-[10px] text-catalyst tracking-widest uppercase">Live Pipeline</span></div>
+                            <span class="font-mono text-[10px] text-text-dim">12 active deals</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3 relative z-10">
+                            <div class="pipeline-col">
+                                <div class="font-mono text-[9px] text-text-dim uppercase tracking-widest mb-3 flex items-center justify-between"><span>New Leads</span><span class="text-catalyst">5</span></div>
+                                <div class="space-y-2">
+                                    <div class="pipeline-card rounded-lg p-3"><div class="font-body text-xs font-medium mb-1">Martinez Home</div><div class="font-mono text-[9px] text-text-dim">Full renovation</div><div class="flex items-center gap-1 mt-2"><div class="w-full h-1 rounded-full bg-text-dim/20"><div class="w-[85%] h-full rounded-full bg-catalyst"></div></div><span class="font-mono text-[8px] text-catalyst">85</span></div></div>
+                                    <div class="pipeline-card rounded-lg p-3"><div class="font-body text-xs font-medium mb-1">Chen Residence</div><div class="font-mono text-[9px] text-text-dim">HVAC + insulation</div><div class="flex items-center gap-1 mt-2"><div class="w-full h-1 rounded-full bg-text-dim/20"><div class="w-[72%] h-full rounded-full bg-catalyst"></div></div><span class="font-mono text-[8px] text-catalyst">72</span></div></div>
+                                    <div class="pipeline-card rounded-lg p-3 opacity-50"><div class="font-body text-xs font-medium mb-1">Nguyen Property</div><div class="font-mono text-[9px] text-text-dim">Roof + gutters</div></div>
+                                </div>
+                            </div>
+                            <div class="pipeline-col">
+                                <div class="font-mono text-[9px] text-text-dim uppercase tracking-widest mb-3 flex items-center justify-between"><span>Proposal</span><span class="text-catalyst-light">4</span></div>
+                                <div class="space-y-2">
+                                    <div class="pipeline-card rounded-lg p-3" style="border-color:rgba(245,158,11,0.12);"><div class="font-body text-xs font-medium mb-1">Williams Home</div><div class="font-mono text-[9px] text-text-dim">$38,200</div><div class="mt-2"><span class="inline-block px-1.5 py-0.5 rounded text-[8px] font-mono bg-catalyst-light/10 text-catalyst-light">Opened 3x</span></div></div>
+                                    <div class="pipeline-card rounded-lg p-3" style="border-color:rgba(245,158,11,0.12);"><div class="font-body text-xs font-medium mb-1">Park Family</div><div class="font-mono text-[9px] text-text-dim">$52,800</div><div class="mt-2"><span class="inline-block px-1.5 py-0.5 rounded text-[8px] font-mono bg-catalyst/10 text-catalyst">Follow-up today</span></div></div>
+                                </div>
+                            </div>
+                            <div class="pipeline-col">
+                                <div class="font-mono text-[9px] text-text-dim uppercase tracking-widest mb-3 flex items-center justify-between"><span>Closing</span><span class="text-success">3</span></div>
+                                <div class="space-y-2">
+                                    <div class="pipeline-card rounded-lg p-3" style="border-color:rgba(52,211,153,0.15);"><div class="font-body text-xs font-medium mb-1">Thompson Remodel</div><div class="font-mono text-[9px] text-text-dim">$41,500</div><div class="mt-2"><span class="inline-block px-1.5 py-0.5 rounded text-[8px] font-mono bg-success/10 text-success">Contract sent</span></div></div>
+                                    <div class="pipeline-card rounded-lg p-3 relative overflow-hidden" style="border-color:rgba(52,211,153,0.15);"><div class="absolute inset-0 bg-gradient-to-r from-success/5 to-transparent"></div><div class="relative"><div class="font-body text-xs font-medium mb-1">Rivera Estate</div><div class="font-mono text-[9px] text-success font-medium">$68,900 — Signed!</div></div></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-text-dim/10 flex items-center gap-3 relative z-10">
+                            <div class="w-5 h-5 rounded-full bg-catalyst/15 flex items-center justify-center"><svg viewBox="0 0 24 24" class="w-3 h-3 text-catalyst" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                            <span class="font-mono text-[10px] text-text-muted">Catalyst auto-sent follow-up to <span class="text-catalyst">Williams Home</span> — proposal opened 3x, scheduling call</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- KEY METRICS -->
+        <section class="border-y border-text-dim/10 py-16 px-6 md:px-10">
+            <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 reveal">
+                <div class="text-center"><div class="font-display text-4xl md:text-5xl font-extrabold gradient-text">2x</div><p class="text-text-muted text-sm mt-2">More proposals sent per rep</p></div>
+                <div class="text-center"><div class="font-display text-4xl md:text-5xl font-extrabold gradient-text">68%</div><p class="text-text-muted text-sm mt-2">Faster lead response time</p></div>
+                <div class="text-center"><div class="font-display text-4xl md:text-5xl font-extrabold gradient-text">&lt;30d</div><p class="text-text-muted text-sm mt-2">Average sales cycle</p></div>
+                <div class="text-center"><div class="font-display text-4xl md:text-5xl font-extrabold gradient-text">31%</div><p class="text-text-muted text-sm mt-2">Average close rate</p></div>
+            </div>
+        </section>
+
+        <!-- FEATURES -->
+        <section id="features" class="px-6 md:px-10 py-28 max-w-7xl mx-auto">
+            <div class="reveal text-center mb-20">
+                <span class="font-mono text-[11px] text-catalyst tracking-[0.3em] uppercase">HOW CATALYST WORKS</span>
+                <h2 class="font-display text-4xl md:text-6xl font-bold tracking-tight mt-4 mb-5">From first lead to<br><span class="text-text-muted">signed contract.</span></h2>
+                <p class="text-text-muted text-lg max-w-2xl mx-auto">Every step of your sales process, handled by AI — with you in control of the deals that matter.</p>
+            </div>
+
+            <!-- Feature 1 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-28 reveal">
+                <div class="order-2 lg:order-1">
+                    <div class="rounded-2xl border border-text-dim/10 bg-card p-6 overflow-hidden">
+                        <div class="space-y-3">
+                            <div class="flex items-start gap-3 p-3 rounded-xl bg-void-light border border-text-dim/8">
+                                <div class="w-8 h-8 rounded-full bg-catalyst/12 flex items-center justify-center shrink-0 mt-0.5"><span class="text-[10px] font-bold text-catalyst">IN</span></div>
+                                <div class="flex-1 min-w-0"><div class="font-body text-sm font-medium">New lead from Google Ads</div><div class="font-mono text-[10px] text-text-dim mt-0.5">Sarah Johnson · 4BR home · Tampa, FL · Interested in full renovation</div></div>
+                                <div class="font-mono text-[10px] text-text-dim shrink-0">2s ago</div>
+                            </div>
+                            <div class="flex items-start gap-3 p-3 rounded-xl bg-catalyst/[0.03] border border-catalyst/10">
+                                <div class="w-8 h-8 rounded-full bg-catalyst/12 flex items-center justify-center shrink-0 mt-0.5"><svg viewBox="0 0 24 24" class="w-4 h-4 text-catalyst" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div>
+                                <div class="flex-1 min-w-0"><div class="font-body text-sm font-medium text-catalyst">Catalyst scored lead</div><div class="font-mono text-[10px] text-text-muted mt-0.5">Score: <span class="text-success font-medium">91/100</span> — Homeowner, high property value, matches service area, strong purchase intent</div></div>
+                            </div>
+                            <div class="flex items-start gap-3 p-3 rounded-xl bg-success/[0.03] border border-success/10">
+                                <div class="w-8 h-8 rounded-full bg-success/12 flex items-center justify-center shrink-0 mt-0.5"><svg viewBox="0 0 24 24" class="w-4 h-4 text-success" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 13l4 4L19 7"/></svg></div>
+                                <div class="flex-1 min-w-0"><div class="font-body text-sm font-medium text-success">Auto-routed to your top rep</div><div class="font-mono text-[10px] text-text-muted mt-0.5">Personalized intro text sent · Appointment link included · Follow-up scheduled in 24h</div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-1 lg:order-2 space-y-5">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-catalyst/10 border border-catalyst/15"><span class="font-mono text-[10px] text-catalyst tracking-wider">STEP 01</span></div>
+                    <h3 class="font-display text-3xl md:text-4xl font-bold tracking-tight">Instant lead<br>qualification</h3>
+                    <p class="text-text-muted text-lg leading-relaxed max-w-md">Every lead gets scored in seconds — not hours. Catalyst looks at property data, service history, location, budget signals, and intent to rank who's most likely to close. Your reps only talk to the best leads.</p>
+                </div>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-28 reveal">
+                <div class="space-y-5">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-catalyst-light/10 border border-catalyst-light/15"><span class="font-mono text-[10px] text-catalyst-light tracking-wider">STEP 02</span></div>
+                    <h3 class="font-display text-3xl md:text-4xl font-bold tracking-tight">Proposals that<br>sell themselves</h3>
+                    <p class="text-text-muted text-lg leading-relaxed max-w-md">Catalyst auto-generates professional proposals with scope of work, pricing breakdowns, financing options, and before/after projections — personalized to each customer. What used to take your reps an hour now takes 30 seconds.</p>
+                </div>
+                <div>
+                    <div class="rounded-2xl border border-text-dim/10 bg-card p-6">
+                        <div class="flex items-center justify-between mb-4"><span class="font-mono text-[10px] text-catalyst tracking-widest uppercase">Auto-Generated Proposal</span><span class="font-mono text-[10px] text-text-dim">for Sarah Johnson</span></div>
+                        <div class="space-y-4">
+                            <!-- Proposal header -->
+                            <div class="p-4 rounded-lg bg-void-light border border-text-dim/8">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div>
+                                        <div class="font-display text-sm font-bold">Home Improvement Proposal</div>
+                                        <div class="font-mono text-[9px] text-text-dim mt-0.5">Generated in 28 seconds · Customized to property data</div>
+                                    </div>
+                                    <div class="px-2 py-1 rounded-md bg-success/10 border border-success/10"><span class="font-mono text-[9px] text-success">Ready to send</span></div>
+                                </div>
+                                <div class="w-full h-px bg-text-dim/10 mb-3"></div>
+                                <div class="grid grid-cols-3 gap-3">
+                                    <div><div class="font-mono text-[8px] text-text-dim uppercase mb-1">Project scope</div><div class="font-body text-xs font-medium">Full service</div></div>
+                                    <div><div class="font-mono text-[8px] text-text-dim uppercase mb-1">Timeline</div><div class="font-body text-xs font-medium">2–3 weeks</div></div>
+                                    <div><div class="font-mono text-[8px] text-text-dim uppercase mb-1">Total</div><div class="font-body text-xs font-medium text-catalyst">$28,400</div></div>
+                                </div>
+                            </div>
+
+                            <!-- Line items preview -->
+                            <div class="p-4 rounded-lg bg-void-light border border-text-dim/8">
+                                <div class="font-mono text-[8px] text-text-dim uppercase mb-3">Scope of work</div>
+                                <div class="space-y-2">
+                                    <div class="flex items-center justify-between"><span class="font-body text-xs text-text-muted">Materials & equipment</span><span class="font-mono text-xs">$14,200</span></div>
+                                    <div class="w-full h-px bg-text-dim/6"></div>
+                                    <div class="flex items-center justify-between"><span class="font-body text-xs text-text-muted">Labor & installation</span><span class="font-mono text-xs">$9,800</span></div>
+                                    <div class="w-full h-px bg-text-dim/6"></div>
+                                    <div class="flex items-center justify-between"><span class="font-body text-xs text-text-muted">Permits & inspections</span><span class="font-mono text-xs">$1,200</span></div>
+                                    <div class="w-full h-px bg-text-dim/6"></div>
+                                    <div class="flex items-center justify-between"><span class="font-body text-xs text-text-muted">Warranty (10yr)</span><span class="font-mono text-xs text-success">Included</span></div>
+                                </div>
+                            </div>
+
+                            <!-- ROI snapshot -->
+                            <div class="p-4 rounded-lg bg-catalyst/[0.03] border border-catalyst/10">
+                                <div class="font-mono text-[8px] text-catalyst uppercase mb-2">Customer ROI snapshot</div>
+                                <div class="flex items-end gap-1 h-10">
+                                    <div class="flex-1 rounded-t" style="height:25%;background:rgba(249,115,22,0.2);"></div>
+                                    <div class="flex-1 rounded-t" style="height:40%;background:rgba(249,115,22,0.3);"></div>
+                                    <div class="flex-1 rounded-t" style="height:55%;background:rgba(249,115,22,0.4);"></div>
+                                    <div class="flex-1 rounded-t" style="height:68%;background:rgba(249,115,22,0.55);"></div>
+                                    <div class="flex-1 rounded-t" style="height:80%;background:rgba(249,115,22,0.7);"></div>
+                                    <div class="flex-1 rounded-t" style="height:100%;background:#F97316;"></div>
+                                </div>
+                                <div class="flex justify-between mt-1.5"><span class="font-mono text-[8px] text-text-dim">Year 1</span><span class="font-mono text-[8px] text-text-dim">Year 5+</span></div>
+                                <div class="font-mono text-[10px] text-text-muted mt-2">Projected property value increase: <span class="text-success font-medium">+$52,000</span></div>
+                            </div>
+
+                            <div class="flex gap-2">
+                                <span class="px-2 py-1 rounded text-[9px] font-mono bg-catalyst/10 text-catalyst border border-catalyst/10">3 financing options</span>
+                                <span class="px-2 py-1 rounded text-[9px] font-mono bg-catalyst-light/10 text-catalyst-light border border-catalyst-light/10">Tax incentives</span>
+                                <span class="px-2 py-1 rounded text-[9px] font-mono bg-success/10 text-success border border-success/10">E-signature ready</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-28 reveal">
+                <div class="order-2 lg:order-1">
+                    <div class="rounded-2xl border border-text-dim/10 bg-card p-6">
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-catalyst"></div><div class="flex-1 h-px bg-text-dim/10"></div><span class="font-mono text-[9px] text-text-dim">DAY 1</span></div>
+                            <div class="pl-4 ml-0.5 border-l border-catalyst/20 space-y-3 pb-3">
+                                <div class="p-3 rounded-lg bg-catalyst/[0.03] border border-catalyst/10"><div class="font-mono text-[10px] text-catalyst mb-1">Proposal Sent — 10:23 AM</div><div class="font-body text-xs text-text-muted">Personalized $28K proposal with 3 financing options</div></div>
+                                <div class="p-3 rounded-lg bg-void-light border border-text-dim/8"><div class="font-mono text-[10px] text-text-dim mb-1">Opened by customer — 2:41 PM</div><div class="font-body text-xs text-text-muted">Spent 4m 12s on pricing breakdown page</div></div>
+                            </div>
+                            <div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-catalyst-light"></div><div class="flex-1 h-px bg-text-dim/10"></div><span class="font-mono text-[9px] text-text-dim">DAY 3</span></div>
+                            <div class="pl-4 ml-0.5 border-l border-catalyst-light/20 space-y-3 pb-3">
+                                <div class="p-3 rounded-lg bg-catalyst-light/[0.03] border border-catalyst-light/10"><div class="font-mono text-[10px] text-catalyst-light mb-1">Auto follow-up sent — 9:00 AM</div><div class="font-body text-xs text-text-muted">"Hi Sarah, noticed you were reviewing the savings — want me to walk you through the numbers?"</div></div>
+                            </div>
+                            <div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-success"></div><div class="flex-1 h-px bg-text-dim/10"></div><span class="font-mono text-[9px] text-text-dim">DAY 5</span></div>
+                            <div class="pl-4 ml-0.5 border-l border-success/20">
+                                <div class="p-3 rounded-lg bg-success/[0.03] border border-success/10"><div class="font-mono text-[10px] text-success mb-1">Appointment booked — 11:15 AM</div><div class="font-body text-xs text-text-muted">Site assessment scheduled for Saturday 10 AM</div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-1 lg:order-2 space-y-5">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-success/10 border border-success/15"><span class="font-mono text-[10px] text-success tracking-wider">STEP 03</span></div>
+                    <h3 class="font-display text-3xl md:text-4xl font-bold tracking-tight">Smart follow-ups<br>that don't feel robotic</h3>
+                    <p class="text-text-muted text-lg leading-relaxed max-w-md">Catalyst tracks when customers open your proposal, what they look at, and follows up at the right moment with the right message. No generic drip campaigns — every touchpoint is personalized to their behavior.</p>
+                </div>
+            </div>
+
+            <!-- Feature 4 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center reveal">
+                <div class="space-y-5">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-warning/10 border border-warning/15"><span class="font-mono text-[10px] text-warning tracking-wider">STEP 04</span></div>
+                    <h3 class="font-display text-3xl md:text-4xl font-bold tracking-tight">Pipeline intelligence<br>you can actually use</h3>
+                    <p class="text-text-muted text-lg leading-relaxed max-w-md">See which deals need attention, which reps are hot, and where revenue is coming from — all in real time. Catalyst flags at-risk deals before they go cold and tells you exactly what to do about them.</p>
+                </div>
+                <div>
+                    <div class="rounded-2xl border border-text-dim/10 bg-card p-6">
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <div class="p-4 rounded-xl bg-void-light border border-text-dim/8 relative overflow-hidden"><div class="stat-glow" style="opacity:0.05;"></div><div class="font-mono text-[9px] text-text-dim uppercase mb-1 relative z-10">Pipeline Value</div><div class="font-display text-2xl font-bold relative z-10">$842K</div><div class="font-mono text-[10px] text-success mt-1 relative z-10">+23% this month</div></div>
+                            <div class="p-4 rounded-xl bg-void-light border border-text-dim/8 relative overflow-hidden"><div class="stat-glow" style="opacity:0.05;"></div><div class="font-mono text-[9px] text-text-dim uppercase mb-1 relative z-10">Win Rate</div><div class="font-display text-2xl font-bold relative z-10">38%</div><div class="font-mono text-[10px] text-success mt-1 relative z-10">vs. 22% industry avg</div></div>
+                        </div>
+                        <div class="p-3 rounded-xl bg-warning/[0.04] border border-warning/15 flex items-start gap-3">
+                            <div class="w-6 h-6 rounded-full bg-warning/15 flex items-center justify-center shrink-0 mt-0.5"><span class="text-[9px] text-warning font-bold">!</span></div>
+                            <div><div class="font-body text-xs font-medium text-warning">2 deals at risk</div><div class="font-mono text-[10px] text-text-muted mt-0.5">Lopez family — no engagement in 5 days. Catalyst recommends: call + incentive offer.</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ROI -->
+        <section id="results" class="px-6 md:px-10 py-28 border-t border-text-dim/10">
+            <div class="max-w-6xl mx-auto">
+                <div class="reveal text-center mb-20">
+                    <span class="font-mono text-[11px] text-catalyst tracking-[0.3em] uppercase">RESULTS</span>
+                    <h2 class="font-display text-4xl md:text-6xl font-bold tracking-tight mt-4">The math <span class="gradient-text">works.</span></h2>
+                    <p class="text-text-muted text-lg max-w-2xl mx-auto mt-4">Here's what changes when your sales team runs on Catalyst instead of spreadsheets and sticky notes.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 reveal">
+                    <div class="rounded-2xl border border-text-dim/10 bg-card/60 p-8">
+                        <div class="font-mono text-[10px] text-text-dim tracking-widest uppercase mb-6">WITHOUT CATALYST</div>
+                        <div class="space-y-6">
+                            <div><div class="flex justify-between mb-2"><span class="text-sm text-text-muted">Lead response time</span><span class="font-mono text-sm text-text-dim">4–6 hours</span></div><div class="w-full h-2 rounded-full bg-text-dim/15"><div class="h-full rounded-full bg-text-dim/30" style="width:80%;"></div></div></div>
+                            <div><div class="flex justify-between mb-2"><span class="text-sm text-text-muted">Proposals per rep / week</span><span class="font-mono text-sm text-text-dim">8–12</span></div><div class="w-full h-2 rounded-full bg-text-dim/15"><div class="h-full rounded-full bg-text-dim/30" style="width:30%;"></div></div></div>
+                            <div><div class="flex justify-between mb-2"><span class="text-sm text-text-muted">Average close rate</span><span class="font-mono text-sm text-text-dim">18–22%</span></div><div class="w-full h-2 rounded-full bg-text-dim/15"><div class="h-full rounded-full bg-text-dim/30" style="width:22%;"></div></div></div>
+                            <div><div class="flex justify-between mb-2"><span class="text-sm text-text-muted">Sales cycle</span><span class="font-mono text-sm text-text-dim">45–60 days</span></div><div class="w-full h-2 rounded-full bg-text-dim/15"><div class="h-full rounded-full bg-text-dim/30" style="width:75%;"></div></div></div>
+                        </div>
+                    </div>
+                    <div class="rounded-2xl border border-catalyst/15 bg-card/60 p-8 relative overflow-hidden">
+                        <div class="absolute -top-10 -right-10 w-40 h-40 bg-catalyst/6 rounded-full blur-3xl pointer-events-none"></div>
+                        <div class="font-mono text-[10px] text-catalyst tracking-widest uppercase mb-6 relative z-10">WITH CATALYST</div>
+                        <div class="space-y-6 relative z-10">
+                            <div><div class="flex justify-between mb-2"><span class="text-sm text-white font-medium">Lead response time</span><span class="font-mono text-sm text-catalyst font-medium">Under 30 seconds</span></div><div class="w-full h-2 rounded-full bg-text-dim/15"><div class="h-full rounded-full bg-gradient-to-r from-catalyst to-catalyst-light" style="width:3%;"></div></div></div>
+                            <div><div class="flex justify-between mb-2"><span class="text-sm text-white font-medium">Proposals per rep / week</span><span class="font-mono text-sm text-catalyst font-medium">18–22</span></div><div class="w-full h-2 rounded-full bg-text-dim/15"><div class="h-full rounded-full bg-gradient-to-r from-catalyst to-catalyst-light" style="width:55%;"></div></div></div>
+                            <div><div class="flex justify-between mb-2"><span class="text-sm text-white font-medium">Average close rate</span><span class="font-mono text-sm text-catalyst font-medium">28–32%</span></div><div class="w-full h-2 rounded-full bg-text-dim/15"><div class="h-full rounded-full bg-gradient-to-r from-catalyst to-success" style="width:32%;"></div></div></div>
+                            <div><div class="flex justify-between mb-2"><span class="text-sm text-white font-medium">Sales cycle</span><span class="font-mono text-sm text-catalyst font-medium">Under 30 days</span></div><div class="w-full h-2 rounded-full bg-text-dim/15"><div class="h-full rounded-full bg-gradient-to-r from-catalyst to-success" style="width:38%;"></div></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DEAD LEAD REVIVAL -->
+        <section id="revival" class="px-6 md:px-10 py-28 border-t border-text-dim/10 relative overflow-hidden">
+            <!-- Background accent -->
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-catalyst/[0.04] rounded-full blur-[120px] pointer-events-none"></div>
+
+            <div class="max-w-7xl mx-auto relative z-10">
+                <div class="reveal text-center mb-16">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-catalyst/20 bg-catalyst/5 mb-6">
+                        <svg viewBox="0 0 24 24" class="w-4 h-4 text-catalyst" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <span class="font-mono text-[11px] text-catalyst tracking-wide">EXCLUSIVE FEATURE</span>
+                    </div>
+                    <h2 class="font-display text-4xl md:text-6xl font-bold tracking-tight mt-2">
+                        Dead leads?<br><span class="gradient-text">Bring them back.</span>
+                    </h2>
+                    <p class="text-text-muted text-lg max-w-2xl mx-auto mt-5 leading-relaxed">Most contractors have hundreds — sometimes thousands — of old leads sitting in a spreadsheet doing nothing. Catalyst's Dead Lead Revival scans your entire database, finds the ones worth re-engaging, and automatically reaches back out.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center reveal">
+                    <!-- Left: Visual walkthrough -->
+                    <div class="rounded-2xl border border-catalyst/10 bg-card p-6 relative overflow-hidden">
+                        <div class="absolute -top-16 -left-16 w-48 h-48 bg-catalyst/6 rounded-full blur-3xl pointer-events-none"></div>
+
+                        <!-- Header -->
+                        <div class="flex items-center justify-between mb-5 relative z-10">
+                            <div class="flex items-center gap-2">
+                                <svg viewBox="0 0 24 24" class="w-4 h-4 text-catalyst" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                <span class="font-mono text-[10px] text-catalyst tracking-widest uppercase">Dead Lead Revival</span>
+                            </div>
+                            <span class="font-mono text-[10px] text-text-dim">1,847 old leads scanned</span>
+                        </div>
+
+                        <!-- Funnel visualization -->
+                        <div class="space-y-3 relative z-10">
+                            <!-- Stage 1: Database scan -->
+                            <div class="p-4 rounded-xl bg-void-light border border-text-dim/8">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="font-mono text-[10px] text-text-dim uppercase">Your old lead database</span>
+                                    <span class="font-display text-lg font-bold">1,847</span>
+                                </div>
+                                <div class="w-full h-2 rounded-full bg-text-dim/15">
+                                    <div class="h-full rounded-full bg-text-dim/25" style="width:100%;"></div>
+                                </div>
+                                <div class="font-mono text-[9px] text-text-dim mt-1.5">Leads aged 30–365+ days · No recent activity</div>
+                            </div>
+
+                            <!-- Arrow -->
+                            <div class="flex justify-center"><svg viewBox="0 0 24 24" class="w-5 h-5 text-catalyst/40"><path d="M12 5v14m0 0l-4-4m4 4l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+
+                            <!-- Stage 2: AI analysis -->
+                            <div class="p-4 rounded-xl bg-catalyst/[0.03] border border-catalyst/10">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="font-mono text-[10px] text-catalyst uppercase">AI-scored as revivable</span>
+                                    <span class="font-display text-lg font-bold text-catalyst">312</span>
+                                </div>
+                                <div class="w-full h-2 rounded-full bg-text-dim/15">
+                                    <div class="h-full rounded-full bg-gradient-to-r from-catalyst to-catalyst-light" style="width:17%;"></div>
+                                </div>
+                                <div class="font-mono text-[9px] text-text-muted mt-1.5">New financing available · Seasonal pricing · Market conditions changed · Previous objection resolved</div>
+                            </div>
+
+                            <!-- Arrow -->
+                            <div class="flex justify-center"><svg viewBox="0 0 24 24" class="w-5 h-5 text-catalyst/40"><path d="M12 5v14m0 0l-4-4m4 4l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+
+                            <!-- Stage 3: Auto outreach -->
+                            <div class="p-4 rounded-xl bg-catalyst-light/[0.03] border border-catalyst-light/10">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="font-mono text-[10px] text-catalyst-light uppercase">Auto-outreach sent</span>
+                                    <span class="font-display text-lg font-bold text-catalyst-light">312</span>
+                                </div>
+                                <div class="flex gap-2 mt-1">
+                                    <span class="px-2 py-0.5 rounded text-[8px] font-mono bg-catalyst/10 text-catalyst border border-catalyst/10">Personalized emails</span>
+                                    <span class="px-2 py-0.5 rounded text-[8px] font-mono bg-catalyst-light/10 text-catalyst-light border border-catalyst-light/10">SMS sequences</span>
+                                    <span class="px-2 py-0.5 rounded text-[8px] font-mono bg-success/10 text-success border border-success/10">Updated proposals</span>
+                                </div>
+                            </div>
+
+                            <!-- Arrow -->
+                            <div class="flex justify-center"><svg viewBox="0 0 24 24" class="w-5 h-5 text-success/40"><path d="M12 5v14m0 0l-4-4m4 4l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+
+                            <!-- Stage 4: Results -->
+                            <div class="p-4 rounded-xl bg-success/[0.04] border border-success/15 relative overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-r from-success/5 to-transparent"></div>
+                                <div class="relative z-10">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="font-mono text-[10px] text-success uppercase">Re-engaged & booking</span>
+                                        <span class="font-display text-lg font-bold text-success">47</span>
+                                    </div>
+                                    <div class="w-full h-2 rounded-full bg-text-dim/15">
+                                        <div class="h-full rounded-full bg-success" style="width:15%;"></div>
+                                    </div>
+                                    <div class="font-mono text-[9px] text-success/80 mt-1.5">15% revival rate · $1.9M in recovered pipeline value</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Benefits copy -->
+                    <div class="space-y-8">
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 rounded-xl bg-catalyst/10 flex items-center justify-center shrink-0 mt-1">
+                                    <svg viewBox="0 0 24 24" class="w-5 h-5 text-catalyst" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-display text-lg font-semibold mb-1">Finds the signal in the noise</h4>
+                                    <p class="text-text-muted text-sm leading-relaxed">Catalyst cross-references your old leads against current financing rates, new rebate programs, seasonal demand trends, and local market conditions to figure out which ones are actually worth calling again.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 rounded-xl bg-catalyst-light/10 flex items-center justify-center shrink-0 mt-1">
+                                    <svg viewBox="0 0 24 24" class="w-5 h-5 text-catalyst-light" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-display text-lg font-semibold mb-1">Re-engages with context</h4>
+                                    <p class="text-text-muted text-sm leading-relaxed">No awkward cold calls. Catalyst sends personalized outreach referencing why now is different — "Since we last spoke, new financing options dropped your monthly payment by $120 and we can start 2 weeks sooner."</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 rounded-xl bg-success/10 flex items-center justify-center shrink-0 mt-1">
+                                    <svg viewBox="0 0 24 24" class="w-5 h-5 text-success" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-display text-lg font-semibold mb-1">Revenue you already paid for</h4>
+                                    <p class="text-text-muted text-sm leading-relaxed">You already spent the ad dollars to acquire these leads. Dead Lead Revival turns your existing database into a pipeline — with zero new customer acquisition cost.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Highlight stat -->
+                        <div class="p-5 rounded-2xl bg-card border border-catalyst/10 relative overflow-hidden">
+                            <div class="absolute -top-8 -right-8 w-32 h-32 bg-catalyst/6 rounded-full blur-2xl pointer-events-none"></div>
+                            <div class="relative z-10 flex items-center gap-5">
+                                <div>
+                                    <div class="font-display text-4xl font-extrabold gradient-text">$1.9M</div>
+                                    <div class="font-mono text-[10px] text-text-dim uppercase tracking-wider mt-1">Recovered pipeline</div>
+                                </div>
+                                <div class="w-px h-12 bg-text-dim/10"></div>
+                                <div>
+                                    <div class="font-display text-4xl font-extrabold gradient-text">$0</div>
+                                    <div class="font-mono text-[10px] text-text-dim uppercase tracking-wider mt-1">New ad spend required</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ROI CALCULATOR -->
+        <section id="roi" class="px-6 md:px-10 py-28 border-t border-text-dim/10 relative overflow-hidden">
+            <div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-catalyst/[0.03] rounded-full blur-[100px] pointer-events-none"></div>
+
+            <div class="max-w-5xl mx-auto relative z-10">
+                <div class="reveal text-center mb-16">
+                    <span class="font-mono text-[11px] text-catalyst tracking-[0.3em] uppercase">ROI CALCULATOR</span>
+                    <h2 class="font-display text-4xl md:text-6xl font-bold tracking-tight mt-4">
+                        See your <span class="gradient-text">revenue potential.</span>
+                    </h2>
+                    <p class="text-text-muted text-lg max-w-2xl mx-auto mt-4">Plug in your numbers. See how much additional revenue Catalyst can unlock from your existing lead database.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 reveal">
+                    <!-- LEFT: Inputs -->
+                    <div class="rounded-2xl border border-text-dim/10 bg-card p-8 space-y-8">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg bg-catalyst/10 flex items-center justify-center">
+                                <svg viewBox="0 0 24 24" class="w-5 h-5 text-catalyst" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="12" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="12" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="16" y2="18"/></svg>
+                            </div>
+                            <h3 class="font-display text-xl font-bold">Your Numbers</h3>
+                        </div>
+
+                        <!-- Dormant Leads -->
+                        <div>
+                            <label class="flex justify-between text-sm font-medium mb-3">
+                                <span class="text-text-muted">Dormant leads in your database</span>
+                                <span class="font-mono text-catalyst font-bold" id="leads-value">1,000</span>
+                            </label>
+                            <input type="range" id="leads-slider" min="100" max="10000" step="100" value="1000"
+                                class="w-full h-2 rounded-full appearance-none cursor-pointer"
+                                style="background: linear-gradient(to right, #F97316 10%, #505050 10%);"
+                                oninput="updateCalc()">
+                            <div class="flex justify-between font-mono text-[10px] text-text-dim mt-1.5"><span>100</span><span>10,000</span></div>
+                        </div>
+
+                        <!-- Avg Job Value -->
+                        <div>
+                            <label class="flex justify-between text-sm font-medium mb-3">
+                                <span class="text-text-muted">Average job value</span>
+                                <span class="font-mono text-catalyst font-bold" id="job-value">$25,000</span>
+                            </label>
+                            <input type="range" id="job-slider" min="5000" max="80000" step="1000" value="25000"
+                                class="w-full h-2 rounded-full appearance-none cursor-pointer"
+                                style="background: linear-gradient(to right, #F97316 26.7%, #505050 26.7%);"
+                                oninput="updateCalc()">
+                            <div class="flex justify-between font-mono text-[10px] text-text-dim mt-1.5"><span>$5K</span><span>$80K</span></div>
+                        </div>
+
+                        <!-- Close Rate -->
+                        <div>
+                            <label class="flex justify-between text-sm font-medium mb-3">
+                                <span class="text-text-muted">Your current close rate</span>
+                                <span class="font-mono text-catalyst font-bold" id="close-value">15%</span>
+                            </label>
+                            <input type="range" id="close-slider" min="1" max="40" step="1" value="15"
+                                class="w-full h-2 rounded-full appearance-none cursor-pointer"
+                                style="background: linear-gradient(to right, #F97316 35.9%, #505050 35.9%);"
+                                oninput="updateCalc()">
+                            <div class="flex justify-between font-mono text-[10px] text-text-dim mt-1.5"><span>1%</span><span>40%</span></div>
+                        </div>
+
+                        <div class="p-3 rounded-xl bg-void-light border border-text-dim/8">
+                            <div class="font-mono text-[9px] text-text-dim uppercase tracking-wider mb-1">Assumptions</div>
+                            <div class="font-mono text-[10px] text-text-muted leading-relaxed">15% of dormant leads are revivable · 35% of revived leads book an appointment · Catalyst improves close rate by 1.4x on re-engaged leads</div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: Results -->
+                    <div class="rounded-2xl border border-catalyst/12 bg-card p-8 relative overflow-hidden">
+                        <div class="absolute -top-12 -right-12 w-40 h-40 bg-catalyst/6 rounded-full blur-3xl pointer-events-none"></div>
+
+                        <div class="flex items-center gap-3 mb-8 relative z-10">
+                            <div class="w-9 h-9 rounded-lg bg-catalyst/10 flex items-center justify-center">
+                                <svg viewBox="0 0 24 24" class="w-5 h-5 text-catalyst" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                            </div>
+                            <h3 class="font-display text-xl font-bold">Projected Results</h3>
+                        </div>
+
+                        <div class="space-y-0 relative z-10">
+                            <!-- Funnel steps -->
+                            <div class="flex justify-between items-center py-4 border-b border-text-dim/8">
+                                <span class="text-text-muted text-sm">Leads revived</span>
+                                <span class="font-display text-lg font-bold" id="result-revived">150</span>
+                            </div>
+                            <div class="flex justify-between items-center py-4 border-b border-text-dim/8">
+                                <span class="text-text-muted text-sm">Appointments booked</span>
+                                <span class="font-display text-lg font-bold" id="result-booked">53</span>
+                            </div>
+                            <div class="flex justify-between items-center py-4 border-b border-text-dim/8">
+                                <span class="text-text-muted text-sm">Additional closed deals</span>
+                                <span class="font-display text-lg font-bold" id="result-closed">11</span>
+                            </div>
+
+                            <!-- Revenue highlight -->
+                            <div class="pt-6 pb-2">
+                                <div class="flex justify-between items-center mb-4">
+                                    <span class="text-text-muted text-sm">Additional revenue</span>
+                                    <span class="font-display text-3xl font-extrabold gradient-text" id="result-revenue">$275,000</span>
+                                </div>
+                            </div>
+
+                            <!-- ROI box -->
+                            <div class="p-5 rounded-xl bg-catalyst/[0.04] border border-catalyst/12 mt-2">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <div class="font-mono text-[10px] text-catalyst uppercase tracking-wider mb-1">Estimated ROI</div>
+                                        <div class="font-mono text-[10px] text-text-dim" id="roi-context">Based on ~$2,497/mo Catalyst cost</div>
+                                    </div>
+                                    <div class="font-display text-4xl md:text-5xl font-extrabold gradient-text" id="result-roi">10,910%</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CTA -->
+                        <a href="#demo" class="cta-btn mt-8 w-full py-4 rounded-xl font-display text-sm font-semibold text-void tracking-wide flex items-center justify-center gap-3">
+                            <span>Unlock This Revenue</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section id="demo" class="px-6 md:px-10 py-28 border-t border-text-dim/10 relative">
+            <div class="absolute inset-0 pointer-events-none overflow-hidden"><div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-catalyst/6 rounded-full blur-[100px]"></div></div>
+            <div class="max-w-3xl mx-auto text-center relative z-10 reveal">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-catalyst/20 bg-catalyst/5 mb-8"><span class="w-1.5 h-1.5 rounded-full bg-catalyst animate-pulse"></span><span class="font-mono text-[11px] text-catalyst tracking-wide">LIMITED EARLY ACCESS</span></div>
+                <h2 class="font-display text-4xl md:text-6xl font-bold tracking-tight mb-6">See Catalyst<br><span class="gradient-text">in action.</span></h2>
+                <p class="text-text-muted text-lg max-w-xl mx-auto mb-10 leading-relaxed">We'll show you how Catalyst works with your actual leads, your service area, and your pricing. 30 minutes, no pressure.</p>
+                <div class="max-w-md mx-auto space-y-4">
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input type="text" placeholder="Your name" class="flex-1 px-5 py-4 rounded-xl bg-card border border-text-dim/12 text-white placeholder:text-text-dim text-sm font-body focus:outline-none focus:border-catalyst/40 transition-colors">
+                        <input type="email" placeholder="Work email" class="flex-1 px-5 py-4 rounded-xl bg-card border border-text-dim/12 text-white placeholder:text-text-dim text-sm font-body focus:outline-none focus:border-catalyst/40 transition-colors">
+                    </div>
+                    <input type="text" placeholder="Company name" class="w-full px-5 py-4 rounded-xl bg-card border border-text-dim/12 text-white placeholder:text-text-dim text-sm font-body focus:outline-none focus:border-catalyst/40 transition-colors">
+                    <input type="text" placeholder="How many sales reps on your team?" class="w-full px-5 py-4 rounded-xl bg-card border border-text-dim/12 text-white placeholder:text-text-dim text-sm font-body focus:outline-none focus:border-catalyst/40 transition-colors">
+                    <button class="cta-btn w-full py-4 rounded-xl font-display text-sm font-semibold text-void tracking-wide flex items-center justify-center gap-3"><span>Request a Demo</span><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></button>
+                    <p class="font-mono text-[10px] text-text-dim tracking-wide">30-MIN WALKTHROUGH · NO COMMITMENT · SEE YOUR OWN DATA</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="px-6 md:px-10 py-10 border-t border-text-dim/10">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-2">
+                    <svg viewBox="0 0 100 100" class="w-5 h-5">
+                        <defs><linearGradient id="cfLit" x1="0" y1="0" x2="0.6" y2="1"><stop offset="0%" stop-color="#FEF3C7"/><stop offset="30%" stop-color="#FCD34D"/><stop offset="70%" stop-color="#F59E0B"/><stop offset="100%" stop-color="#D97706"/></linearGradient><linearGradient id="cfShd" x1="0.4" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#F59E0B"/><stop offset="40%" stop-color="#EA580C"/><stop offset="100%" stop-color="#C2410C"/></linearGradient><linearGradient id="cfMid" x1="0.5" y1="0" x2="0.5" y2="1"><stop offset="0%" stop-color="#FBBF24"/><stop offset="100%" stop-color="#F97316"/></linearGradient><radialGradient id="cfCore" cx="50%" cy="50%"><stop offset="0%" stop-color="#FEF3C7" stop-opacity="0.9"/><stop offset="40%" stop-color="#FCD34D" stop-opacity="0.7"/><stop offset="100%" stop-color="#F59E0B" stop-opacity="0"/></radialGradient></defs>
+                        <path d="M50 48L56 36L68 8L50 34Z" fill="url(#cfLit)"/><path d="M50 48L44 36L68 8L50 34Z" fill="url(#cfShd)"/><path d="M50 48L44 60L34 84L50 62Z" fill="url(#cfShd)"/><path d="M50 48L56 60L34 84L50 62Z" fill="#C2410C" opacity="0.85"/><path d="M50 48L40 42L22 26L44 48Z" fill="url(#cfLit)"/><path d="M50 48L40 54L22 26L44 48Z" fill="url(#cfShd)" opacity="0.9"/><path d="M50 48L60 54L78 70L56 48Z" fill="url(#cfShd)"/><path d="M50 48L60 42L78 70L56 48Z" fill="#C2410C" opacity="0.8"/><path d="M50 48L53 40L51 20L47 40Z" fill="url(#cfLit)" opacity="0.9"/><path d="M50 48L58 45L80 47L58 51Z" fill="url(#cfMid)" opacity="0.8"/><path d="M50 48L53 56L51 74L47 56Z" fill="url(#cfShd)" opacity="0.8"/><path d="M50 48L42 45L24 47L42 51Z" fill="url(#cfMid)" opacity="0.75"/><path d="M28 18L31 22L27 24Z" fill="#FCD34D" opacity="0.85"/><path d="M28 18L25 22L27 24Z" fill="#EA580C" opacity="0.65"/><path d="M28 10L29 17L27 17Z" fill="#FBBF24" opacity="0.7"/><circle cx="50" cy="48" r="8" fill="url(#cfCore)"/><circle cx="50" cy="48" r="4" fill="#FDE68A" opacity="0.6"/><circle cx="50" cy="48" r="2.2" fill="#FEF3C7" opacity="0.5"/>
+                    </svg>
+                    <span class="font-display text-sm font-semibold text-catalyst">catalyst</span>
+                    <a href="/" class="text-text-dim text-xs ml-2 hover:text-white transition-colors">leviosai</a><span class="text-text-dim text-xs">· © 2026</span>
+                </div>
+                <div class="flex gap-8 font-mono text-[10px] uppercase tracking-widest text-text-dim">
+                    <a href="/" class="hover:text-white transition-colors">Home</a>
+                    <a href="/#cta-section" class="hover:text-white transition-colors">Contact</a>
+                    <a href="/catalyst/" class="hover:text-white transition-colors">Catalyst</a>
+                    <a href="/solvent/" class="hover:text-white transition-colors">Solvent</a><a href="/bond/" class="hover:text-white transition-colors">Bond</a><a href="/reactor/" class="hover:text-white transition-colors">Reactor</a><a href="/privacy/" class="hover:text-white transition-colors">Privacy</a><a href="/terms/" class="hover:text-white transition-colors">Terms</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        function updateSliderFill(slider) {
+            const min = parseFloat(slider.min);
+            const max = parseFloat(slider.max);
+            const val = parseFloat(slider.value);
+            const pct = ((val - min) / (max - min)) * 100;
+            slider.style.background = 'linear-gradient(to right, #F97316 ' + pct + '%, #505050 ' + pct + '%)';
+        }
+
+        function updateCalc() {
+            const leadsSlider = document.getElementById('leads-slider');
+            const jobSlider = document.getElementById('job-slider');
+            const closeSlider = document.getElementById('close-slider');
+
+            const leads = parseInt(leadsSlider.value);
+            const avgJobValue = parseInt(jobSlider.value);
+            const currentCloseRate = parseInt(closeSlider.value);
+
+            updateSliderFill(leadsSlider);
+            updateSliderFill(jobSlider);
+            updateSliderFill(closeSlider);
+
+            document.getElementById('leads-value').textContent = leads.toLocaleString();
+            document.getElementById('job-value').textContent = '$' + avgJobValue.toLocaleString();
+            document.getElementById('close-value').textContent = currentCloseRate + '%';
+
+            var revivalRate = 0.15;
+            var bookedRate = 0.35;
+            var closeRateBoost = 1.4;
+
+            var revivedLeads = Math.round(leads * revivalRate);
+            var bookedAppointments = Math.round(revivedLeads * bookedRate);
+            var closedDeals = Math.round(bookedAppointments * (currentCloseRate / 100) * closeRateBoost);
+            var additionalRevenue = closedDeals * avgJobValue;
+
+            var monthlyCost;
+            if (leads <= 500) { monthlyCost = 997; }
+            else if (leads <= 2000) { monthlyCost = 2497; }
+            else { monthlyCost = 4997; }
+
+            var roi = monthlyCost > 0 ? Math.round(((additionalRevenue - monthlyCost) / monthlyCost) * 100) : 0;
+
+            document.getElementById('result-revived').textContent = revivedLeads.toLocaleString();
+            document.getElementById('result-booked').textContent = bookedAppointments.toLocaleString();
+            document.getElementById('result-closed').textContent = closedDeals.toLocaleString();
+            document.getElementById('result-revenue').textContent = '$' + additionalRevenue.toLocaleString();
+            document.getElementById('result-roi').textContent = roi.toLocaleString() + '%';
+            document.getElementById('roi-context').textContent = 'Based on ~$' + monthlyCost.toLocaleString() + '/mo Catalyst cost';
+        }
+
+        updateCalc();
+    </script>
+
+
+    <script>
+        // Mobile menu
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        let menuOpen = false;
+        if (mobileToggle && mobileMenu) {
+            mobileToggle.addEventListener('click', () => {
+                menuOpen = !menuOpen;
+                if (menuOpen) {
+                    mobileMenu.classList.add('open');
+                } else {
+                    mobileMenu.classList.remove('open');
+                }
+            });
+            document.querySelectorAll('#mobile-menu a').forEach(a => {
+                a.addEventListener('click', () => {
+                    menuOpen = false;
+                    mobileMenu.classList.remove('open');
+                });
+            });
+        }
+    </script>
+
+    
+    <script>
+        // Form submission
+        (function() {
+            document.querySelectorAll('.cta-btn').forEach(function(btn) {
+                var parent = btn.closest('.space-y-4') || btn.closest('.max-w-md') || btn.closest('.max-w-3xl');
+                if (!parent) return;
+                var inputs = parent.querySelectorAll('input, select');
+                if (inputs.length === 0) return;
+                
+                // Only attach to buttons, not nav links
+                if (btn.tagName === 'A' && btn.getAttribute('href') && btn.getAttribute('href').indexOf('#') === 0 && btn.getAttribute('href').length > 1) return;
+                
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    var fields = {};
+                    var hasEmpty = false;
+                    
+                    inputs.forEach(function(input) {
+                        var val = input.value ? input.value.trim() : '';
+                        var placeholder = input.placeholder || '';
+                        
+                        if (input.tagName === 'SELECT') {
+                            val = input.options[input.selectedIndex].text;
+                            if (val === 'Select your market') val = '';
+                        }
+                        
+                        if (!val) {
+                            hasEmpty = true;
+                            input.style.borderColor = 'rgba(248,113,113,0.5)';
+                            setTimeout(function() { input.style.borderColor = ''; }, 2000);
+                        } else {
+                            fields[placeholder || input.name || 'field'] = val;
+                        }
+                    });
+                    
+                    if (hasEmpty) return;
+                    
+                    var btnSpan = btn.querySelector('span');
+                    var originalText = btnSpan ? btnSpan.textContent : '';
+                    var btnSvg = btn.querySelector('svg');
+                    if (btnSpan) btnSpan.textContent = 'Sending...';
+                    if (btnSvg) btnSvg.style.display = 'none';
+                    btn.style.pointerEvents = 'none';
+                    btn.style.opacity = '0.7';
+                    
+                    var formData = new FormData();
+                    for (var key in fields) {
+                        formData.append(key, fields[key]);
+                    }
+                    formData.append('_subject', 'New Demo Request — ' + (fields['Company name'] || 'Website'));
+                    formData.append('_template', 'table');
+                    formData.append('_captcha', 'false');
+                    formData.append('Page', document.title);
+                    
+                    fetch('https://formsubmit.co/ajax/christian@leviosai.io', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(function(res) { return res.json(); })
+                    .then(function() { showConfirmation(parent); })
+                    .catch(function() { showConfirmation(parent); });
+                });
+            });
+            
+            function showConfirmation(container) {
+                container.innerHTML = '<div style="text-align:center;padding:2rem 0;">' +
+                    '<div style="width:56px;height:56px;border-radius:50%;background:rgba(13,217,139,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">' +
+                    '<svg viewBox="0 0 24 24" style="width:28px;height:28px;color:#0DD98B;" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+                    '</div>' +
+                    '<h3 style="font-size:1.5rem;font-weight:700;color:#F2F2F2;margin-bottom:0.5rem;">Talk to you soon!</h3>' +
+                    '<p style="font-size:0.95rem;color:#A3A3A3;">We\u2019ll reach out within 24 hours to get you set up.</p>' +
+                    '</div>';
+            }
+        })();
+    </script>
+</body></html>

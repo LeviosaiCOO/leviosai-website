@@ -1,0 +1,136 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms &amp; Conditions | Leviosai</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { 'void': '#0A0A0F', 'void-light': '#12121A', 'void-card': '#161622', 'electric-blue': '#5B5BF0', 'electric-purple': '#9B59D0', 'soft': '#A3A3A3', 'softer': '#737373', }, fontFamily: { display: ['"Outfit"', 'sans-serif'], body: ['"Space Grotesk"', 'sans-serif'], mono: ['"JetBrains Mono"', 'monospace'], } } } }
+    </script>
+    <style>
+        * { box-sizing: border-box; }
+        body { background-color: #0A0A0F; color: #E8E8F0; overflow-x: hidden; }
+        .bg-mesh { position: fixed; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; }
+        .bg-mesh::before { content: ''; position: absolute; top: -30%; left: -20%; width: 80%; height: 80%; background: radial-gradient(ellipse at center, rgba(91,91,240,0.06) 0%, transparent 55%); }
+        .grid-overlay { position: fixed; inset: 0; z-index: 1; pointer-events: none; background-image: linear-gradient(rgba(91,91,240,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(91,91,240,0.015) 1px, transparent 1px); background-size: 60px 60px; }
+        @keyframes orbit { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .atom-ring { animation: orbit 8s linear infinite; transform-origin: center; }
+        .atom-ring:nth-child(2) { animation-duration: 10s; animation-direction: reverse; }
+        .atom-ring:nth-child(3) { animation-duration: 12s; }
+        @keyframes fadeUp { 0% { opacity:0; transform: translateY(30px); } 100% { opacity:1; transform: translateY(0); } }
+        .anim-fade-up { opacity:0; animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) forwards; }
+        .anim-fade-in { opacity:0; animation: fadeIn 1s ease forwards; }
+        @keyframes fadeIn { 0% { opacity:0; } 100% { opacity:1; } }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0A0A0F; }
+        ::-webkit-scrollbar-thumb { background: #5B5BF0; border-radius: 2px; }
+        .legal-content h2 { font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 0.75rem; color: #E8E8F0; }
+        .legal-content p { color: #A3A3A3; font-size: 0.875rem; line-height: 1.8; margin-bottom: 1rem; }
+        .legal-content ul { color: #A3A3A3; font-size: 0.875rem; line-height: 1.8; margin-bottom: 1rem; padding-left: 1.5rem; list-style-type: disc; }
+        .legal-content li { margin-bottom: 0.25rem; }
+    </style>
+</head>
+<body class="min-h-screen w-screen relative font-body selection:bg-electric-blue/30 selection:text-white">
+    <div class="bg-mesh"></div>
+    <div class="grid-overlay"></div>
+    <div class="relative z-10 min-h-screen w-full">
+
+        <!-- NAV -->
+        <header class="fixed top-0 left-0 right-0 z-50 px-6 md:px-10 py-5 flex justify-between items-center anim-fade-in" style="animation-delay:0.1s; background: linear-gradient(to bottom, rgba(10,10,15,0.95) 0%, rgba(10,10,15,0) 100%);">
+            <a href="/" class="flex items-center gap-3">
+                <div class="w-9 h-9 relative"><svg viewBox="0 0 40 40" class="w-full h-full"><circle cx="20" cy="20" r="3" fill="#6366F1"/><ellipse cx="20" cy="20" rx="16" ry="6" fill="none" stroke="#0DD98B" stroke-width="1" opacity="0.7" class="atom-ring"/><ellipse cx="20" cy="20" rx="16" ry="6" fill="none" stroke="#A855F7" stroke-width="1" opacity="0.5" transform="rotate(60 20 20)" class="atom-ring"/><ellipse cx="20" cy="20" rx="16" ry="6" fill="none" stroke="#F97316" stroke-width="1" opacity="0.5" transform="rotate(-60 20 20)" class="atom-ring"/></svg></div>
+                <span class="font-display text-xl font-bold tracking-tight">leviosai</span>
+            </a>
+            <nav class="hidden md:flex items-center gap-6">
+                <a href="/" class="text-sm text-soft hover:text-white transition-colors">Home</a>
+            </nav>
+        </header>
+
+        <!-- CONTENT -->
+        <section class="pt-36 pb-20 px-6 md:px-10 max-w-3xl mx-auto">
+            <div class="anim-fade-up" style="animation-delay:0.2s">
+                <span class="font-mono text-[11px] text-electric-blue tracking-[0.3em] uppercase">LEGAL</span>
+                <h1 class="font-display text-4xl md:text-5xl font-extrabold tracking-tight mt-4 mb-2">Terms &amp; Conditions</h1>
+                <p class="font-mono text-[11px] text-softer mb-12">Last updated: March 31, 2026</p>
+            </div>
+
+            <div class="legal-content anim-fade-up" style="animation-delay:0.4s">
+                <p>These Terms and Conditions ("Terms") govern your access to and use of the products, services, and website provided by Leviosai, Inc. ("Leviosai," "we," "us," or "our"). By accessing or using our services, you agree to be bound by these Terms. If you do not agree, do not use our services.</p>
+
+                <h2>1. Services</h2>
+                <p>Leviosai provides AI-powered software tools for home services contractors, including but not limited to sales automation, permit processing, CRM, and operations management (the "Services"). The specific features and functionality available to you depend on your subscription plan and service agreement.</p>
+
+                <h2>2. Account Registration</h2>
+                <p>To use our Services, you must create an account and provide accurate, complete information. You are responsible for maintaining the confidentiality of your account credentials and for all activity that occurs under your account. You agree to notify us immediately of any unauthorized access or use of your account.</p>
+
+                <h2>3. Acceptable Use</h2>
+                <p>You agree to use the Services only for lawful purposes and in accordance with these Terms. You agree not to:</p>
+                <ul>
+                    <li>Use the Services in any way that violates applicable laws or regulations</li>
+                    <li>Attempt to gain unauthorized access to our systems or networks</li>
+                    <li>Interfere with or disrupt the integrity or performance of the Services</li>
+                    <li>Reverse engineer, decompile, or disassemble any part of the Services</li>
+                    <li>Use the Services to transmit spam, malware, or other harmful content</li>
+                    <li>Resell, sublicense, or redistribute the Services without our written consent</li>
+                </ul>
+
+                <h2>4. Customer Data</h2>
+                <p>You retain ownership of all data you submit to the Services ("Customer Data"). You grant Leviosai a limited, non-exclusive license to use Customer Data solely for the purpose of providing the Services to you. We will not access, use, or disclose Customer Data except as necessary to provide the Services, as required by law, or with your consent.</p>
+
+                <h2>5. Fees and Payment</h2>
+                <p>You agree to pay all fees associated with your use of the Services as described in your service agreement or order form. Fees are non-refundable except as expressly stated in your service agreement. We reserve the right to change our pricing with 30 days' written notice. Overdue payments may incur interest at the rate of 1.5% per month or the maximum rate permitted by law, whichever is lower.</p>
+
+                <h2>6. Subscription and Cancellation</h2>
+                <p>Service subscriptions renew automatically unless cancelled in writing before the end of the current billing period. Upon cancellation, you will retain access to the Services through the end of your current paid period. We may terminate or suspend your account if you breach these Terms, with or without notice depending on the severity of the breach.</p>
+
+                <h2>7. Intellectual Property</h2>
+                <p>The Services, including all software, algorithms, designs, text, graphics, and other content, are the exclusive property of Leviosai and are protected by intellectual property laws. Nothing in these Terms grants you any right, title, or interest in the Services except the limited right to use the Services as described herein.</p>
+
+                <h2>8. Disclaimer of Warranties</h2>
+                <p>THE SERVICES ARE PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS, IMPLIED, OR STATUTORY, INCLUDING BUT NOT LIMITED TO IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. WE DO NOT WARRANT THAT THE SERVICES WILL BE UNINTERRUPTED, ERROR-FREE, OR SECURE.</p>
+
+                <h2>9. Limitation of Liability</h2>
+                <p>TO THE MAXIMUM EXTENT PERMITTED BY LAW, LEVIOSAI SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS, REVENUE, DATA, OR BUSINESS OPPORTUNITIES, ARISING OUT OF OR RELATED TO YOUR USE OF THE SERVICES, REGARDLESS OF THE THEORY OF LIABILITY. OUR TOTAL LIABILITY SHALL NOT EXCEED THE AMOUNTS PAID BY YOU TO LEVIOSAI IN THE TWELVE (12) MONTHS PRECEDING THE CLAIM.</p>
+
+                <h2>10. Indemnification</h2>
+                <p>You agree to indemnify, defend, and hold harmless Leviosai and its officers, directors, employees, and agents from any claims, damages, losses, or expenses (including reasonable attorneys' fees) arising out of your use of the Services, your violation of these Terms, or your violation of any rights of a third party.</p>
+
+                <h2>11. Governing Law</h2>
+                <p>These Terms shall be governed by and construed in accordance with the laws of the State of Florida, without regard to its conflict of laws principles. Any disputes arising under these Terms shall be resolved in the state or federal courts located in Broward County, Florida.</p>
+
+                <h2>12. Modifications</h2>
+                <p>We reserve the right to modify these Terms at any time. We will notify you of material changes by posting the updated Terms on this page with a new "Last updated" date and, where appropriate, by email. Your continued use of the Services after such changes constitutes acceptance of the modified Terms.</p>
+
+                <h2>13. Severability</h2>
+                <p>If any provision of these Terms is found to be unenforceable or invalid, that provision shall be limited or eliminated to the minimum extent necessary, and the remaining provisions shall remain in full force and effect.</p>
+
+                <h2>14. Entire Agreement</h2>
+                <p>These Terms, together with any service agreement or order form, constitute the entire agreement between you and Leviosai regarding the Services and supersede all prior agreements and understandings.</p>
+
+                <h2>15. Contact Us</h2>
+                <p>If you have questions about these Terms, please contact us at:</p>
+                <p>Leviosai, Inc.<br>Email: legal@leviosai.io</p>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="px-6 md:px-10 py-10 border-t border-softer/10">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-3">
+                    <a href="/" class="flex items-center gap-2">
+                        <div class="w-7 h-7 relative"><svg viewBox="0 0 40 40" class="w-full h-full"><circle cx="20" cy="20" r="3" fill="#6366F1"/><ellipse cx="20" cy="20" rx="14" ry="5" fill="none" stroke="#0DD98B" stroke-width="1" opacity="0.5"/><ellipse cx="20" cy="20" rx="14" ry="5" fill="none" stroke="#A855F7" stroke-width="1" opacity="0.4" transform="rotate(60 20 20)"/><ellipse cx="20" cy="20" rx="14" ry="5" fill="none" stroke="#F97316" stroke-width="1" opacity="0.4" transform="rotate(-60 20 20)"/></svg></div>
+                        <span class="font-display text-sm font-semibold">leviosai</span>
+                    </a>
+                    <span class="text-softer text-xs ml-2">© 2026</span>
+                </div>
+                <div class="flex gap-8 font-mono text-[10px] uppercase tracking-widest text-softer">
+                    <a href="/" class="hover:text-white transition-colors">Home</a>
+                    <a href="/privacy/" class="hover:text-white transition-colors">Privacy</a>
+                    <a href="/terms/" class="hover:text-white transition-colors text-white">Terms</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body></html>

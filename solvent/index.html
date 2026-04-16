@@ -1,0 +1,935 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solvent — The Permit Intelligence | Leviosai</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bond': '#6366F1',
+                        'reactor': '#A855F7',
+                        'void': '#0A0A0A',
+                        'void-light': '#0E0E0E',
+                        'card': '#121212',
+                        'card-hover': '#181818',
+                        'solvent': '#0DD98B',
+                        'solvent-light': '#3DE8A0',
+                        'solvent-tile': '#5F8F8F',
+                        'text-primary': '#F2F2F2',
+                        'text-muted': '#A3A3A3',
+                        'text-dim': '#737373',
+                        'danger': '#F87171',
+                        'warning': '#FBBF24',
+                        'catalyst': '#F97316',
+                    },
+                    fontFamily: {
+                        display: ['"Outfit"', 'sans-serif'],
+                        body: ['"Space Grotesk"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * { box-sizing: border-box; }
+        body { background-color: #0A0A0A; color: #F2F2F2; overflow-x: hidden; }
+
+        .hero-mesh { position: fixed; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; }
+        .hero-mesh::before { content: ''; position: absolute; top: -25%; left: -15%; width: 70%; height: 70%; background: radial-gradient(ellipse at center, rgba(13,217,139,0.09) 0%, transparent 55%); animation: drift1 14s ease-in-out infinite alternate; }
+        .hero-mesh::after { content: ''; position: absolute; bottom: -20%; right: -10%; width: 60%; height: 60%; background: radial-gradient(ellipse at center, rgba(61,232,160,0.05) 0%, transparent 50%); animation: drift2 16s ease-in-out infinite alternate; }
+        .grid-overlay { position: fixed; inset: 0; background-image: linear-gradient(rgba(13,217,139,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(13,217,139,0.015) 1px, transparent 1px); background-size: 60px 60px; z-index: 0; pointer-events: none; }
+
+        @keyframes drift1 { 0% { transform: translate(0,0); } 100% { transform: translate(4%,6%); } }
+        @keyframes drift2 { 0% { transform: translate(0,0); } 100% { transform: translate(-5%,-4%); } }
+        @keyframes fadeUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+
+        .anim-fade-up { opacity: 0; animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .anim-fade-in { opacity: 0; animation: fadeIn 1s ease forwards; }
+
+        /* Solvent droplet logo — 4K dynamic */
+        @keyframes dropletFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+        @keyframes dropletPulse { 0%, 100% { opacity: 0.55; transform: scale(1); } 50% { opacity: 0.85; transform: scale(1.03); } }
+        @keyframes ripple1 { 0% { r: 4; opacity: 0.5; stroke-width: 1.2; } 100% { r: 22; opacity: 0; stroke-width: 0.2; } }
+        @keyframes ripple2 { 0% { r: 4; opacity: 0.35; stroke-width: 1; } 100% { r: 18; opacity: 0; stroke-width: 0.15; } }
+        @keyframes ripple3 { 0% { r: 3; opacity: 0.25; stroke-width: 0.8; } 100% { r: 15; opacity: 0; stroke-width: 0.1; } }
+        @keyframes innerGlow { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.75; } }
+        @keyframes causticShift { 0%, 100% { transform: translate(0,0) rotate(0deg); opacity: 0.3; } 33% { transform: translate(1px,-1px) rotate(5deg); opacity: 0.5; } 66% { transform: translate(-1px,0.5px) rotate(-3deg); opacity: 0.35; } }
+        @keyframes surfaceTension { 0%, 100% { d: path("M7 19.5Q10.5 21 14 21Q17.5 21 21 19.5"); } 50% { d: path("M7 19.8Q10.5 20.5 14 20.5Q17.5 20.5 21 19.8"); } }
+        @keyframes coreFlare { 0%, 100% { opacity: 0.15; transform: scale(1); } 50% { opacity: 0.3; transform: scale(1.1); } }
+        @keyframes microBubble1 { 0%, 100% { transform: translateY(0); opacity: 0.5; } 50% { transform: translateY(-2px); opacity: 0.8; } }
+        @keyframes microBubble2 { 0%, 100% { transform: translateY(0); opacity: 0.3; } 50% { transform: translateY(-1.5px); opacity: 0.6; } }
+        .droplet-body { animation: dropletFloat 4s ease-in-out infinite; }
+        .droplet-pulse { animation: dropletPulse 3s ease-in-out infinite; }
+        .droplet-ripple-1 { animation: ripple1 2.8s ease-out infinite; }
+        .droplet-ripple-2 { animation: ripple2 2.8s ease-out infinite 0.9s; }
+        .droplet-ripple-3 { animation: ripple3 2.8s ease-out infinite 1.8s; }
+        .droplet-inner { animation: innerGlow 2.5s ease-in-out infinite; }
+        .droplet-caustic { animation: causticShift 5s ease-in-out infinite; transform-origin: center; }
+        .droplet-core-flare { animation: coreFlare 4s ease-in-out infinite; transform-origin: center; }
+        .droplet-bubble-1 { animation: microBubble1 3s ease-in-out infinite 0.5s; }
+        .droplet-bubble-2 { animation: microBubble2 3.5s ease-in-out infinite 1.2s; }
+
+        .gradient-text { background: linear-gradient(135deg, #0DD98B 0%, #3DE8A0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+        .compare-row { transition: background-color 0.3s ease; }
+        .compare-row:hover { background-color: rgba(13,217,139,0.03); }
+
+        .cta-btn { position: relative; background: linear-gradient(135deg, #0DD98B, #3DE8A0); transition: all 0.4s ease; overflow: hidden; }
+        .cta-btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, #3DE8A0, #0DD98B); opacity: 0; transition: opacity 0.4s ease; }
+        .cta-btn:hover::before { opacity: 1; }
+        .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px -8px rgba(13,217,139,0.4); }
+        .cta-btn span, .cta-btn svg { position: relative; z-index: 1; }
+
+        .cta-btn-outline { border: 1px solid rgba(13,217,139,0.3); transition: all 0.3s ease; }
+        .cta-btn-outline:hover { border-color: rgba(13,217,139,0.6); background: rgba(13,217,139,0.05); }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0A0A0A; }
+        ::-webkit-scrollbar-thumb { background: #0DD98B; border-radius: 2px; }
+
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        .step-card { background: #121212; border: 1px solid rgba(13,217,139,0.06); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .step-card:hover { border-color: rgba(13,217,139,0.18); transform: translateY(-3px); box-shadow: 0 16px 48px -12px rgba(13,217,139,0.10); }
+
+        .stat-glow { position: absolute; width: 150%; height: 150%; top: -25%; left: -25%; border-radius: 50%; filter: blur(50px); opacity: 0.06; pointer-events: none; background: #0DD98B; }
+
+        /* AHJ Map dot pulse */
+        @keyframes mapPulse { 0%, 100% { r: 3; opacity: 0.8; } 50% { r: 5; opacity: 0.4; } }
+        .map-dot { animation: mapPulse 2s ease-in-out infinite; }
+        .map-dot:nth-child(2) { animation-delay: 0.3s; }
+        .map-dot:nth-child(3) { animation-delay: 0.6s; }
+        .map-dot:nth-child(4) { animation-delay: 0.9s; }
+        .map-dot:nth-child(5) { animation-delay: 1.2s; }
+        .map-dot:nth-child(6) { animation-delay: 0.15s; }
+        .map-dot:nth-child(7) { animation-delay: 0.45s; }
+        .map-dot:nth-child(8) { animation-delay: 0.75s; }
+
+        /* Progress animation */
+        @keyframes progressFill { 0% { width: 0; } 100% { width: var(--fill); } }
+        .progress-bar { animation: progressFill 1.5s cubic-bezier(0.16,1,0.3,1) forwards; width: 0; }
+            .nav-dropdown { display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); padding-top: 12px; }
+        .nav-parent:hover .nav-dropdown { display: block; }
+        .nav-dropdown-inner { background: rgba(18,18,18,0.95); border: 1px solid rgba(115,115,115,0.15); border-radius: 12px; padding: 8px; min-width: 220px; backdrop-filter: blur(20px); }
+        .nav-dropdown a { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; transition: background 0.2s; font-size: 14px; }
+        .nav-dropdown a:hover { background: rgba(115,115,115,0.1); }
+        .nav-dd-icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+            .mobile-menu { position: fixed; inset: 0; z-index: 100; background: rgba(10,10,15,0.98); backdrop-filter: blur(20px); display: none; flex-direction: column; justify-content: center; align-items: center; gap: 2rem; }
+        .mobile-menu.open { display: flex; }
+    </style>
+</head>
+<body class="min-h-screen w-screen relative font-body selection:bg-solvent/20 selection:text-white">
+
+    <div class="hero-mesh"></div>
+    <div class="grid-overlay"></div>
+
+    <div class="relative z-10 min-h-screen w-full">
+
+        <!-- NAV -->
+        <header class="fixed top-0 left-0 right-0 z-50 px-6 md:px-10 py-5 flex justify-between items-center anim-fade-in" style="animation-delay:0.1s; background: linear-gradient(to bottom, rgba(10,10,10,0.97) 0%, rgba(10,10,10,0) 100%);">
+            <a href="/" class="flex items-center gap-2">
+                <svg viewBox="0 0 56 56" class="w-9 h-9" style="overflow:visible;">
+                    <defs>
+                        <linearGradient id="dropMain" x1="0" y1="0" x2="0.3" y2="1">
+                            <stop offset="0%" stop-color="#3DE8A0"/>
+                            <stop offset="40%" stop-color="#0DD98B"/>
+                            <stop offset="100%" stop-color="#08A86A"/>
+                        </linearGradient>
+                        <linearGradient id="dropInner" x1="0.2" y1="0" x2="0.8" y2="1">
+                            <stop offset="0%" stop-color="#5FFFC0"/>
+                            <stop offset="100%" stop-color="#0DD98B" stop-opacity="0.4"/>
+                        </linearGradient>
+                        <linearGradient id="dropHighlight" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.5"/>
+                            <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+                        </linearGradient>
+                        <linearGradient id="dropEdge" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#3DE8A0" stop-opacity="0.8"/>
+                            <stop offset="100%" stop-color="#08A86A" stop-opacity="0.3"/>
+                        </linearGradient>
+                        <filter id="dropGlow">
+                            <feGaussianBlur stdDeviation="2" result="glow"/>
+                            <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+                        </filter>
+                    </defs>
+                    <!-- Ripple rings from base -->
+                    <circle class="droplet-ripple-1" cx="28" cy="44" fill="none" stroke="#0DD98B" stroke-width="1"/>
+                    <circle class="droplet-ripple-2" cx="28" cy="44" fill="none" stroke="#3DE8A0" stroke-width="0.8"/>
+                    <circle class="droplet-ripple-3" cx="28" cy="44" fill="none" stroke="#5FFFC0" stroke-width="0.5"/>
+                    <!-- Main droplet body -->
+                    <g class="droplet-body" filter="url(#dropGlow)">
+                        <!-- Outer drop shape -->
+                        <path d="M28 4C28 4 11 24 11 34C11 42.8 18.6 50 28 50C37.4 50 45 42.8 45 34C45 24 28 4 28 4Z" fill="url(#dropMain)"/>
+                        <!-- Edge rim highlight -->
+                        <path d="M28 6C28 6 13 24.5 13 34C13 41.7 19.7 48 28 48C36.3 48 43 41.7 43 34C43 24.5 28 6 28 6Z" fill="none" stroke="url(#dropEdge)" stroke-width="0.6"/>
+                        <!-- Inner volume layer -->
+                        <path d="M28 12C28 12 17 26 17 33.5C17 39.8 21.9 45 28 45C34.1 45 39 39.8 39 33.5C39 26 28 12 28 12Z" fill="url(#dropInner)" class="droplet-pulse"/>
+                        <!-- Core depth flare -->
+                        <ellipse class="droplet-core-flare" cx="28" cy="32" rx="8" ry="10" fill="url(#dropHighlight)" opacity="0.15"/>
+                        <!-- Primary specular highlight -->
+                        <ellipse class="droplet-inner" cx="22" cy="28" rx="4.5" ry="6" fill="white" opacity="0.35" transform="rotate(-18 22 28)"/>
+                        <!-- Secondary smaller highlight -->
+                        <ellipse cx="24" cy="24" rx="1.8" ry="2.5" fill="white" opacity="0.5" transform="rotate(-12 24 24)"/>
+                        <!-- Caustic light pattern -->
+                        <g class="droplet-caustic" opacity="0.3">
+                            <path d="M30 35Q33 32 35 36Q33 38 30 35Z" fill="#A8F0D4"/>
+                            <path d="M25 38Q28 36 29 39Q27 41 25 38Z" fill="#A8F0D4" opacity="0.6"/>
+                        </g>
+                        <!-- Micro bubbles -->
+                        <circle class="droplet-bubble-1" cx="32" cy="36" r="1" fill="white" opacity="0.4"/>
+                        <circle class="droplet-bubble-2" cx="25" cy="40" r="0.7" fill="white" opacity="0.3"/>
+                        <circle class="droplet-bubble-1" cx="30" cy="42" r="0.5" fill="white" opacity="0.25"/>
+                        <!-- Surface tension arc at bottom -->
+                        <path d="M18 43Q23 46 28 46Q33 46 38 43" fill="none" stroke="#3DE8A0" stroke-width="0.4" opacity="0.4"/>
+                    </g>
+                </svg>
+                <span class="font-display text-xl font-bold tracking-tight text-solvent">solvent</span>
+                <a href="/" class="hidden md:inline text-text-dim text-xs ml-2 hover:text-white transition-colors">by leviosai</a>
+            </a>
+            <nav class="hidden md:flex items-center gap-10">
+                <a href="/" class="text-sm text-text-muted hover:text-white transition-colors">Home</a>
+                <div class="relative nav-parent">
+                <button class="text-sm text-text-muted hover:text-white transition-colors flex items-center gap-1">Products<svg class="w-3.5 h-3.5 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+                <div class="nav-dropdown"><div class="nav-dropdown-inner">
+                    <a href="/catalyst/"><div class="nav-dd-icon" style="background:rgba(249,115,22,0.12);"><svg viewBox="0 0 24 24" class="w-4 h-4" style="color:#F97316;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><span class="text-sm text-white">Catalyst</span><p style="font-size:11px;" class="text-text-dim">Sales intelligence</p></div></a>
+                    <a href="/solvent/"><div class="nav-dd-icon" style="background:rgba(13,217,139,0.12);"><svg viewBox="0 0 24 24" class="w-4 h-4" style="color:#0DD98B;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><span class="text-sm text-white">Solvent</span><p style="font-size:11px;" class="text-text-dim">Permit Intelligence</p></div></a>
+                    <a href="/bond/"><div class="nav-dd-icon" style="background:rgba(99,102,241,0.12);"><svg viewBox="0 0 24 24" class="w-4 h-4" style="color:#6366F1;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><span class="text-sm text-white">Bond</span><p style="font-size:11px;" class="text-text-dim">AI-native CRM</p></div></a>
+                    <a href="/reactor/"><div class="nav-dd-icon" style="background:rgba(168,85,247,0.12);"><svg viewBox="0 0 24 24" class="w-4 h-4" style="color:#A855F7;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3"/></svg></div><div><span class="text-sm text-white">Reactor</span><p style="font-size:11px;" class="text-text-dim">Operations Intelligence</p></div></a>
+                </div></div>
+            </div>
+                <a href="/solvent/pricing/" class="text-sm text-text-muted hover:text-white transition-colors">Pricing</a>
+                <a href="#demo" class="cta-btn px-5 py-2.5 rounded-full text-sm font-semibold text-void"><span>Request a Demo</span></a>
+            </nav>
+            <button id="mobile-toggle" class="md:hidden flex flex-col gap-1.5 z-[110]"><span class="w-6 h-px bg-white"></span><span class="w-4 h-px bg-white"></span></button>
+        </header>
+    <div class="mobile-menu" id="mobile-menu">
+        <a href="/" class="font-display text-3xl font-bold text-white">Home</a>
+        <a href="/catalyst/" class="font-display text-2xl text-text-muted hover:text-catalyst transition-colors">Catalyst</a>
+        <a href="/solvent/" class="font-display text-2xl text-text-muted hover:text-solvent transition-colors">Solvent</a>
+        <a href="/bond/" class="font-display text-2xl text-text-muted hover:text-bond transition-colors">Bond</a>
+        <a href="/reactor/" class="font-display text-2xl text-text-muted hover:text-reactor transition-colors">Reactor</a>
+        <a href="/pricing/" class="font-display text-2xl text-text-muted hover:text-white transition-colors">Pricing</a>
+        <a href="/team/" class="font-display text-2xl text-text-muted hover:text-white transition-colors">Team</a>
+    </div>
+
+
+        <!-- HERO -->
+        <section class="min-h-screen flex flex-col justify-center px-6 md:px-10 pt-28 pb-20 max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div class="space-y-8">
+                    <div class="anim-fade-up" style="animation-delay:0.2s">
+                        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-solvent/20 bg-solvent/5 mb-6">
+                            <svg viewBox="0 0 24 24" class="w-3.5 h-3.5 text-solvent" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            <span class="font-mono text-[11px] text-solvent tracking-wide">THE PERMIT INTELLIGENCE ENGINE</span>
+                        </div>
+                    </div>
+                    <h1 class="font-display text-5xl md:text-7xl font-extrabold leading-[0.93] tracking-tight anim-fade-up" style="animation-delay:0.35s">Permits filed.<br>Permits approved.<br><span class="gradient-text">Permits done.</span></h1>
+                    <p class="text-lg md:text-xl text-text-muted max-w-lg leading-relaxed anim-fade-up" style="animation-delay:0.5s">Solvent is your Permit Intelligence — it handles the entire process — from application prep to AHJ submission to status tracking. No more chasing paperwork or missing deadlines.</p>
+                    <div class="flex flex-col sm:flex-row gap-4 pt-2 anim-fade-up" style="animation-delay:0.65s">
+                        <a href="#demo" class="cta-btn px-8 py-4 rounded-full font-display text-sm font-semibold text-void tracking-wide flex items-center gap-3"><span>Request a Demo</span><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>
+                        <a href="#process" class="cta-btn-outline px-8 py-4 rounded-full text-sm font-medium text-text-muted hover:text-white flex items-center gap-2">See How It Works<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg></a>
+                    </div>
+                </div>
+
+                <!-- Hero visual: Permit status dashboard -->
+                <div class="anim-fade-in" style="animation-delay:0.8s">
+                    <div class="relative rounded-2xl border border-text-dim/15 bg-card p-5 overflow-hidden">
+                        <div class="absolute -top-20 -right-20 w-60 h-60 bg-solvent/8 rounded-full blur-3xl pointer-events-none"></div>
+                        <div class="flex items-center justify-between mb-5 relative z-10">
+                            <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-solvent animate-pulse"></div><span class="font-mono text-[10px] text-solvent tracking-widest uppercase">Permit Tracker</span></div>
+                            <span class="font-mono text-[10px] text-text-dim">8 active permits</span>
+                        </div>
+                        <div class="space-y-3 relative z-10">
+                            <!-- Permit 1: Approved -->
+                            <div class="p-3 rounded-lg bg-void-light border border-solvent/15 relative overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-r from-solvent/5 to-transparent"></div>
+                                <div class="relative flex items-center justify-between">
+                                    <div><div class="font-body text-xs font-medium">Martinez Home — Full Renovation</div><div class="font-mono text-[9px] text-text-dim mt-0.5">Hillsborough County, FL · Filed 12 days ago</div></div>
+                                    <span class="px-2 py-1 rounded-md text-[9px] font-mono bg-solvent/15 text-solvent font-medium">Approved</span>
+                                </div>
+                            </div>
+                            <!-- Permit 2: In Review -->
+                            <div class="p-3 rounded-lg bg-void-light border border-text-dim/8">
+                                <div class="flex items-center justify-between">
+                                    <div><div class="font-body text-xs font-medium">Chen Residence — HVAC Install</div><div class="font-mono text-[9px] text-text-dim mt-0.5">Orange County, CA · Filed 5 days ago</div></div>
+                                    <span class="px-2 py-1 rounded-md text-[9px] font-mono bg-warning/15 text-warning font-medium">In Review</span>
+                                </div>
+                                <div class="mt-2 flex items-center gap-2"><div class="flex-1 h-1 rounded-full bg-text-dim/15"><div class="h-full rounded-full bg-warning/60" style="width:65%;"></div></div><span class="font-mono text-[8px] text-text-dim">65%</span></div>
+                            </div>
+                            <!-- Permit 3: Submitted -->
+                            <div class="p-3 rounded-lg bg-void-light border border-text-dim/8">
+                                <div class="flex items-center justify-between">
+                                    <div><div class="font-body text-xs font-medium">Park Property — Electrical Upgrade</div><div class="font-mono text-[9px] text-text-dim mt-0.5">Miami-Dade County, FL · Filed 2 days ago</div></div>
+                                    <span class="px-2 py-1 rounded-md text-[9px] font-mono bg-solvent-tile/20 text-solvent-light font-medium">Submitted</span>
+                                </div>
+                            </div>
+                            <!-- Permit 4: Auto-corrected -->
+                            <div class="p-3 rounded-lg bg-void-light border border-solvent/10">
+                                <div class="flex items-center justify-between">
+                                    <div><div class="font-body text-xs font-medium">Williams Roof Replacement</div><div class="font-mono text-[9px] text-text-dim mt-0.5">Broward County, FL · Correction filed automatically</div></div>
+                                    <span class="px-2 py-1 rounded-md text-[9px] font-mono bg-solvent/10 text-solvent font-medium">Re-submitted</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- AI activity -->
+                        <div class="mt-4 pt-4 border-t border-text-dim/10 flex items-center gap-3 relative z-10">
+                            <div class="w-5 h-5 rounded-full bg-solvent/15 flex items-center justify-center">
+                                <svg viewBox="0 0 24 24" class="w-3 h-3 text-solvent" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <span class="font-mono text-[10px] text-text-muted">Solvent auto-corrected a missing load calculation on <span class="text-solvent">Williams Roof</span> and re-submitted in 4 minutes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- KEY METRICS -->
+        <section class="border-y border-text-dim/10 py-16 px-6 md:px-10">
+            <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 reveal">
+                <div class="text-center"><div class="font-display text-4xl md:text-5xl font-extrabold gradient-text">85%</div><p class="text-text-muted text-sm mt-2">Faster permit turnaround</p></div>
+                <div class="text-center"><div class="font-display text-4xl md:text-5xl font-extrabold gradient-text">96%</div><p class="text-text-muted text-sm mt-2">First-pass approval rate</p></div>
+                <div class="text-center"><div class="font-display text-4xl md:text-5xl font-extrabold gradient-text">2,400+</div><p class="text-text-muted text-sm mt-2">AHJs mapped nationwide</p></div>
+                <div class="text-center"><div class="font-display text-4xl md:text-5xl font-extrabold gradient-text">4 min</div><p class="text-text-muted text-sm mt-2">Avg correction response time</p></div>
+            </div>
+        </section>
+
+        <!-- HOW SOLVENT WORKS (Step by step) -->
+        <section id="process" class="px-6 md:px-10 py-28 max-w-7xl mx-auto">
+            <div class="reveal text-center mb-20">
+                <span class="font-mono text-[11px] text-solvent tracking-[0.3em] uppercase">HOW SOLVENT WORKS</span>
+                <h2 class="font-display text-4xl md:text-6xl font-bold tracking-tight mt-4 mb-5">From project scope to<br><span class="text-text-muted">approved permit.</span></h2>
+                <p class="text-text-muted text-lg max-w-2xl mx-auto">The entire permitting lifecycle, handled by AI. You focus on the work — Solvent handles the paperwork.</p>
+            </div>
+
+            <!-- Step 1 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-28 reveal">
+                <div class="order-2 lg:order-1">
+                    <div class="rounded-2xl border border-text-dim/10 bg-card p-6 overflow-hidden">
+                        <div class="space-y-3">
+                            <div class="flex items-start gap-3 p-3 rounded-xl bg-void-light border border-text-dim/8">
+                                <div class="w-8 h-8 rounded-full bg-solvent/12 flex items-center justify-center shrink-0 mt-0.5"><span class="text-[10px] font-bold text-solvent">IN</span></div>
+                                <div class="flex-1 min-w-0"><div class="font-body text-sm font-medium">New project from Catalyst</div><div class="font-mono text-[10px] text-text-dim mt-0.5">Martinez Home · Full renovation · Hillsborough County, FL</div></div>
+                                <div class="font-mono text-[10px] text-text-dim shrink-0">Auto</div>
+                            </div>
+                            <div class="flex items-start gap-3 p-3 rounded-xl bg-solvent/[0.03] border border-solvent/10">
+                                <div class="w-8 h-8 rounded-full bg-solvent/12 flex items-center justify-center shrink-0 mt-0.5"><svg viewBox="0 0 24 24" class="w-4 h-4 text-solvent" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></div>
+                                <div class="flex-1 min-w-0"><div class="font-body text-sm font-medium text-solvent">AHJ requirements identified</div><div class="font-mono text-[10px] text-text-muted mt-0.5">Hillsborough County requires: structural plans, electrical load calcs, site plan, contractor license verification</div></div>
+                            </div>
+                            <div class="flex items-start gap-3 p-3 rounded-xl bg-solvent-light/[0.03] border border-solvent-light/10">
+                                <div class="w-8 h-8 rounded-full bg-solvent-light/12 flex items-center justify-center shrink-0 mt-0.5"><svg viewBox="0 0 24 24" class="w-4 h-4 text-solvent-light" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+                                <div class="flex-1 min-w-0"><div class="font-body text-sm font-medium text-solvent-light">Application package assembled</div><div class="font-mono text-[10px] text-text-muted mt-0.5">All 4 documents generated · Compliance pre-checked · Ready to submit in 8 minutes</div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-1 lg:order-2 space-y-5">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-solvent/10 border border-solvent/15"><span class="font-mono text-[10px] text-solvent tracking-wider">STEP 01</span></div>
+                    <h3 class="font-display text-3xl md:text-4xl font-bold tracking-tight">Auto-detects what<br>every AHJ needs</h3>
+                    <p class="text-text-muted text-lg leading-relaxed max-w-md">Every jurisdiction has different rules. Solvent knows them all. When a new project comes in — from Catalyst or manually — it instantly identifies the exact documents, forms, and calculations that specific AHJ requires. No more Googling county websites.</p>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-28 reveal">
+                <div class="space-y-5">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-solvent-light/10 border border-solvent-light/15"><span class="font-mono text-[10px] text-solvent-light tracking-wider">STEP 02</span></div>
+                    <h3 class="font-display text-3xl md:text-4xl font-bold tracking-tight">Assembles & submits<br>the full package</h3>
+                    <p class="text-text-muted text-lg leading-relaxed max-w-md">Solvent generates the application, attaches all supporting documents, fills in every form field, and submits directly to the AHJ — electronically where supported, or formatted for manual drop-off. Your team doesn't touch a single form.</p>
+                </div>
+                <div>
+                    <div class="rounded-2xl border border-text-dim/10 bg-card p-6">
+                        <div class="flex items-center justify-between mb-4"><span class="font-mono text-[10px] text-solvent tracking-widest uppercase">Application Package</span><span class="font-mono text-[10px] text-text-dim">Hillsborough County</span></div>
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-3 p-3 rounded-lg bg-void-light border border-text-dim/8">
+                                <svg viewBox="0 0 24 24" class="w-4 h-4 text-solvent shrink-0" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4"/><rect x="3" y="3" width="18" height="18" rx="4"/></svg>
+                                <div class="flex-1"><div class="font-body text-xs font-medium">Permit application form</div><div class="font-mono text-[9px] text-text-dim">Auto-filled · 23 fields</div></div>
+                                <span class="font-mono text-[9px] text-solvent">Complete</span>
+                            </div>
+                            <div class="flex items-center gap-3 p-3 rounded-lg bg-void-light border border-text-dim/8">
+                                <svg viewBox="0 0 24 24" class="w-4 h-4 text-solvent shrink-0" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4"/><rect x="3" y="3" width="18" height="18" rx="4"/></svg>
+                                <div class="flex-1"><div class="font-body text-xs font-medium">Structural engineering plans</div><div class="font-mono text-[9px] text-text-dim">Verified against county code</div></div>
+                                <span class="font-mono text-[9px] text-solvent">Complete</span>
+                            </div>
+                            <div class="flex items-center gap-3 p-3 rounded-lg bg-void-light border border-text-dim/8">
+                                <svg viewBox="0 0 24 24" class="w-4 h-4 text-solvent shrink-0" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4"/><rect x="3" y="3" width="18" height="18" rx="4"/></svg>
+                                <div class="flex-1"><div class="font-body text-xs font-medium">Electrical load calculations</div><div class="font-mono text-[9px] text-text-dim">NEC 2023 compliant</div></div>
+                                <span class="font-mono text-[9px] text-solvent">Complete</span>
+                            </div>
+                            <div class="flex items-center gap-3 p-3 rounded-lg bg-void-light border border-text-dim/8">
+                                <svg viewBox="0 0 24 24" class="w-4 h-4 text-solvent shrink-0" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4"/><rect x="3" y="3" width="18" height="18" rx="4"/></svg>
+                                <div class="flex-1"><div class="font-body text-xs font-medium">Site plan & contractor license</div><div class="font-mono text-[9px] text-text-dim">Geo-verified & active</div></div>
+                                <span class="font-mono text-[9px] text-solvent">Complete</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 p-3 rounded-lg bg-solvent/[0.04] border border-solvent/12 flex items-center gap-2">
+                            <svg viewBox="0 0 24 24" class="w-4 h-4 text-solvent shrink-0" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
+                            <span class="font-mono text-[10px] text-solvent">Pre-submission compliance check passed — 0 issues found</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center reveal">
+                <div class="order-2 lg:order-1">
+                    <div class="rounded-2xl border border-text-dim/10 bg-card p-6">
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-solvent"></div><div class="flex-1 h-px bg-text-dim/10"></div><span class="font-mono text-[9px] text-text-dim">DAY 1</span></div>
+                            <div class="pl-4 ml-0.5 border-l border-solvent/20 pb-3">
+                                <div class="p-3 rounded-lg bg-solvent/[0.03] border border-solvent/10"><div class="font-mono text-[10px] text-solvent mb-1">Application submitted — 2:14 PM</div><div class="font-body text-xs text-text-muted">Electronic submission to Hillsborough County portal</div></div>
+                            </div>
+                            <div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-warning"></div><div class="flex-1 h-px bg-text-dim/10"></div><span class="font-mono text-[9px] text-text-dim">DAY 5</span></div>
+                            <div class="pl-4 ml-0.5 border-l border-warning/20 pb-3">
+                                <div class="p-3 rounded-lg bg-warning/[0.03] border border-warning/10"><div class="font-mono text-[10px] text-warning mb-1">Correction requested by reviewer</div><div class="font-body text-xs text-text-muted">Missing load calculation for sub-panel. Solvent auto-generated and re-submitted in 4 minutes.</div></div>
+                            </div>
+                            <div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-solvent"></div><div class="flex-1 h-px bg-text-dim/10"></div><span class="font-mono text-[9px] text-text-dim">DAY 9</span></div>
+                            <div class="pl-4 ml-0.5 border-l border-solvent/20">
+                                <div class="p-3 rounded-lg bg-solvent/[0.04] border border-solvent/15 relative overflow-hidden"><div class="absolute inset-0 bg-gradient-to-r from-solvent/5 to-transparent"></div><div class="relative"><div class="font-mono text-[10px] text-solvent mb-1 font-medium">Permit approved — 11:30 AM</div><div class="font-body text-xs text-text-muted">Approved on second review. Total time: 9 days (county avg: 28 days)</div></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-1 lg:order-2 space-y-5">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-warning/10 border border-warning/15"><span class="font-mono text-[10px] text-warning tracking-wider">STEP 03</span></div>
+                    <h3 class="font-display text-3xl md:text-4xl font-bold tracking-tight">Tracks, responds,<br>and gets it approved</h3>
+                    <p class="text-text-muted text-lg leading-relaxed max-w-md">Solvent monitors permit status in real time. When the AHJ requests corrections, Solvent fixes and re-submits automatically — often within minutes instead of the days it takes most teams. You get notified when it's approved, not when there's a problem.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- AHJ COVERAGE -->
+        <section id="coverage" class="px-6 md:px-10 py-28 border-t border-text-dim/10">
+            <div class="max-w-7xl mx-auto">
+                <div class="reveal text-center mb-16">
+                    <span class="font-mono text-[11px] text-solvent tracking-[0.3em] uppercase">AHJ COVERAGE</span>
+                    <h2 class="font-display text-4xl md:text-6xl font-bold tracking-tight mt-4">Every jurisdiction.<br><span class="text-text-muted">Every rule. Mapped.</span></h2>
+                    <p class="text-text-muted text-lg max-w-2xl mx-auto mt-4">Solvent maintains a live database of permitting requirements across 2,400+ Authorities Having Jurisdiction — and it's growing every week.</p>
+                </div>
+
+                <!-- Interactive Map -->
+                <div class="reveal">
+                    <div class="rounded-2xl border border-text-dim/10 bg-card p-6 md:p-8 relative overflow-hidden">
+                        <div class="absolute -bottom-20 -left-20 w-60 h-60 bg-solvent/5 rounded-full blur-3xl pointer-events-none"></div>
+                        <div class="flex items-center justify-between mb-6 relative z-10">
+                            <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-solvent animate-pulse"></div><span class="font-mono text-[10px] text-solvent tracking-widest uppercase">Interactive Coverage Map</span></div>
+                            <div class="flex items-center gap-4">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm" style="background:#0DD98B;"></div><span class="font-mono text-[9px] text-text-dim">Full coverage</span></div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm" style="background:#3DE8A0; opacity:0.5;"></div><span class="font-mono text-[9px] text-text-dim">Expanding</span></div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm" style="background:#737373; opacity:0.3;"></div><span class="font-mono text-[9px] text-text-dim">Coming soon</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Map container -->
+                        <div id="map-container" class="relative z-10" style="cursor:crosshair;">
+                            <svg id="us-map" viewBox="0 0 960 600" class="w-full" style="max-height: 480px;"></svg>
+                            <!-- Tooltip -->
+                            <div id="map-tooltip" class="absolute pointer-events-none opacity-0 transition-opacity duration-150 z-20 px-4 py-3 rounded-xl border border-solvent/20 bg-void/95 backdrop-blur-md shadow-xl" style="min-width:180px;">
+                                <div class="font-display text-sm font-bold text-white" id="tt-state"></div>
+                                <div class="mt-2 space-y-1.5">
+                                    <div class="flex justify-between"><span class="font-mono text-[10px] text-text-dim">AHJs mapped</span><span class="font-mono text-[10px] text-solvent font-medium" id="tt-ahjs"></span></div>
+                                    <div class="flex justify-between"><span class="font-mono text-[10px] text-text-dim">Permits filed</span><span class="font-mono text-[10px] text-solvent font-medium" id="tt-permits"></span></div>
+                                    <div class="flex justify-between"><span class="font-mono text-[10px] text-text-dim">Avg approval</span><span class="font-mono text-[10px] text-solvent font-medium" id="tt-avg"></span></div>
+                                    <div class="flex justify-between"><span class="font-mono text-[10px] text-text-dim">Coverage</span><span class="font-mono text-[10px] font-medium" id="tt-coverage"></span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Summary stats below map -->
+                        <div class="mt-6 pt-6 border-t border-text-dim/8 grid grid-cols-2 md:grid-cols-4 gap-4 relative z-10">
+                            <div class="text-center"><div class="font-display text-2xl font-bold gradient-text">2,400+</div><div class="font-mono text-[9px] text-text-dim mt-1">AHJs mapped</div></div>
+                            <div class="text-center"><div class="font-display text-2xl font-bold gradient-text">50</div><div class="font-mono text-[9px] text-text-dim mt-1">States covered</div></div>
+                            <div class="text-center"><div class="font-display text-2xl font-bold gradient-text">96%</div><div class="font-mono text-[9px] text-text-dim mt-1">First-pass approval</div></div>
+                            <div class="text-center"><div class="font-display text-2xl font-bold gradient-text">Weekly</div><div class="font-mono text-[9px] text-text-dim mt-1">New AHJs added</div></div>
+                        </div>
+                    </div>
+
+                    <!-- Request coverage -->
+                    <div class="mt-4 p-4 rounded-xl bg-solvent/[0.03] border border-solvent/10 flex items-center gap-3">
+                        <svg viewBox="0 0 24 24" class="w-5 h-5 text-solvent shrink-0" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                        <div><span class="font-body text-sm text-text-muted">Need coverage in a specific jurisdiction? We add new AHJs weekly. </span><a href="#demo" class="font-body text-sm text-solvent font-medium hover:underline">Request coverage →</a></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TIME & COST SAVINGS -->
+        <section id="savings" class="px-6 md:px-10 py-28 border-t border-text-dim/10">
+            <div class="max-w-6xl mx-auto">
+                <div class="reveal text-center mb-20">
+                    <span class="font-mono text-[11px] text-solvent tracking-[0.3em] uppercase">TIME & COST SAVINGS</span>
+                    <h2 class="font-display text-4xl md:text-6xl font-bold tracking-tight mt-4">Stop losing money <span class="gradient-text">on paperwork.</span></h2>
+                    <p class="text-text-muted text-lg max-w-2xl mx-auto mt-4">Every permit delay costs you revenue. Every rejection costs you time. Solvent eliminates both.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 reveal">
+                    <!-- Without -->
+                    <div class="rounded-2xl border border-text-dim/10 bg-card/60 p-8">
+                        <div class="font-mono text-[10px] text-text-dim tracking-widest uppercase mb-6">MANUAL PERMITTING</div>
+                        <div class="space-y-6">
+                            <div><div class="flex justify-between mb-2"><span class="text-sm text-text-muted">Time to prepare application</span><span class="font-mono text-sm text-text-dim">3–5 hours</span></div><div class="w-full h-2 rounded-full bg-text-dim/15"><div class="h-full rounded-full bg-text-dim/30" style="width:70%;"></div></div></div>
+                            <div><div class="flex justify-between mb-2"><span class="text-sm text-text-muted">First-pass approval rate</span><span class="font-mono text-sm text-text-dim">55–65%</span></div><div class="w-full h-2 rounded-full bg-text-dim/15"><div class="h-full rounded-full bg-text-dim/30" style="width:60%;"></div></div></div>
+                            <div><div class="flex justify-between mb-2"><span class="text-sm text-text-muted">Average time to approval</span><span class="font-mono text-sm text-text-dim">21–35 days</span></div><div class="w-full h-2 rounded-full bg-text-dim/15"><div class="h-full rounded-full bg-text-dim/30" style="width:80%;"></div></div></div>
+                            <div><div class="flex justify-between mb-2"><span class="text-sm text-text-muted">Time lost to corrections</span><span class="font-mono text-sm text-text-dim">3–7 days per round</span></div><div class="w-full h-2 rounded-full bg-text-dim/15"><div class="h-full rounded-full bg-text-dim/30" style="width:65%;"></div></div></div>
+                        </div>
+                    </div>
+                    <!-- With Solvent -->
+                    <div class="rounded-2xl border border-solvent/15 bg-card/60 p-8 relative overflow-hidden">
+                        <div class="absolute -top-10 -right-10 w-40 h-40 bg-solvent/6 rounded-full blur-3xl pointer-events-none"></div>
+                        <div class="font-mono text-[10px] text-solvent tracking-widest uppercase mb-6 relative z-10">WITH SOLVENT</div>
+                        <div class="space-y-6 relative z-10">
+                            <div><div class="flex justify-between mb-2"><span class="text-sm text-white font-medium">Time to prepare application</span><span class="font-mono text-sm text-solvent font-medium">Under 10 minutes</span></div><div class="w-full h-2 rounded-full bg-text-dim/15"><div class="h-full rounded-full bg-gradient-to-r from-solvent to-solvent-light" style="width:5%;"></div></div></div>
+                            <div><div class="flex justify-between mb-2"><span class="text-sm text-white font-medium">First-pass approval rate</span><span class="font-mono text-sm text-solvent font-medium">96%</span></div><div class="w-full h-2 rounded-full bg-text-dim/15"><div class="h-full rounded-full bg-gradient-to-r from-solvent to-solvent-light" style="width:96%;"></div></div></div>
+                            <div><div class="flex justify-between mb-2"><span class="text-sm text-white font-medium">Average time to approval</span><span class="font-mono text-sm text-solvent font-medium">5–10 days</span></div><div class="w-full h-2 rounded-full bg-text-dim/15"><div class="h-full rounded-full bg-gradient-to-r from-solvent to-solvent-light" style="width:25%;"></div></div></div>
+                            <div><div class="flex justify-between mb-2"><span class="text-sm text-white font-medium">Time lost to corrections</span><span class="font-mono text-sm text-solvent font-medium">Under 5 minutes</span></div><div class="w-full h-2 rounded-full bg-text-dim/15"><div class="h-full rounded-full bg-gradient-to-r from-solvent to-solvent-light" style="width:3%;"></div></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BEZOS QUOTE -->
+        <section class="px-6 md:px-10 py-24 border-t border-text-dim/10 relative">
+            <div class="absolute inset-0 pointer-events-none overflow-hidden"><div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-solvent/4 rounded-full blur-[100px]"></div></div>
+            <div class="max-w-3xl mx-auto relative z-10 reveal">
+                <div class="rounded-2xl border border-text-dim/10 bg-card/60 p-8 md:p-12">
+                    <svg viewBox="0 0 24 24" class="w-8 h-8 text-solvent/30 mb-6" fill="currentColor"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+                    <div class="space-y-5">
+                        <div class="flex items-start gap-3">
+                            <span class="font-mono text-[10px] text-solvent tracking-widest uppercase mt-1 shrink-0 w-16">Today</span>
+                            <p class="text-text-muted text-lg leading-relaxed">Getting a building permit takes months, even though the answer is almost always "yes." People are just forced to wait.</p>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <span class="font-mono text-[10px] text-solvent tracking-widest uppercase mt-1 shrink-0 w-16">Tomorrow</span>
+                            <p class="text-text-muted text-lg leading-relaxed">An AI reads the plans, knows every regulation, and gives a decision in about 10 seconds.</p>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <span class="font-mono text-[10px] text-solvent tracking-widest uppercase mt-1 shrink-0 w-16">Smart</span>
+                            <p class="text-text-muted text-lg leading-relaxed">If the answer is "no," the AI instantly lists the exact changes needed to turn it into a "yes."</p>
+                        </div>
+                    </div>
+                    <div class="mt-8 pt-6 border-t border-text-dim/8 flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-solvent/10 flex items-center justify-center shrink-0">
+                            <span class="font-display text-sm font-bold text-solvent">JB</span>
+                        </div>
+                        <div>
+                            <div class="font-display text-sm font-semibold text-white">Jeff Bezos</div>
+                            <div class="font-mono text-[10px] text-text-dim">Founder, Amazon</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PLATFORM INTEGRATION -->
+        <section id="platform" class="px-6 md:px-10 py-28 border-t border-text-dim/10">
+            <div class="max-w-5xl mx-auto">
+                <div class="reveal text-center mb-16">
+                    <span class="font-mono text-[11px] text-solvent-light tracking-[0.3em] uppercase">OPERATING SYSTEM</span>
+                    <h2 class="font-display text-4xl md:text-5xl font-bold tracking-tight mt-4">Solvent doesn't work alone.<br><span class="text-text-muted">It works with everything.</span></h2>
+                    <p class="text-text-muted text-lg max-w-2xl mx-auto mt-4">Solvent connects directly to the rest of the Leviosai operating system — so permits start automatically when deals close and crews get dispatched the moment permits are approved.</p>
+                </div>
+
+                <div class="reveal rounded-2xl border border-text-dim/10 bg-card p-8">
+                    <!-- Flow diagram -->
+                    <div class="flex flex-col md:flex-row items-center gap-4 md:gap-0">
+                        <!-- Catalyst -->
+                        <div class="flex-1 p-5 rounded-xl bg-void-light border border-catalyst/15 text-center">
+                            <div class="w-10 h-10 rounded-lg bg-catalyst/10 flex items-center justify-center mx-auto mb-3">
+                                <svg viewBox="0 0 24 24" class="w-5 h-5 text-catalyst" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </div>
+                            <div class="font-display text-sm font-bold text-catalyst">Catalyst</div>
+                            <div class="font-mono text-[9px] text-text-dim mt-1">Deal closes</div>
+                        </div>
+
+                        <!-- Arrow -->
+                        <div class="hidden md:flex items-center px-2"><svg viewBox="0 0 24 24" class="w-5 h-5 text-text-dim" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></div>
+                        <div class="md:hidden"><svg viewBox="0 0 24 24" class="w-5 h-5 text-text-dim" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14m0 0l-4-4m4 4l4-4"/></svg></div>
+
+                        <!-- Solvent -->
+                        <div class="flex-1 p-5 rounded-xl bg-void-light border border-solvent/20 text-center relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-b from-solvent/5 to-transparent"></div>
+                            <div class="relative">
+                                <div class="w-10 h-10 rounded-lg bg-solvent/10 flex items-center justify-center mx-auto mb-3">
+                                    <svg viewBox="0 0 24 24" class="w-5 h-5 text-solvent" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                </div>
+                                <div class="font-display text-sm font-bold text-solvent">Solvent</div>
+                                <div class="font-mono text-[9px] text-text-dim mt-1">Permit filed & approved</div>
+                            </div>
+                        </div>
+
+                        <!-- Arrow -->
+                        <div class="hidden md:flex items-center px-2"><svg viewBox="0 0 24 24" class="w-5 h-5 text-text-dim" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></div>
+                        <div class="md:hidden"><svg viewBox="0 0 24 24" class="w-5 h-5 text-text-dim" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14m0 0l-4-4m4 4l4-4"/></svg></div>
+
+                        <!-- Reactor -->
+                        <div class="flex-1 p-5 rounded-xl bg-void-light border border-reactor/15 text-center">
+                            <div class="w-10 h-10 rounded-lg bg-reactor/10 flex items-center justify-center mx-auto mb-3">
+                                <svg viewBox="0 0 24 24" class="w-5 h-5 text-reactor" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.573-1.066z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </div>
+                            <div class="font-display text-sm font-bold text-reactor">Reactor</div>
+                            <div class="font-mono text-[9px] text-text-dim mt-1">Crew dispatched</div>
+                        </div>
+                    </div>
+
+                    <!-- Bond — connective layer -->
+                    <div class="mt-4 p-4 rounded-xl bg-void-light border border-bond/15 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-r from-bond/3 via-bond/5 to-bond/3"></div>
+                        <div class="relative flex flex-col md:flex-row items-center gap-3 md:gap-4">
+                            <div class="w-9 h-9 rounded-lg bg-bond/10 flex items-center justify-center shrink-0">
+                                <svg viewBox="0 0 24 24" class="w-4.5 h-4.5 text-bond" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </div>
+                            <div class="text-center md:text-left">
+                                <div class="font-display text-sm font-bold text-bond">Bond <span class="text-text-dim font-normal">— the connective tissue</span></div>
+                                <div class="font-mono text-[10px] text-text-muted mt-0.5">Every permit update, customer notification, and status change is logged in Bond's living timeline. Your team and your customer always know exactly where things stand.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-6 border-t border-text-dim/8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="flex items-start gap-3">
+                            <svg viewBox="0 0 24 24" class="w-4 h-4 text-catalyst shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            <div class="font-mono text-[10px] text-text-muted"><span class="text-text-primary font-medium">Auto-trigger:</span> Permits start the moment a deal closes in Catalyst</div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <svg viewBox="0 0 24 24" class="w-4 h-4 text-solvent shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <div class="font-mono text-[10px] text-text-muted"><span class="text-text-primary font-medium">Auto-notify:</span> Sales, ops, and the customer all know when the permit is approved</div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <svg viewBox="0 0 24 24" class="w-4 h-4 text-reactor shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            <div class="font-mono text-[10px] text-text-muted"><span class="text-text-primary font-medium">Auto-schedule:</span> Crews get dispatched the day the permit clears</div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <svg viewBox="0 0 24 24" class="w-4 h-4 text-bond shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            <div class="font-mono text-[10px] text-text-muted"><span class="text-text-primary font-medium">Bond tracks it all:</span> Every status change hits the customer timeline automatically</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section id="demo" class="px-6 md:px-10 py-28 border-t border-text-dim/10 relative">
+            <div class="absolute inset-0 pointer-events-none overflow-hidden"><div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-solvent/6 rounded-full blur-[100px]"></div></div>
+            <div class="max-w-3xl mx-auto text-center relative z-10 reveal">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-solvent/20 bg-solvent/5 mb-8"><span class="w-1.5 h-1.5 rounded-full bg-solvent animate-pulse"></span><span class="font-mono text-[11px] text-solvent tracking-wide">LIMITED EARLY ACCESS</span></div>
+                <h2 class="font-display text-4xl md:text-6xl font-bold tracking-tight mb-6">Never chase a permit<br><span class="gradient-text">again.</span></h2>
+                <p class="text-text-muted text-lg max-w-xl mx-auto mb-10 leading-relaxed">See how Solvent handles permitting for your service area. We'll walk through your actual AHJs and show you the process live. 30 minutes, no pressure.</p>
+                <div class="max-w-md mx-auto space-y-4">
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input type="text" placeholder="Your name" class="flex-1 px-5 py-4 rounded-xl bg-card border border-text-dim/12 text-white placeholder:text-text-dim text-sm font-body focus:outline-none focus:border-solvent/40 transition-colors">
+                        <input type="email" placeholder="Work email" class="flex-1 px-5 py-4 rounded-xl bg-card border border-text-dim/12 text-white placeholder:text-text-dim text-sm font-body focus:outline-none focus:border-solvent/40 transition-colors">
+                    </div>
+                    <input type="text" placeholder="Company name" class="w-full px-5 py-4 rounded-xl bg-card border border-text-dim/12 text-white placeholder:text-text-dim text-sm font-body focus:outline-none focus:border-solvent/40 transition-colors">
+                    <input type="text" placeholder="Primary service area (city or county)" class="w-full px-5 py-4 rounded-xl bg-card border border-text-dim/12 text-white placeholder:text-text-dim text-sm font-body focus:outline-none focus:border-solvent/40 transition-colors">
+                    <button class="cta-btn w-full py-4 rounded-xl font-display text-sm font-semibold text-void tracking-wide flex items-center justify-center gap-3"><span>Request a Demo</span><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></button>
+                    <p class="font-mono text-[10px] text-text-dim tracking-wide">30-MIN WALKTHROUGH · YOUR AHJs · NO COMMITMENT</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="px-6 md:px-10 py-10 border-t border-text-dim/10">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-2">
+                    <svg viewBox="0 0 56 56" class="w-6 h-6" style="overflow:visible;">
+                        <defs>
+                            <linearGradient id="dropMainF" x1="0" y1="0" x2="0.3" y2="1">
+                                <stop offset="0%" stop-color="#3DE8A0"/>
+                                <stop offset="40%" stop-color="#0DD98B"/>
+                                <stop offset="100%" stop-color="#08A86A"/>
+                            </linearGradient>
+                            <linearGradient id="dropInnerF" x1="0.2" y1="0" x2="0.8" y2="1">
+                                <stop offset="0%" stop-color="#5FFFC0"/>
+                                <stop offset="100%" stop-color="#0DD98B" stop-opacity="0.4"/>
+                            </linearGradient>
+                        </defs>
+                        <circle class="droplet-ripple-1" cx="28" cy="44" fill="none" stroke="#0DD98B" stroke-width="0.8"/>
+                        <circle class="droplet-ripple-2" cx="28" cy="44" fill="none" stroke="#3DE8A0" stroke-width="0.5"/>
+                        <g class="droplet-body">
+                            <path d="M28 4C28 4 11 24 11 34C11 42.8 18.6 50 28 50C37.4 50 45 42.8 45 34C45 24 28 4 28 4Z" fill="url(#dropMainF)"/>
+                            <path d="M28 12C28 12 17 26 17 33.5C17 39.8 21.9 45 28 45C34.1 45 39 39.8 39 33.5C39 26 28 12 28 12Z" fill="url(#dropInnerF)" class="droplet-pulse"/>
+                            <ellipse class="droplet-inner" cx="22" cy="28" rx="4" ry="5.5" fill="white" opacity="0.3" transform="rotate(-18 22 28)"/>
+                            <ellipse cx="24" cy="24" rx="1.5" ry="2" fill="white" opacity="0.45" transform="rotate(-12 24 24)"/>
+                            <circle class="droplet-bubble-1" cx="32" cy="36" r="0.8" fill="white" opacity="0.35"/>
+                        </g>
+                    </svg>
+                    <span class="font-display text-sm font-semibold text-solvent">solvent</span>
+                    <a href="/" class="text-text-dim text-xs ml-2 hover:text-white transition-colors">leviosai</a><span class="text-text-dim text-xs">· © 2026</span>
+                </div>
+                <div class="flex gap-8 font-mono text-[10px] uppercase tracking-widest text-text-dim">
+                    <a href="/" class="hover:text-white transition-colors">Home</a>
+                    <a href="/#cta-section" class="hover:text-white transition-colors">Contact</a>
+                    <a href="/catalyst/" class="hover:text-white transition-colors">Catalyst</a>
+                    <a href="/solvent/" class="hover:text-white transition-colors">Solvent</a><a href="/bond/" class="hover:text-white transition-colors">Bond</a><a href="/reactor/" class="hover:text-white transition-colors">Reactor</a><a href="/privacy/" class="hover:text-white transition-colors">Privacy</a><a href="/terms/" class="hover:text-white transition-colors">Terms</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        const stateData = {
+            "Alabama":{ab:"AL",ahjs:67,permits:89,avg:"8 days",cov:"Full"},
+            "Alaska":{ab:"AK",ahjs:12,permits:5,avg:"14 days",cov:"Expanding"},
+            "Arizona":{ab:"AZ",ahjs:45,permits:312,avg:"7 days",cov:"Full"},
+            "Arkansas":{ab:"AR",ahjs:30,permits:18,avg:"11 days",cov:"Expanding"},
+            "California":{ab:"CA",ahjs:142,permits:1240,avg:"6 days",cov:"Full"},
+            "Colorado":{ab:"CO",ahjs:52,permits:198,avg:"8 days",cov:"Full"},
+            "Connecticut":{ab:"CT",ahjs:38,permits:87,avg:"9 days",cov:"Full"},
+            "Delaware":{ab:"DE",ahjs:12,permits:34,avg:"7 days",cov:"Full"},
+            "Florida":{ab:"FL",ahjs:167,permits:1580,avg:"5 days",cov:"Full"},
+            "Georgia":{ab:"GA",ahjs:72,permits:245,avg:"7 days",cov:"Full"},
+            "Hawaii":{ab:"HI",ahjs:8,permits:22,avg:"12 days",cov:"Expanding"},
+            "Idaho":{ab:"ID",ahjs:18,permits:24,avg:"10 days",cov:"Expanding"},
+            "Illinois":{ab:"IL",ahjs:68,permits:178,avg:"9 days",cov:"Full"},
+            "Indiana":{ab:"IN",ahjs:42,permits:67,avg:"10 days",cov:"Expanding"},
+            "Iowa":{ab:"IA",ahjs:28,permits:32,avg:"11 days",cov:"Expanding"},
+            "Kansas":{ab:"KS",ahjs:25,permits:28,avg:"10 days",cov:"Expanding"},
+            "Kentucky":{ab:"KY",ahjs:35,permits:42,avg:"10 days",cov:"Expanding"},
+            "Louisiana":{ab:"LA",ahjs:38,permits:56,avg:"9 days",cov:"Expanding"},
+            "Maine":{ab:"ME",ahjs:16,permits:18,avg:"12 days",cov:"Coming soon"},
+            "Maryland":{ab:"MD",ahjs:42,permits:134,avg:"8 days",cov:"Full"},
+            "Massachusetts":{ab:"MA",ahjs:56,permits:167,avg:"8 days",cov:"Full"},
+            "Michigan":{ab:"MI",ahjs:48,permits:89,avg:"10 days",cov:"Expanding"},
+            "Minnesota":{ab:"MN",ahjs:38,permits:56,avg:"10 days",cov:"Expanding"},
+            "Mississippi":{ab:"MS",ahjs:22,permits:15,avg:"12 days",cov:"Coming soon"},
+            "Missouri":{ab:"MO",ahjs:40,permits:62,avg:"10 days",cov:"Expanding"},
+            "Montana":{ab:"MT",ahjs:12,permits:8,avg:"13 days",cov:"Coming soon"},
+            "Nebraska":{ab:"NE",ahjs:18,permits:14,avg:"11 days",cov:"Coming soon"},
+            "Nevada":{ab:"NV",ahjs:28,permits:156,avg:"7 days",cov:"Full"},
+            "New Hampshire":{ab:"NH",ahjs:14,permits:22,avg:"11 days",cov:"Expanding"},
+            "New Jersey":{ab:"NJ",ahjs:62,permits:234,avg:"7 days",cov:"Full"},
+            "New Mexico":{ab:"NM",ahjs:22,permits:45,avg:"9 days",cov:"Expanding"},
+            "New York":{ab:"NY",ahjs:78,permits:312,avg:"8 days",cov:"Full"},
+            "North Carolina":{ab:"NC",ahjs:58,permits:198,avg:"7 days",cov:"Full"},
+            "North Dakota":{ab:"ND",ahjs:10,permits:6,avg:"13 days",cov:"Coming soon"},
+            "Ohio":{ab:"OH",ahjs:52,permits:112,avg:"9 days",cov:"Expanding"},
+            "Oklahoma":{ab:"OK",ahjs:28,permits:34,avg:"10 days",cov:"Expanding"},
+            "Oregon":{ab:"OR",ahjs:32,permits:98,avg:"8 days",cov:"Full"},
+            "Pennsylvania":{ab:"PA",ahjs:62,permits:178,avg:"9 days",cov:"Full"},
+            "Rhode Island":{ab:"RI",ahjs:12,permits:28,avg:"8 days",cov:"Full"},
+            "South Carolina":{ab:"SC",ahjs:38,permits:112,avg:"8 days",cov:"Full"},
+            "South Dakota":{ab:"SD",ahjs:10,permits:5,avg:"13 days",cov:"Coming soon"},
+            "Tennessee":{ab:"TN",ahjs:42,permits:78,avg:"9 days",cov:"Expanding"},
+            "Texas":{ab:"TX",ahjs:128,permits:890,avg:"6 days",cov:"Full"},
+            "Utah":{ab:"UT",ahjs:24,permits:67,avg:"8 days",cov:"Expanding"},
+            "Vermont":{ab:"VT",ahjs:10,permits:12,avg:"12 days",cov:"Coming soon"},
+            "Virginia":{ab:"VA",ahjs:52,permits:156,avg:"8 days",cov:"Full"},
+            "Washington":{ab:"WA",ahjs:42,permits:167,avg:"7 days",cov:"Full"},
+            "West Virginia":{ab:"WV",ahjs:14,permits:12,avg:"12 days",cov:"Coming soon"},
+            "Wisconsin":{ab:"WI",ahjs:32,permits:45,avg:"10 days",cov:"Expanding"},
+            "Wyoming":{ab:"WY",ahjs:8,permits:4,avg:"14 days",cov:"Coming soon"}
+        };
+
+        function getStateFill(cov) {
+            if (cov === "Full") return "rgba(13,217,139,0.35)";
+            if (cov === "Expanding") return "rgba(61,232,160,0.15)";
+            return "rgba(115,115,115,0.08)";
+        }
+        function getStateStroke(cov) {
+            if (cov === "Full") return "rgba(13,217,139,0.5)";
+            if (cov === "Expanding") return "rgba(61,232,160,0.3)";
+            return "rgba(115,115,115,0.15)";
+        }
+        function getCovColor(cov) {
+            if (cov === "Full") return "#0DD98B";
+            if (cov === "Expanding") return "#3DE8A0";
+            return "#737373";
+        }
+
+        fetch("https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json")
+            .then(r => r.json())
+            .then(us => {
+                var svg = d3.select("#us-map");
+                var w = 960, h = 600;
+                var projection = d3.geoAlbersUsa().scale(1200).translate([w/2, h/2]);
+                var path = d3.geoPath().projection(projection);
+                var states = topojson.feature(us, us.objects.states).features;
+                var fipsToName = {};
+                states.forEach(function(f) {
+                    var id = f.id || f.properties.STATEFP;
+                    var names = ["","","","","","","","","","","","Alabama","Alaska","","Arizona","Arkansas","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""];
+                    var fipsNames = {1:"Alabama",2:"Alaska",4:"Arizona",5:"Arkansas",6:"California",8:"Colorado",9:"Connecticut",10:"Delaware",12:"Florida",13:"Georgia",15:"Hawaii",16:"Idaho",17:"Illinois",18:"Indiana",19:"Iowa",20:"Kansas",21:"Kentucky",22:"Louisiana",23:"Maine",24:"Maryland",25:"Massachusetts",26:"Michigan",27:"Minnesota",28:"Mississippi",29:"Missouri",30:"Montana",31:"Nebraska",32:"Nevada",33:"New Hampshire",34:"New Jersey",35:"New Mexico",36:"New York",37:"North Carolina",38:"North Dakota",39:"Ohio",40:"Oklahoma",41:"Oregon",42:"Pennsylvania",44:"Rhode Island",45:"South Carolina",46:"South Dakota",47:"Tennessee",48:"Texas",49:"Utah",50:"Vermont",51:"Virginia",53:"Washington",54:"West Virginia",55:"Wisconsin",56:"Wyoming"};
+                    fipsToName[+id] = fipsNames[+id] || "";
+                });
+
+                var tooltip = document.getElementById("map-tooltip");
+                var ttState = document.getElementById("tt-state");
+                var ttAhjs = document.getElementById("tt-ahjs");
+                var ttPermits = document.getElementById("tt-permits");
+                var ttAvg = document.getElementById("tt-avg");
+                var ttCov = document.getElementById("tt-coverage");
+                var container = document.getElementById("map-container");
+
+                svg.selectAll("path")
+                    .data(states)
+                    .enter()
+                    .append("path")
+                    .attr("d", path)
+                    .attr("fill", function(d) {
+                        var name = fipsToName[+d.id];
+                        var data = stateData[name];
+                        return data ? getStateFill(data.cov) : "rgba(115,115,115,0.05)";
+                    })
+                    .attr("stroke", function(d) {
+                        var name = fipsToName[+d.id];
+                        var data = stateData[name];
+                        return data ? getStateStroke(data.cov) : "rgba(115,115,115,0.1)";
+                    })
+                    .attr("stroke-width", 0.8)
+                    .style("cursor", "pointer")
+                    .style("transition", "fill 0.2s, stroke 0.2s")
+                    .on("mouseenter", function(event, d) {
+                        var name = fipsToName[+d.id];
+                        var data = stateData[name];
+                        if (!name || !data) return;
+                        d3.select(this).attr("fill", "rgba(13,217,139,0.55)").attr("stroke", "#0DD98B").attr("stroke-width", 1.5);
+                        ttState.textContent = name + " (" + data.ab + ")";
+                        ttAhjs.textContent = data.ahjs;
+                        ttPermits.textContent = data.permits.toLocaleString();
+                        ttAvg.textContent = data.avg;
+                        ttCov.textContent = data.cov;
+                        ttCov.style.color = getCovColor(data.cov);
+                        tooltip.style.opacity = "1";
+                    })
+                    .on("mousemove", function(event) {
+                        var rect = container.getBoundingClientRect();
+                        var x = event.clientX - rect.left + 16;
+                        var y = event.clientY - rect.top - 16;
+                        if (x + 200 > rect.width) x = event.clientX - rect.left - 200;
+                        if (y < 0) y = event.clientY - rect.top + 20;
+                        tooltip.style.left = x + "px";
+                        tooltip.style.top = y + "px";
+                    })
+                    .on("mouseleave", function(event, d) {
+                        var name = fipsToName[+d.id];
+                        var data = stateData[name];
+                        d3.select(this)
+                            .attr("fill", data ? getStateFill(data.cov) : "rgba(115,115,115,0.05)")
+                            .attr("stroke", data ? getStateStroke(data.cov) : "rgba(115,115,115,0.1)")
+                            .attr("stroke-width", 0.8);
+                        tooltip.style.opacity = "0";
+                    });
+            });
+    </script>
+
+
+    <script>
+        // Mobile menu
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        let menuOpen = false;
+        if (mobileToggle && mobileMenu) {
+            mobileToggle.addEventListener('click', () => {
+                menuOpen = !menuOpen;
+                if (menuOpen) {
+                    mobileMenu.classList.add('open');
+                } else {
+                    mobileMenu.classList.remove('open');
+                }
+            });
+            document.querySelectorAll('#mobile-menu a').forEach(a => {
+                a.addEventListener('click', () => {
+                    menuOpen = false;
+                    mobileMenu.classList.remove('open');
+                });
+            });
+        }
+    </script>
+
+    
+    <script>
+        // Form submission
+        (function() {
+            document.querySelectorAll('.cta-btn').forEach(function(btn) {
+                var parent = btn.closest('.space-y-4') || btn.closest('.max-w-md') || btn.closest('.max-w-3xl');
+                if (!parent) return;
+                var inputs = parent.querySelectorAll('input, select');
+                if (inputs.length === 0) return;
+                
+                // Only attach to buttons, not nav links
+                if (btn.tagName === 'A' && btn.getAttribute('href') && btn.getAttribute('href').indexOf('#') === 0 && btn.getAttribute('href').length > 1) return;
+                
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    var fields = {};
+                    var hasEmpty = false;
+                    
+                    inputs.forEach(function(input) {
+                        var val = input.value ? input.value.trim() : '';
+                        var placeholder = input.placeholder || '';
+                        
+                        if (input.tagName === 'SELECT') {
+                            val = input.options[input.selectedIndex].text;
+                            if (val === 'Select your market') val = '';
+                        }
+                        
+                        if (!val) {
+                            hasEmpty = true;
+                            input.style.borderColor = 'rgba(248,113,113,0.5)';
+                            setTimeout(function() { input.style.borderColor = ''; }, 2000);
+                        } else {
+                            fields[placeholder || input.name || 'field'] = val;
+                        }
+                    });
+                    
+                    if (hasEmpty) return;
+                    
+                    var btnSpan = btn.querySelector('span');
+                    var originalText = btnSpan ? btnSpan.textContent : '';
+                    var btnSvg = btn.querySelector('svg');
+                    if (btnSpan) btnSpan.textContent = 'Sending...';
+                    if (btnSvg) btnSvg.style.display = 'none';
+                    btn.style.pointerEvents = 'none';
+                    btn.style.opacity = '0.7';
+                    
+                    var formData = new FormData();
+                    for (var key in fields) {
+                        formData.append(key, fields[key]);
+                    }
+                    formData.append('_subject', 'New Demo Request — ' + (fields['Company name'] || 'Website'));
+                    formData.append('_template', 'table');
+                    formData.append('_captcha', 'false');
+                    formData.append('Page', document.title);
+                    
+                    fetch('https://formsubmit.co/ajax/christian@leviosai.io', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(function(res) { return res.json(); })
+                    .then(function() { showConfirmation(parent); })
+                    .catch(function() { showConfirmation(parent); });
+                });
+            });
+            
+            function showConfirmation(container) {
+                container.innerHTML = '<div style="text-align:center;padding:2rem 0;">' +
+                    '<div style="width:56px;height:56px;border-radius:50%;background:rgba(13,217,139,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">' +
+                    '<svg viewBox="0 0 24 24" style="width:28px;height:28px;color:#0DD98B;" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+                    '</div>' +
+                    '<h3 style="font-size:1.5rem;font-weight:700;color:#F2F2F2;margin-bottom:0.5rem;">Talk to you soon!</h3>' +
+                    '<p style="font-size:0.95rem;color:#A3A3A3;">We\u2019ll reach out within 24 hours to get you set up.</p>' +
+                    '</div>';
+            }
+        })();
+    </script>
+</body></html>

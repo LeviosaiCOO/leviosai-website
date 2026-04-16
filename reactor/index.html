@@ -1,0 +1,832 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reactor — The Operations Intelligence | Leviosai</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'catalyst': '#F97316',
+                        'solvent': '#0DD98B',
+                        'bond': '#6366F1',
+                        'void': '#0A0A0A',
+                        'void-light': '#0E0E0E',
+                        'card': '#121212',
+                        'reactor': '#A855F7',
+                        'reactor-light': '#C084FC',
+                        'orbital-orange': '#F97316',
+                        'orbital-green': '#0DD98B',
+                        'text-primary': '#F2F2F2',
+                        'text-muted': '#A3A3A3',
+                        'text-dim': '#737373',
+                        'success': '#34D399',
+                        'warning': '#FBBF24',
+                        'danger': '#F87171',
+                    },
+                    fontFamily: {
+                        display: ['"Outfit"', 'sans-serif'],
+                        body: ['"Space Grotesk"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * { box-sizing: border-box; }
+        body { background-color: #0A0A0A; color: #F2F2F2; overflow-x: hidden; }
+
+        .hero-mesh { position: fixed; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; }
+        .hero-mesh::before { content: ''; position: absolute; top: -25%; left: -15%; width: 70%; height: 70%; background: radial-gradient(ellipse at center, rgba(168,85,247,0.09) 0%, transparent 55%); animation: drift1 14s ease-in-out infinite alternate; }
+        .hero-mesh::after { content: ''; position: absolute; bottom: -20%; right: -10%; width: 60%; height: 60%; background: radial-gradient(ellipse at center, rgba(192,132,252,0.05) 0%, transparent 50%); animation: drift2 16s ease-in-out infinite alternate; }
+        .grid-overlay { position: fixed; inset: 0; background-image: linear-gradient(rgba(168,85,247,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(168,85,247,0.015) 1px, transparent 1px); background-size: 60px 60px; z-index: 0; pointer-events: none; }
+
+        @keyframes drift1 { 0% { transform: translate(0,0); } 100% { transform: translate(4%,6%); } }
+        @keyframes drift2 { 0% { transform: translate(0,0); } 100% { transform: translate(-5%,-4%); } }
+        @keyframes fadeUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+
+        .anim-fade-up { opacity: 0; animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .anim-fade-in { opacity: 0; animation: fadeIn 1s ease forwards; }
+
+        /* Reactor atom logo */
+        @keyframes orbit1 { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes orbit2 { 0% { transform: rotate(0deg); } 100% { transform: rotate(-360deg); } }
+        @keyframes orbit3 { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes corePulse { 0%, 100% { r: 4; opacity: 0.9; } 50% { r: 5; opacity: 1; } }
+        @keyframes coreGlow { 0%, 100% { r: 7; opacity: 0.15; } 50% { r: 9; opacity: 0.25; } }
+        @keyframes electronPulse { 0%, 100% { r: 1.8; opacity: 0.9; } 50% { r: 2.2; opacity: 1; } }
+        .atom-orbit-1 { animation: orbit1 8s linear infinite; transform-origin: 28px 28px; }
+        .atom-orbit-2 { animation: orbit2 10s linear infinite; transform-origin: 28px 28px; }
+        .atom-orbit-3 { animation: orbit3 12s linear infinite; transform-origin: 28px 28px; }
+        .atom-core { animation: corePulse 3s ease-in-out infinite; }
+        .atom-glow { animation: coreGlow 3s ease-in-out infinite; }
+        .atom-electron { animation: electronPulse 2s ease-in-out infinite; }
+
+        .gradient-text { background: linear-gradient(135deg, #A855F7 0%, #C084FC 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+        .cta-btn { position: relative; background: linear-gradient(135deg, #A855F7, #C084FC); transition: all 0.4s ease; overflow: hidden; }
+        .cta-btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, #C084FC, #A855F7); opacity: 0; transition: opacity 0.4s ease; }
+        .cta-btn:hover::before { opacity: 1; }
+        .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px -8px rgba(168,85,247,0.4); }
+        .cta-btn span, .cta-btn svg { position: relative; z-index: 1; }
+
+        .cta-btn-outline { border: 1px solid rgba(168,85,247,0.3); transition: all 0.3s ease; }
+        .cta-btn-outline:hover { border-color: rgba(168,85,247,0.6); background: rgba(168,85,247,0.05); }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0A0A0A; }
+        ::-webkit-scrollbar-thumb { background: #A855F7; border-radius: 2px; }
+
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        .feature-card { background: #121212; border: 1px solid rgba(168,85,247,0.06); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .feature-card:hover { border-color: rgba(168,85,247,0.18); transform: translateY(-3px); box-shadow: 0 16px 48px -12px rgba(168,85,247,0.10); }
+            .nav-dropdown { display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); padding-top: 12px; }
+        .nav-parent:hover .nav-dropdown { display: block; }
+        .nav-dropdown-inner { background: rgba(18,18,18,0.95); border: 1px solid rgba(115,115,115,0.15); border-radius: 12px; padding: 8px; min-width: 220px; backdrop-filter: blur(20px); }
+        .nav-dropdown a { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; transition: background 0.2s; font-size: 14px; }
+        .nav-dropdown a:hover { background: rgba(115,115,115,0.1); }
+        .nav-dd-icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+            .mobile-menu { position: fixed; inset: 0; z-index: 100; background: rgba(10,10,15,0.98); backdrop-filter: blur(20px); display: none; flex-direction: column; justify-content: center; align-items: center; gap: 2rem; }
+        .mobile-menu.open { display: flex; }
+    </style>
+</head>
+<body class="min-h-screen w-screen relative font-body selection:bg-reactor/20 selection:text-white">
+
+    <div class="hero-mesh"></div>
+    <div class="grid-overlay"></div>
+
+    <div class="relative z-10 min-h-screen w-full">
+
+        <!-- NAV -->
+        <header class="fixed top-0 left-0 right-0 z-50 px-6 md:px-10 py-5 flex justify-between items-center anim-fade-in" style="animation-delay:0.1s; background: linear-gradient(to bottom, rgba(10,10,10,0.97) 0%, rgba(10,10,10,0) 100%);">
+            <a href="/" class="flex items-center gap-2">
+                <svg viewBox="0 0 56 56" class="w-9 h-9" style="overflow:visible;">
+                    <defs>
+                        <filter id="atomGlow"><feGaussianBlur stdDeviation="1.5" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                    </defs>
+                    <g filter="url(#atomGlow)">
+                        <!-- Core glow -->
+                        <circle class="atom-glow" cx="28" cy="28" r="7" fill="#A855F7" opacity="0.15"/>
+                        <!-- Orbital rings — each a different product color -->
+                        <g class="atom-orbit-1">
+                            <ellipse cx="28" cy="28" rx="22" ry="8" fill="none" stroke="#F97316" stroke-width="1" opacity="0.7" transform="rotate(-30 28 28)"/>
+                            <circle class="atom-electron" cx="50" cy="28" r="1.8" fill="#F97316" transform="rotate(-30 28 28)"/>
+                        </g>
+                        <g class="atom-orbit-2">
+                            <ellipse cx="28" cy="28" rx="22" ry="8" fill="none" stroke="#A855F7" stroke-width="1.2" opacity="0.8" transform="rotate(30 28 28)"/>
+                            <circle class="atom-electron" cx="6" cy="28" r="1.8" fill="#C084FC" transform="rotate(30 28 28)"/>
+                        </g>
+                        <g class="atom-orbit-3">
+                            <ellipse cx="28" cy="28" rx="22" ry="8" fill="none" stroke="#0DD98B" stroke-width="1" opacity="0.7" transform="rotate(90 28 28)"/>
+                            <circle class="atom-electron" cx="28" cy="6" r="1.8" fill="#0DD98B" transform="rotate(90 28 28)"/>
+                        </g>
+                        <!-- Core nucleus -->
+                        <circle class="atom-core" cx="28" cy="28" r="4" fill="#A855F7"/>
+                        <circle cx="28" cy="28" r="2" fill="#C084FC" opacity="0.6"/>
+                        <circle cx="28" cy="28" r="1" fill="white" opacity="0.4"/>
+                    </g>
+                </svg>
+                <span class="font-display text-xl font-bold tracking-tight text-reactor">reactor</span>
+                <a href="/" class="hidden md:inline text-text-dim text-xs ml-2 hover:text-white transition-colors">by leviosai</a>
+            </a>
+            <nav class="hidden md:flex items-center gap-10">
+                <a href="/" class="text-sm text-text-muted hover:text-white transition-colors">Home</a>
+                <div class="relative nav-parent">
+                <button class="text-sm text-text-muted hover:text-white transition-colors flex items-center gap-1">Products<svg class="w-3.5 h-3.5 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+                <div class="nav-dropdown"><div class="nav-dropdown-inner">
+                    <a href="/catalyst/"><div class="nav-dd-icon" style="background:rgba(249,115,22,0.12);"><svg viewBox="0 0 24 24" class="w-4 h-4" style="color:#F97316;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><span class="text-sm text-white">Catalyst</span><p style="font-size:11px;" class="text-text-dim">Sales intelligence</p></div></a>
+                    <a href="/solvent/"><div class="nav-dd-icon" style="background:rgba(13,217,139,0.12);"><svg viewBox="0 0 24 24" class="w-4 h-4" style="color:#0DD98B;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><span class="text-sm text-white">Solvent</span><p style="font-size:11px;" class="text-text-dim">Permit Intelligence</p></div></a>
+                    <a href="/bond/"><div class="nav-dd-icon" style="background:rgba(99,102,241,0.12);"><svg viewBox="0 0 24 24" class="w-4 h-4" style="color:#6366F1;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><span class="text-sm text-white">Bond</span><p style="font-size:11px;" class="text-text-dim">AI-native CRM</p></div></a>
+                    <a href="/reactor/"><div class="nav-dd-icon" style="background:rgba(168,85,247,0.12);"><svg viewBox="0 0 24 24" class="w-4 h-4" style="color:#A855F7;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3"/></svg></div><div><span class="text-sm text-white">Reactor</span><p style="font-size:11px;" class="text-text-dim">Operations Intelligence</p></div></a>
+                </div></div>
+            </div>
+                <a href="/reactor/pricing/" class="text-sm text-text-muted hover:text-white transition-colors">Pricing</a>
+                <a href="#demo" class="cta-btn px-5 py-2.5 rounded-full text-sm font-semibold text-white"><span>Talk to Sales</span></a>
+            </nav>
+            <button id="mobile-toggle" class="md:hidden flex flex-col gap-1.5 z-[110]"><span class="w-6 h-px bg-white"></span><span class="w-4 h-px bg-white"></span></button>
+        </header>
+    <div class="mobile-menu" id="mobile-menu">
+        <a href="/" class="font-display text-3xl font-bold text-white">Home</a>
+        <a href="/catalyst/" class="font-display text-2xl text-text-muted hover:text-catalyst transition-colors">Catalyst</a>
+        <a href="/solvent/" class="font-display text-2xl text-text-muted hover:text-solvent transition-colors">Solvent</a>
+        <a href="/bond/" class="font-display text-2xl text-text-muted hover:text-bond transition-colors">Bond</a>
+        <a href="/reactor/" class="font-display text-2xl text-text-muted hover:text-reactor transition-colors">Reactor</a>
+        <a href="/pricing/" class="font-display text-2xl text-text-muted hover:text-white transition-colors">Pricing</a>
+        <a href="/team/" class="font-display text-2xl text-text-muted hover:text-white transition-colors">Team</a>
+    </div>
+
+
+        <!-- HERO -->
+        <section class="min-h-screen flex flex-col justify-center px-6 md:px-10 pt-28 pb-20 max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div class="space-y-8">
+                    <div class="anim-fade-up" style="animation-delay:0.2s">
+                        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-reactor/20 bg-reactor/5 mb-6">
+                            <svg viewBox="0 0 24 24" class="w-3.5 h-3.5 text-reactor" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.573-1.066z"/><circle cx="12" cy="12" r="3"/></svg>
+                            <span class="font-mono text-[11px] text-reactor tracking-wide">THE OPERATIONS INTELLIGENCE ENGINE</span>
+                        </div>
+                    </div>
+                    <h1 class="font-display text-5xl md:text-7xl font-extrabold leading-[0.93] tracking-tight anim-fade-up" style="animation-delay:0.35s">Run your<br>entire operation<br><span class="gradient-text">on autopilot.</span></h1>
+                    <p class="text-lg md:text-xl text-text-muted max-w-lg leading-relaxed anim-fade-up" style="animation-delay:0.5s">Reactor is the AI that schedules your crews, manages inventory, tracks every job, and keeps the whole machine running — so you stop firefighting and start scaling.</p>
+                    <div class="flex flex-col sm:flex-row gap-4 pt-2 anim-fade-up" style="animation-delay:0.65s">
+                        <a href="#demo" class="cta-btn px-8 py-4 rounded-full font-display text-sm font-semibold text-white tracking-wide flex items-center gap-3"><span>Request a Demo</span><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>
+                        <a href="#features" class="cta-btn-outline px-8 py-4 rounded-full text-sm font-medium text-text-muted hover:text-white flex items-center gap-2">See How It Works<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg></a>
+                    </div>
+                </div>
+
+                <!-- Hero visual: Ops dashboard -->
+                <div class="anim-fade-in" style="animation-delay:0.8s">
+                    <div class="relative rounded-2xl border border-text-dim/15 bg-card p-5 overflow-hidden">
+                        <div class="absolute -top-20 -right-20 w-60 h-60 bg-reactor/8 rounded-full blur-3xl pointer-events-none"></div>
+                        <div class="flex items-center justify-between mb-5 relative z-10">
+                            <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-reactor animate-pulse"></div><span class="font-mono text-[10px] text-reactor tracking-widest uppercase">Today's Operations</span></div>
+                            <span class="font-mono text-[10px] text-text-dim">Tue, Mar 14 · 6 crews active</span>
+                        </div>
+                        <!-- Schedule grid -->
+                        <div class="space-y-2 relative z-10">
+                            <div class="grid grid-cols-12 gap-1 mb-1">
+                                <div class="col-span-2"></div>
+                                <div class="col-span-2 text-center font-mono text-[8px] text-text-dim">8 AM</div>
+                                <div class="col-span-2 text-center font-mono text-[8px] text-text-dim">10 AM</div>
+                                <div class="col-span-2 text-center font-mono text-[8px] text-text-dim">12 PM</div>
+                                <div class="col-span-2 text-center font-mono text-[8px] text-text-dim">2 PM</div>
+                                <div class="col-span-2 text-center font-mono text-[8px] text-text-dim">4 PM</div>
+                            </div>
+                            <!-- Crew 1 -->
+                            <div class="grid grid-cols-12 gap-1 items-center">
+                                <div class="col-span-2 font-body text-[10px] font-medium truncate">Team Alpha</div>
+                                <div class="col-span-5 h-6 rounded bg-reactor/20 border border-reactor/15 flex items-center px-2"><span class="font-mono text-[8px] text-reactor truncate">Martinez — Full Reno</span></div>
+                                <div class="col-span-1"></div>
+                                <div class="col-span-4 h-6 rounded bg-orbital-green/15 border border-orbital-green/12 flex items-center px-2"><span class="font-mono text-[8px] text-orbital-green truncate">Chen — HVAC</span></div>
+                            </div>
+                            <!-- Crew 2 -->
+                            <div class="grid grid-cols-12 gap-1 items-center">
+                                <div class="col-span-2 font-body text-[10px] font-medium truncate">Team Bravo</div>
+                                <div class="col-span-3 h-6 rounded bg-orbital-orange/15 border border-orbital-orange/12 flex items-center px-2"><span class="font-mono text-[8px] text-orbital-orange truncate">Park — Electrical</span></div>
+                                <div class="col-span-1"></div>
+                                <div class="col-span-6 h-6 rounded bg-reactor/20 border border-reactor/15 flex items-center px-2"><span class="font-mono text-[8px] text-reactor truncate">Williams — Roof Replace</span></div>
+                            </div>
+                            <!-- Crew 3 -->
+                            <div class="grid grid-cols-12 gap-1 items-center">
+                                <div class="col-span-2 font-body text-[10px] font-medium truncate">Team Charlie</div>
+                                <div class="col-span-8 h-6 rounded bg-reactor-light/15 border border-reactor-light/12 flex items-center px-2"><span class="font-mono text-[8px] text-reactor-light truncate">Thompson — Full Remodel (all day)</span></div>
+                                <div class="col-span-2"></div>
+                            </div>
+                            <!-- Crew 4 -->
+                            <div class="grid grid-cols-12 gap-1 items-center">
+                                <div class="col-span-2 font-body text-[10px] font-medium truncate">Team Delta</div>
+                                <div class="col-span-2"></div>
+                                <div class="col-span-4 h-6 rounded bg-warning/15 border border-warning/12 flex items-center px-2"><span class="font-mono text-[8px] text-warning truncate">Rivera — Inspection</span></div>
+                                <div class="col-span-4 h-6 rounded bg-orbital-green/15 border border-orbital-green/12 flex items-center px-2"><span class="font-mono text-[8px] text-orbital-green truncate">Nguyen — Gutters</span></div>
+                            </div>
+                        </div>
+                        <!-- Alerts bar -->
+                        <div class="mt-4 pt-4 border-t border-text-dim/10 space-y-2 relative z-10">
+                            <div class="flex items-center gap-3">
+                                <div class="w-5 h-5 rounded-full bg-reactor/15 flex items-center justify-center"><svg viewBox="0 0 24 24" class="w-3 h-3 text-reactor" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/></svg></div>
+                                <span class="font-mono text-[10px] text-text-muted">Reactor auto-rescheduled <span class="text-reactor">Team Delta</span> after permit approval came in — inspection moved up 2 days</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- KEY METRICS -->
+        <section class="border-y border-text-dim/10 py-16 px-6 md:px-10">
+            <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 reveal">
+                <div class="text-center"><div class="font-display text-4xl md:text-5xl font-extrabold gradient-text">40%</div><p class="text-text-muted text-sm mt-2">Less scheduling overhead</p></div>
+                <div class="text-center"><div class="font-display text-4xl md:text-5xl font-extrabold gradient-text">98%</div><p class="text-text-muted text-sm mt-2">On-time crew dispatch</p></div>
+                <div class="text-center"><div class="font-display text-4xl md:text-5xl font-extrabold gradient-text">2.4x</div><p class="text-text-muted text-sm mt-2">More jobs completed / month</p></div>
+                <div class="text-center"><div class="font-display text-4xl md:text-5xl font-extrabold gradient-text">Real-time</div><p class="text-text-muted text-sm mt-2">Job status for every project</p></div>
+            </div>
+        </section>
+
+        <!-- FEATURES -->
+        <section id="features" class="px-6 md:px-10 py-28 max-w-7xl mx-auto">
+            <div class="reveal text-center mb-20">
+                <span class="font-mono text-[11px] text-reactor tracking-[0.3em] uppercase">WHAT REACTOR DOES</span>
+                <h2 class="font-display text-4xl md:text-6xl font-bold tracking-tight mt-4 mb-5">The backend of your business,<br><span class="text-text-muted">fully automated.</span></h2>
+                <p class="text-text-muted text-lg max-w-2xl mx-auto">Scheduling, dispatch, inventory, crew tracking — the stuff that eats your day. Reactor handles all of it.</p>
+            </div>
+
+            <!-- Feature grid: 2x2 + 1 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 reveal">
+                <!-- Scheduling & Dispatch -->
+                <div class="feature-card rounded-2xl p-8">
+                    <div class="flex items-start justify-between mb-6">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:rgba(168,85,247,0.1);"><svg viewBox="0 0 24 24" class="w-6 h-6 text-reactor" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                        <span class="font-mono text-[10px] text-reactor/50 tracking-widest">01</span>
+                    </div>
+                    <h3 class="font-display text-xl font-bold mb-3">Scheduling & dispatch</h3>
+                    <p class="text-text-muted leading-relaxed mb-5">Reactor builds optimal daily schedules based on crew skills, location, job type, and availability. When things change — a permit comes through, a job runs long — it automatically re-optimizes and notifies everyone.</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 rounded-full text-[10px] font-mono bg-reactor/8 text-reactor/80 border border-reactor/10">Auto-scheduling</span>
+                        <span class="px-3 py-1 rounded-full text-[10px] font-mono bg-reactor/8 text-reactor/80 border border-reactor/10">Route optimization</span>
+                        <span class="px-3 py-1 rounded-full text-[10px] font-mono bg-reactor/8 text-reactor/80 border border-reactor/10">Real-time re-dispatch</span>
+                    </div>
+                </div>
+
+                <!-- Inventory -->
+                <div class="feature-card rounded-2xl p-8">
+                    <div class="flex items-start justify-between mb-6">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:rgba(192,132,252,0.1);"><svg viewBox="0 0 24 24" class="w-6 h-6 text-reactor-light" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                        <span class="font-mono text-[10px] text-reactor/50 tracking-widest">02</span>
+                    </div>
+                    <h3 class="font-display text-xl font-bold mb-3">Inventory & materials</h3>
+                    <p class="text-text-muted leading-relaxed mb-5">Tracks every piece of equipment and material across jobs, trucks, and warehouses. Reactor knows what's on each truck, what's running low, and auto-generates reorder alerts before you run out on a job site.</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 rounded-full text-[10px] font-mono bg-reactor-light/8 text-reactor-light/80 border border-reactor-light/10">Truck-level tracking</span>
+                        <span class="px-3 py-1 rounded-full text-[10px] font-mono bg-reactor-light/8 text-reactor-light/80 border border-reactor-light/10">Auto-reorder</span>
+                        <span class="px-3 py-1 rounded-full text-[10px] font-mono bg-reactor-light/8 text-reactor-light/80 border border-reactor-light/10">Cost tracking</span>
+                    </div>
+                </div>
+
+                <!-- Crew Performance -->
+                <div class="feature-card rounded-2xl p-8">
+                    <div class="flex items-start justify-between mb-6">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:rgba(168,85,247,0.1);"><svg viewBox="0 0 24 24" class="w-6 h-6 text-reactor" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                        <span class="font-mono text-[10px] text-reactor/50 tracking-widest">03</span>
+                    </div>
+                    <h3 class="font-display text-xl font-bold mb-3">Crew performance</h3>
+                    <p class="text-text-muted leading-relaxed mb-5">See which crews are hitting targets and which need support. Reactor tracks completion rates, time-on-site, customer feedback scores, and rework rates — so you can coach based on data, not gut feel.</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 rounded-full text-[10px] font-mono bg-reactor/8 text-reactor/80 border border-reactor/10">Completion rates</span>
+                        <span class="px-3 py-1 rounded-full text-[10px] font-mono bg-reactor/8 text-reactor/80 border border-reactor/10">Quality scores</span>
+                        <span class="px-3 py-1 rounded-full text-[10px] font-mono bg-reactor/8 text-reactor/80 border border-reactor/10">Leaderboards</span>
+                    </div>
+                </div>
+
+                <!-- Job Status -->
+                <div class="feature-card rounded-2xl p-8">
+                    <div class="flex items-start justify-between mb-6">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:rgba(192,132,252,0.1);"><svg viewBox="0 0 24 24" class="w-6 h-6 text-reactor-light" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                        <span class="font-mono text-[10px] text-reactor/50 tracking-widest">04</span>
+                    </div>
+                    <h3 class="font-display text-xl font-bold mb-3">Job status & timeline</h3>
+                    <p class="text-text-muted leading-relaxed mb-5">Every project has a real-time status board — from sale to permit to install to inspection to close-out. Your office team, field crews, and customers all see the same source of truth. No more "where are we on that job?" calls.</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 rounded-full text-[10px] font-mono bg-reactor-light/8 text-reactor-light/80 border border-reactor-light/10">Live timelines</span>
+                        <span class="px-3 py-1 rounded-full text-[10px] font-mono bg-reactor-light/8 text-reactor-light/80 border border-reactor-light/10">Customer portal</span>
+                        <span class="px-3 py-1 rounded-full text-[10px] font-mono bg-reactor-light/8 text-reactor-light/80 border border-reactor-light/10">Auto-updates</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- JOB VISIBILITY -->
+        <section id="visibility" class="px-6 md:px-10 py-28 border-t border-text-dim/10">
+            <div class="max-w-6xl mx-auto">
+                <div class="reveal text-center mb-16">
+                    <span class="font-mono text-[11px] text-reactor tracking-[0.3em] uppercase">JOB VISIBILITY</span>
+                    <h2 class="font-display text-4xl md:text-6xl font-bold tracking-tight mt-4">Every job. <span class="gradient-text">One screen.</span></h2>
+                    <p class="text-text-muted text-lg max-w-2xl mx-auto mt-4">Stop digging through texts, emails, and spreadsheets. Reactor gives you a single view of every project's status.</p>
+                </div>
+
+                <div class="reveal rounded-2xl border border-text-dim/10 bg-card p-6 md:p-8 overflow-hidden relative">
+                    <div class="absolute -bottom-16 -right-16 w-48 h-48 bg-reactor/5 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="flex items-center justify-between mb-6 relative z-10">
+                        <span class="font-mono text-[10px] text-reactor tracking-widest uppercase">Active Projects</span>
+                        <div class="flex gap-3">
+                            <span class="px-2 py-1 rounded text-[9px] font-mono bg-reactor/10 text-reactor border border-reactor/10">6 in progress</span>
+                            <span class="px-2 py-1 rounded text-[9px] font-mono bg-success/10 text-success border border-success/10">3 completed this week</span>
+                        </div>
+                    </div>
+                    <!-- Project rows -->
+                    <div class="space-y-3 relative z-10">
+                        <div class="p-4 rounded-xl bg-void-light border border-text-dim/8">
+                            <div class="flex items-center justify-between mb-3">
+                                <div><div class="font-body text-sm font-medium">Martinez Home — Full Renovation</div><div class="font-mono text-[9px] text-text-dim mt-0.5">Tampa, FL · Started Feb 28</div></div>
+                                <span class="px-2 py-1 rounded-md text-[9px] font-mono bg-reactor/15 text-reactor font-medium">Installing</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <div class="flex-1 h-1.5 rounded-full bg-success" title="Sold"></div>
+                                <div class="flex-1 h-1.5 rounded-full bg-success" title="Permitted"></div>
+                                <div class="flex-1 h-1.5 rounded-full bg-reactor" title="Installing"></div>
+                                <div class="flex-1 h-1.5 rounded-full bg-text-dim/15" title="Inspection"></div>
+                                <div class="flex-1 h-1.5 rounded-full bg-text-dim/15" title="Complete"></div>
+                            </div>
+                            <div class="flex justify-between mt-1.5"><span class="font-mono text-[8px] text-text-dim">Sold</span><span class="font-mono text-[8px] text-text-dim">Permit</span><span class="font-mono text-[8px] text-reactor">Install</span><span class="font-mono text-[8px] text-text-dim">Inspect</span><span class="font-mono text-[8px] text-text-dim">Done</span></div>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-void-light border border-text-dim/8">
+                            <div class="flex items-center justify-between mb-3">
+                                <div><div class="font-body text-sm font-medium">Chen Residence — HVAC System</div><div class="font-mono text-[9px] text-text-dim mt-0.5">Irvine, CA · Started Mar 5</div></div>
+                                <span class="px-2 py-1 rounded-md text-[9px] font-mono bg-warning/15 text-warning font-medium">Permitting</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <div class="flex-1 h-1.5 rounded-full bg-success"></div>
+                                <div class="flex-1 h-1.5 rounded-full bg-warning"></div>
+                                <div class="flex-1 h-1.5 rounded-full bg-text-dim/15"></div>
+                                <div class="flex-1 h-1.5 rounded-full bg-text-dim/15"></div>
+                                <div class="flex-1 h-1.5 rounded-full bg-text-dim/15"></div>
+                            </div>
+                            <div class="flex justify-between mt-1.5"><span class="font-mono text-[8px] text-text-dim">Sold</span><span class="font-mono text-[8px] text-warning">Permit</span><span class="font-mono text-[8px] text-text-dim">Install</span><span class="font-mono text-[8px] text-text-dim">Inspect</span><span class="font-mono text-[8px] text-text-dim">Done</span></div>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-void-light border border-success/12 relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-r from-success/3 to-transparent"></div>
+                            <div class="flex items-center justify-between mb-3 relative">
+                                <div><div class="font-body text-sm font-medium">Rivera Estate — Roof + Gutters</div><div class="font-mono text-[9px] text-text-dim mt-0.5">Miami, FL · Completed Mar 12</div></div>
+                                <span class="px-2 py-1 rounded-md text-[9px] font-mono bg-success/15 text-success font-medium">Complete</span>
+                            </div>
+                            <div class="flex items-center gap-1 relative">
+                                <div class="flex-1 h-1.5 rounded-full bg-success"></div>
+                                <div class="flex-1 h-1.5 rounded-full bg-success"></div>
+                                <div class="flex-1 h-1.5 rounded-full bg-success"></div>
+                                <div class="flex-1 h-1.5 rounded-full bg-success"></div>
+                                <div class="flex-1 h-1.5 rounded-full bg-success"></div>
+                            </div>
+                            <div class="flex justify-between mt-1.5 relative"><span class="font-mono text-[8px] text-success">Sold</span><span class="font-mono text-[8px] text-success">Permit</span><span class="font-mono text-[8px] text-success">Install</span><span class="font-mono text-[8px] text-success">Inspect</span><span class="font-mono text-[8px] text-success">Done</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- JOB COST & BUDGET DASHBOARD -->
+        <section id="budgets" class="px-6 md:px-10 py-28 border-t border-text-dim/10">
+            <div class="max-w-7xl mx-auto">
+                <div class="reveal text-center mb-16">
+                    <span class="font-mono text-[11px] text-reactor tracking-[0.3em] uppercase">BUDGET TRACKING</span>
+                    <h2 class="font-display text-4xl md:text-6xl font-bold tracking-tight mt-4">Every job. <span class="gradient-text">On budget.</span></h2>
+                    <p class="text-text-muted text-lg max-w-2xl mx-auto mt-4">Reactor tracks labor hours, material costs, and margins in real time for every active project — so you catch overruns before they eat your profit.</p>
+                </div>
+
+                <div class="reveal">
+                    <!-- Dashboard mockup -->
+                    <div class="rounded-2xl border border-text-dim/10 bg-card p-6 md:p-8 relative overflow-hidden">
+                        <div class="absolute -top-16 -left-16 w-48 h-48 bg-reactor/5 rounded-full blur-3xl pointer-events-none"></div>
+
+                        <!-- Header -->
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4 relative z-10">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 rounded-full bg-reactor animate-pulse"></div>
+                                <span class="font-mono text-[10px] text-reactor tracking-widest uppercase">Job Cost Dashboard</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <!-- Summary pills -->
+                                <div class="px-3 py-1.5 rounded-lg bg-void-light border border-text-dim/8 flex items-center gap-2">
+                                    <span class="font-mono text-[9px] text-text-dim">Active jobs</span>
+                                    <span class="font-mono text-[10px] text-white font-medium">6</span>
+                                </div>
+                                <div class="px-3 py-1.5 rounded-lg bg-void-light border border-text-dim/8 flex items-center gap-2">
+                                    <span class="font-mono text-[9px] text-text-dim">Total budget</span>
+                                    <span class="font-mono text-[10px] text-white font-medium">$214,300</span>
+                                </div>
+                                <div class="px-3 py-1.5 rounded-lg bg-success/8 border border-success/12 flex items-center gap-2">
+                                    <span class="font-mono text-[9px] text-text-dim">Avg margin</span>
+                                    <span class="font-mono text-[10px] text-success font-medium">34.2%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Table header -->
+                        <div class="grid grid-cols-12 gap-2 px-4 py-3 rounded-t-xl bg-void-light border border-text-dim/8 border-b-0 relative z-10">
+                            <div class="col-span-3 font-mono text-[9px] text-text-dim uppercase tracking-wider">Job / Customer</div>
+                            <div class="col-span-2 font-mono text-[9px] text-text-dim uppercase tracking-wider">Type</div>
+                            <div class="col-span-1 font-mono text-[9px] text-text-dim uppercase tracking-wider text-right">Est. Hrs</div>
+                            <div class="col-span-1 font-mono text-[9px] text-text-dim uppercase tracking-wider text-right">Actual</div>
+                            <div class="col-span-2 font-mono text-[9px] text-text-dim uppercase tracking-wider text-right">Labor Cost</div>
+                            <div class="col-span-2 font-mono text-[9px] text-text-dim uppercase tracking-wider text-right">Materials</div>
+                            <div class="col-span-1 font-mono text-[9px] text-text-dim uppercase tracking-wider text-right">Status</div>
+                        </div>
+
+                        <!-- Job rows -->
+                        <div class="space-y-0 relative z-10">
+                            <!-- Job 1: On budget -->
+                            <div class="grid grid-cols-12 gap-2 px-4 py-4 border border-text-dim/8 border-t-0 items-center hover:bg-reactor/[0.02] transition-colors">
+                                <div class="col-span-3"><div class="font-body text-xs font-medium">Martinez Home</div><div class="font-mono text-[9px] text-text-dim mt-0.5">Full Renovation</div></div>
+                                <div class="col-span-2"><span class="px-2 py-0.5 rounded text-[9px] font-mono bg-reactor/10 text-reactor border border-reactor/8">Renovation</span></div>
+                                <div class="col-span-1 text-right font-mono text-xs text-text-muted">120 hrs</div>
+                                <div class="col-span-1 text-right font-mono text-xs text-white font-medium">87 hrs</div>
+                                <div class="col-span-2 text-right">
+                                    <div class="font-mono text-xs text-white font-medium">$6,960</div>
+                                    <div class="font-mono text-[9px] text-success">$2,640 under</div>
+                                </div>
+                                <div class="col-span-2 text-right">
+                                    <div class="font-mono text-xs text-white font-medium">$14,200</div>
+                                    <div class="font-mono text-[9px] text-text-dim">of $14,800</div>
+                                </div>
+                                <div class="col-span-1 text-right"><span class="inline-block w-2 h-2 rounded-full bg-success"></span></div>
+                            </div>
+
+                            <!-- Job 2: On budget -->
+                            <div class="grid grid-cols-12 gap-2 px-4 py-4 border border-text-dim/8 border-t-0 items-center hover:bg-reactor/[0.02] transition-colors">
+                                <div class="col-span-3"><div class="font-body text-xs font-medium">Chen Residence</div><div class="font-mono text-[9px] text-text-dim mt-0.5">HVAC Install</div></div>
+                                <div class="col-span-2"><span class="px-2 py-0.5 rounded text-[9px] font-mono bg-orbital-green/10 text-orbital-green border border-orbital-green/8">HVAC</span></div>
+                                <div class="col-span-1 text-right font-mono text-xs text-text-muted">48 hrs</div>
+                                <div class="col-span-1 text-right font-mono text-xs text-white font-medium">22 hrs</div>
+                                <div class="col-span-2 text-right">
+                                    <div class="font-mono text-xs text-white font-medium">$1,760</div>
+                                    <div class="font-mono text-[9px] text-success">on track</div>
+                                </div>
+                                <div class="col-span-2 text-right">
+                                    <div class="font-mono text-xs text-white font-medium">$8,200</div>
+                                    <div class="font-mono text-[9px] text-text-dim">of $8,500</div>
+                                </div>
+                                <div class="col-span-1 text-right"><span class="inline-block w-2 h-2 rounded-full bg-success"></span></div>
+                            </div>
+
+                            <!-- Job 3: Warning -->
+                            <div class="grid grid-cols-12 gap-2 px-4 py-4 border border-warning/10 border-t-0 items-center bg-warning/[0.02] hover:bg-warning/[0.04] transition-colors">
+                                <div class="col-span-3"><div class="font-body text-xs font-medium">Park Property</div><div class="font-mono text-[9px] text-text-dim mt-0.5">Electrical Upgrade</div></div>
+                                <div class="col-span-2"><span class="px-2 py-0.5 rounded text-[9px] font-mono bg-warning/10 text-warning border border-warning/8">Electrical</span></div>
+                                <div class="col-span-1 text-right font-mono text-xs text-text-muted">32 hrs</div>
+                                <div class="col-span-1 text-right font-mono text-xs text-warning font-medium">28 hrs</div>
+                                <div class="col-span-2 text-right">
+                                    <div class="font-mono text-xs text-white font-medium">$2,240</div>
+                                    <div class="font-mono text-[9px] text-warning">87% used, 60% done</div>
+                                </div>
+                                <div class="col-span-2 text-right">
+                                    <div class="font-mono text-xs text-white font-medium">$4,100</div>
+                                    <div class="font-mono text-[9px] text-warning">$380 over est.</div>
+                                </div>
+                                <div class="col-span-1 text-right"><span class="inline-block w-2 h-2 rounded-full bg-warning"></span></div>
+                            </div>
+
+                            <!-- Job 4: On budget -->
+                            <div class="grid grid-cols-12 gap-2 px-4 py-4 border border-text-dim/8 border-t-0 items-center hover:bg-reactor/[0.02] transition-colors">
+                                <div class="col-span-3"><div class="font-body text-xs font-medium">Williams Roof</div><div class="font-mono text-[9px] text-text-dim mt-0.5">Roof Replacement</div></div>
+                                <div class="col-span-2"><span class="px-2 py-0.5 rounded text-[9px] font-mono bg-reactor-light/10 text-reactor-light border border-reactor-light/8">Roofing</span></div>
+                                <div class="col-span-1 text-right font-mono text-xs text-text-muted">64 hrs</div>
+                                <div class="col-span-1 text-right font-mono text-xs text-white font-medium">41 hrs</div>
+                                <div class="col-span-2 text-right">
+                                    <div class="font-mono text-xs text-white font-medium">$3,280</div>
+                                    <div class="font-mono text-[9px] text-success">on track</div>
+                                </div>
+                                <div class="col-span-2 text-right">
+                                    <div class="font-mono text-xs text-white font-medium">$9,400</div>
+                                    <div class="font-mono text-[9px] text-text-dim">of $9,600</div>
+                                </div>
+                                <div class="col-span-1 text-right"><span class="inline-block w-2 h-2 rounded-full bg-success"></span></div>
+                            </div>
+
+                            <!-- Job 5: Completed -->
+                            <div class="grid grid-cols-12 gap-2 px-4 py-4 border border-text-dim/8 border-t-0 rounded-b-xl items-center hover:bg-reactor/[0.02] transition-colors">
+                                <div class="col-span-3"><div class="font-body text-xs font-medium text-text-muted">Rivera Estate</div><div class="font-mono text-[9px] text-text-dim mt-0.5">Roof + Gutters</div></div>
+                                <div class="col-span-2"><span class="px-2 py-0.5 rounded text-[9px] font-mono bg-text-dim/10 text-text-dim border border-text-dim/8">Roofing</span></div>
+                                <div class="col-span-1 text-right font-mono text-xs text-text-dim">80 hrs</div>
+                                <div class="col-span-1 text-right font-mono text-xs text-text-muted">74 hrs</div>
+                                <div class="col-span-2 text-right">
+                                    <div class="font-mono text-xs text-text-muted">$5,920</div>
+                                    <div class="font-mono text-[9px] text-success">$480 saved</div>
+                                </div>
+                                <div class="col-span-2 text-right">
+                                    <div class="font-mono text-xs text-text-muted">$11,800</div>
+                                    <div class="font-mono text-[9px] text-success">under budget</div>
+                                </div>
+                                <div class="col-span-1 text-right"><span class="inline-block w-2 h-2 rounded-full bg-text-dim/40"></span></div>
+                            </div>
+                        </div>
+
+                        <!-- AI Alert -->
+                        <div class="mt-5 p-4 rounded-xl bg-warning/[0.04] border border-warning/12 flex items-start gap-3 relative z-10">
+                            <div class="w-6 h-6 rounded-full bg-warning/15 flex items-center justify-center shrink-0 mt-0.5"><span class="text-[9px] text-warning font-bold">!</span></div>
+                            <div>
+                                <div class="font-body text-xs font-medium text-warning">Budget alert: Park Property</div>
+                                <div class="font-mono text-[10px] text-text-muted mt-0.5">Labor hours are at 87% with the job only 60% complete. Reactor recommends: reassign a second electrician to avoid overtime costs. Projected overrun if unchanged: $1,240.</div>
+                            </div>
+                        </div>
+
+                        <!-- Bottom stats -->
+                        <div class="mt-5 pt-5 border-t border-text-dim/8 grid grid-cols-2 md:grid-cols-4 gap-4 relative z-10">
+                            <div class="p-4 rounded-xl bg-void-light border border-text-dim/8">
+                                <div class="font-mono text-[9px] text-text-dim uppercase mb-1">Total labor tracked</div>
+                                <div class="font-display text-xl font-bold">252 hrs</div>
+                                <div class="font-mono text-[9px] text-success mt-0.5">of 344 hrs estimated</div>
+                            </div>
+                            <div class="p-4 rounded-xl bg-void-light border border-text-dim/8">
+                                <div class="font-mono text-[9px] text-text-dim uppercase mb-1">Total labor cost</div>
+                                <div class="font-display text-xl font-bold">$20,160</div>
+                                <div class="font-mono text-[9px] text-success mt-0.5">$7,360 under budget</div>
+                            </div>
+                            <div class="p-4 rounded-xl bg-void-light border border-text-dim/8">
+                                <div class="font-mono text-[9px] text-text-dim uppercase mb-1">Total materials</div>
+                                <div class="font-display text-xl font-bold">$47,700</div>
+                                <div class="font-mono text-[9px] text-text-muted mt-0.5">of $48,500 budgeted</div>
+                            </div>
+                            <div class="p-4 rounded-xl bg-void-light border border-success/12">
+                                <div class="font-mono text-[9px] text-text-dim uppercase mb-1">Projected margin</div>
+                                <div class="font-display text-xl font-bold gradient-text">34.2%</div>
+                                <div class="font-mono text-[9px] text-success mt-0.5">+2.1% vs target</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PLATFORM INTEGRATION -->
+        <section id="integration" class="px-6 md:px-10 py-28 border-t border-text-dim/10">
+            <div class="max-w-5xl mx-auto">
+                <div class="reveal text-center mb-16">
+                    <span class="font-mono text-[11px] text-reactor-light tracking-[0.3em] uppercase">THE FULL LOOP</span>
+                    <h2 class="font-display text-4xl md:text-5xl font-bold tracking-tight mt-4">Where it all <span class="gradient-text">comes together.</span></h2>
+                    <p class="text-text-muted text-lg max-w-2xl mx-auto mt-4">Reactor is the final piece. When Catalyst closes a deal and Solvent gets the permit approved, Reactor automatically schedules the crew, orders materials, and kicks off the job — while Bond keeps everyone in the loop.</p>
+                </div>
+
+                <div class="reveal rounded-2xl border border-text-dim/10 bg-card p-8">
+                    <div class="flex flex-col md:flex-row items-center gap-4 md:gap-0">
+                        <!-- Catalyst -->
+                        <div class="flex-1 p-5 rounded-xl bg-void-light border border-orbital-orange/15 text-center">
+                            <div class="w-10 h-10 rounded-lg bg-orbital-orange/10 flex items-center justify-center mx-auto mb-3"><svg viewBox="0 0 24 24" class="w-5 h-5 text-orbital-orange" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div>
+                            <div class="font-display text-sm font-bold text-orbital-orange">Catalyst</div>
+                            <div class="font-mono text-[9px] text-text-dim mt-1">Deal closed</div>
+                        </div>
+                        <div class="hidden md:flex items-center px-2"><svg viewBox="0 0 24 24" class="w-5 h-5 text-text-dim" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></div>
+                        <div class="md:hidden"><svg viewBox="0 0 24 24" class="w-5 h-5 text-text-dim" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14m0 0l-4-4m4 4l4-4"/></svg></div>
+
+                        <!-- Solvent -->
+                        <div class="flex-1 p-5 rounded-xl bg-void-light border border-orbital-green/15 text-center">
+                            <div class="w-10 h-10 rounded-lg bg-orbital-green/10 flex items-center justify-center mx-auto mb-3"><svg viewBox="0 0 24 24" class="w-5 h-5 text-orbital-green" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
+                            <div class="font-display text-sm font-bold text-orbital-green">Solvent</div>
+                            <div class="font-mono text-[9px] text-text-dim mt-1">Permit approved</div>
+                        </div>
+                        <div class="hidden md:flex items-center px-2"><svg viewBox="0 0 24 24" class="w-5 h-5 text-text-dim" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></div>
+                        <div class="md:hidden"><svg viewBox="0 0 24 24" class="w-5 h-5 text-text-dim" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14m0 0l-4-4m4 4l4-4"/></svg></div>
+
+                        <!-- Reactor -->
+                        <div class="flex-1 p-5 rounded-xl bg-void-light border border-reactor/20 text-center relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-b from-reactor/5 to-transparent"></div>
+                            <div class="relative">
+                                <div class="w-10 h-10 rounded-lg bg-reactor/10 flex items-center justify-center mx-auto mb-3"><svg viewBox="0 0 24 24" class="w-5 h-5 text-reactor" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.573-1.066z"/><circle cx="12" cy="12" r="3"/></svg></div>
+                                <div class="font-display text-sm font-bold text-reactor">Reactor</div>
+                                <div class="font-mono text-[9px] text-text-dim mt-1">Crew dispatched, job started</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bond — connective layer -->
+                    <div class="mt-4 p-4 rounded-xl bg-void-light border border-bond/15 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-r from-bond/3 via-bond/5 to-bond/3"></div>
+                        <div class="relative flex flex-col md:flex-row items-center gap-3 md:gap-4">
+                            <div class="w-9 h-9 rounded-lg bg-bond/10 flex items-center justify-center shrink-0">
+                                <svg viewBox="0 0 24 24" class="w-4.5 h-4.5 text-bond" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </div>
+                            <div class="text-center md:text-left">
+                                <div class="font-display text-sm font-bold text-bond">Bond <span class="text-text-dim font-normal">— the connective tissue</span></div>
+                                <div class="font-mono text-[10px] text-text-muted mt-0.5">Every job update, crew dispatch, and completion milestone is logged in Bond's living timeline. Your team and your customer always know exactly where things stand.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-6 border-t border-text-dim/8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="flex items-start gap-3">
+                            <svg viewBox="0 0 24 24" class="w-4 h-4 text-orbital-orange shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            <div class="font-mono text-[10px] text-text-muted"><span class="text-text-primary font-medium">From Catalyst:</span> Customer info, job scope, and pricing flow directly into Reactor's project queue</div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <svg viewBox="0 0 24 24" class="w-4 h-4 text-orbital-green shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <div class="font-mono text-[10px] text-text-muted"><span class="text-text-primary font-medium">From Solvent:</span> Permit approval triggers auto-scheduling — no manual handoff needed</div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <svg viewBox="0 0 24 24" class="w-4 h-4 text-reactor shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            <div class="font-mono text-[10px] text-text-muted"><span class="text-text-primary font-medium">Reactor does:</span> Schedule crew, order materials, notify customer, track job to completion</div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <svg viewBox="0 0 24 24" class="w-4 h-4 text-bond shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            <div class="font-mono text-[10px] text-text-muted"><span class="text-text-primary font-medium">Bond tracks it all:</span> Every milestone from deal to install lives in one customer timeline</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BEFORE / AFTER -->
+        <section class="px-6 md:px-10 py-28 border-t border-text-dim/10">
+            <div class="max-w-6xl mx-auto">
+                <div class="reveal text-center mb-20">
+                    <span class="font-mono text-[11px] text-reactor tracking-[0.3em] uppercase">THE DIFFERENCE</span>
+                    <h2 class="font-display text-4xl md:text-6xl font-bold tracking-tight mt-4">From chaos <span class="gradient-text">to clockwork.</span></h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 reveal">
+                    <div class="rounded-2xl border border-text-dim/10 bg-card/60 p-8">
+                        <div class="font-mono text-[10px] text-text-dim tracking-widest uppercase mb-6">WITHOUT REACTOR</div>
+                        <div class="space-y-6">
+                            <div><div class="flex justify-between mb-2"><span class="text-sm text-text-muted">Time spent scheduling per week</span><span class="font-mono text-sm text-text-dim">8–12 hours</span></div><div class="w-full h-2 rounded-full bg-text-dim/15"><div class="h-full rounded-full bg-text-dim/30" style="width:75%;"></div></div></div>
+                            <div><div class="flex justify-between mb-2"><span class="text-sm text-text-muted">Missed or late dispatches</span><span class="font-mono text-sm text-text-dim">15–20%</span></div><div class="w-full h-2 rounded-full bg-text-dim/15"><div class="h-full rounded-full bg-text-dim/30" style="width:60%;"></div></div></div>
+                            <div><div class="flex justify-between mb-2"><span class="text-sm text-text-muted">Customer "where are we?" calls</span><span class="font-mono text-sm text-text-dim">5–10 per day</span></div><div class="w-full h-2 rounded-full bg-text-dim/15"><div class="h-full rounded-full bg-text-dim/30" style="width:70%;"></div></div></div>
+                            <div><div class="flex justify-between mb-2"><span class="text-sm text-text-muted">Inventory surprises on job site</span><span class="font-mono text-sm text-text-dim">Weekly</span></div><div class="w-full h-2 rounded-full bg-text-dim/15"><div class="h-full rounded-full bg-text-dim/30" style="width:50%;"></div></div></div>
+                        </div>
+                    </div>
+                    <div class="rounded-2xl border border-reactor/15 bg-card/60 p-8 relative overflow-hidden">
+                        <div class="absolute -top-10 -right-10 w-40 h-40 bg-reactor/6 rounded-full blur-3xl pointer-events-none"></div>
+                        <div class="font-mono text-[10px] text-reactor tracking-widest uppercase mb-6 relative z-10">WITH REACTOR</div>
+                        <div class="space-y-6 relative z-10">
+                            <div><div class="flex justify-between mb-2"><span class="text-sm text-white font-medium">Time spent scheduling per week</span><span class="font-mono text-sm text-reactor font-medium">Under 1 hour</span></div><div class="w-full h-2 rounded-full bg-text-dim/15"><div class="h-full rounded-full bg-gradient-to-r from-reactor to-reactor-light" style="width:8%;"></div></div></div>
+                            <div><div class="flex justify-between mb-2"><span class="text-sm text-white font-medium">Missed or late dispatches</span><span class="font-mono text-sm text-reactor font-medium">Under 2%</span></div><div class="w-full h-2 rounded-full bg-text-dim/15"><div class="h-full rounded-full bg-gradient-to-r from-reactor to-reactor-light" style="width:5%;"></div></div></div>
+                            <div><div class="flex justify-between mb-2"><span class="text-sm text-white font-medium">Customer "where are we?" calls</span><span class="font-mono text-sm text-reactor font-medium">Near zero</span></div><div class="w-full h-2 rounded-full bg-text-dim/15"><div class="h-full rounded-full bg-gradient-to-r from-reactor to-success" style="width:3%;"></div></div></div>
+                            <div><div class="flex justify-between mb-2"><span class="text-sm text-white font-medium">Inventory surprises on job site</span><span class="font-mono text-sm text-reactor font-medium">Eliminated</span></div><div class="w-full h-2 rounded-full bg-text-dim/15"><div class="h-full rounded-full bg-gradient-to-r from-reactor to-success" style="width:1%;"></div></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section id="demo" class="px-6 md:px-10 py-28 border-t border-text-dim/10 relative">
+            <div class="absolute inset-0 pointer-events-none overflow-hidden"><div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-reactor/6 rounded-full blur-[100px]"></div></div>
+            <div class="max-w-3xl mx-auto text-center relative z-10 reveal">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-reactor/20 bg-reactor/5 mb-8"><span class="w-1.5 h-1.5 rounded-full bg-reactor animate-pulse"></span><span class="font-mono text-[11px] text-reactor tracking-wide">LIMITED EARLY ACCESS</span></div>
+                <h2 class="font-display text-4xl md:text-6xl font-bold tracking-tight mb-6">Stop managing chaos.<br><span class="gradient-text">Start running a machine.</span></h2>
+                <p class="text-text-muted text-lg max-w-xl mx-auto mb-10 leading-relaxed">See how Reactor automates your scheduling, dispatch, inventory, and crew management. We'll walk through your actual operation. 30 minutes, no pressure.</p>
+                <div class="max-w-md mx-auto space-y-4">
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input type="text" placeholder="Your name" class="flex-1 px-5 py-4 rounded-xl bg-card border border-text-dim/12 text-white placeholder:text-text-dim text-sm font-body focus:outline-none focus:border-reactor/40 transition-colors">
+                        <input type="email" placeholder="Work email" class="flex-1 px-5 py-4 rounded-xl bg-card border border-text-dim/12 text-white placeholder:text-text-dim text-sm font-body focus:outline-none focus:border-reactor/40 transition-colors">
+                    </div>
+                    <input type="text" placeholder="Company name" class="w-full px-5 py-4 rounded-xl bg-card border border-text-dim/12 text-white placeholder:text-text-dim text-sm font-body focus:outline-none focus:border-reactor/40 transition-colors">
+                    <input type="text" placeholder="How many crews do you run?" class="w-full px-5 py-4 rounded-xl bg-card border border-text-dim/12 text-white placeholder:text-text-dim text-sm font-body focus:outline-none focus:border-reactor/40 transition-colors">
+                    <button class="cta-btn w-full py-4 rounded-xl font-display text-sm font-semibold text-white tracking-wide flex items-center justify-center gap-3"><span>Request a Demo</span><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></button>
+                    <p class="font-mono text-[10px] text-text-dim tracking-wide">30-MIN WALKTHROUGH · YOUR OPERATION · NO COMMITMENT</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="px-6 md:px-10 py-10 border-t border-text-dim/10">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-2">
+                    <svg viewBox="0 0 56 56" class="w-6 h-6" style="overflow:visible;">
+                        <circle class="atom-glow" cx="28" cy="28" r="6" fill="#A855F7" opacity="0.12"/>
+                        <g class="atom-orbit-1"><ellipse cx="28" cy="28" rx="18" ry="6" fill="none" stroke="#F97316" stroke-width="0.8" opacity="0.6" transform="rotate(-30 28 28)"/></g>
+                        <g class="atom-orbit-2"><ellipse cx="28" cy="28" rx="18" ry="6" fill="none" stroke="#A855F7" stroke-width="1" opacity="0.7" transform="rotate(30 28 28)"/></g>
+                        <g class="atom-orbit-3"><ellipse cx="28" cy="28" rx="18" ry="6" fill="none" stroke="#0DD98B" stroke-width="0.8" opacity="0.6" transform="rotate(90 28 28)"/></g>
+                        <circle cx="28" cy="28" r="3.5" fill="#A855F7"/>
+                        <circle cx="28" cy="28" r="1.5" fill="#C084FC" opacity="0.6"/>
+                    </svg>
+                    <span class="font-display text-sm font-semibold text-reactor">reactor</span>
+                    <a href="/" class="text-text-dim text-xs ml-2 hover:text-white transition-colors">leviosai</a><span class="text-text-dim text-xs">· © 2026</span>
+                </div>
+                <div class="flex gap-8 font-mono text-[10px] uppercase tracking-widest text-text-dim">
+                    <a href="/" class="hover:text-white transition-colors">Home</a>
+                    <a href="/#cta-section" class="hover:text-white transition-colors">Contact</a>
+                    <a href="/catalyst/" class="hover:text-white transition-colors">Catalyst</a>
+                    <a href="/solvent/" class="hover:text-white transition-colors">Solvent</a><a href="/bond/" class="hover:text-white transition-colors">Bond</a><a href="/reactor/" class="hover:text-white transition-colors">Reactor</a><a href="/privacy/" class="hover:text-white transition-colors">Privacy</a><a href="/terms/" class="hover:text-white transition-colors">Terms</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+
+
+    <script>
+        // Mobile menu
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        let menuOpen = false;
+        if (mobileToggle && mobileMenu) {
+            mobileToggle.addEventListener('click', () => {
+                menuOpen = !menuOpen;
+                if (menuOpen) {
+                    mobileMenu.classList.add('open');
+                } else {
+                    mobileMenu.classList.remove('open');
+                }
+            });
+            document.querySelectorAll('#mobile-menu a').forEach(a => {
+                a.addEventListener('click', () => {
+                    menuOpen = false;
+                    mobileMenu.classList.remove('open');
+                });
+            });
+        }
+    </script>
+
+    
+    <script>
+        // Form submission
+        (function() {
+            document.querySelectorAll('.cta-btn').forEach(function(btn) {
+                var parent = btn.closest('.space-y-4') || btn.closest('.max-w-md') || btn.closest('.max-w-3xl');
+                if (!parent) return;
+                var inputs = parent.querySelectorAll('input, select');
+                if (inputs.length === 0) return;
+                
+                // Only attach to buttons, not nav links
+                if (btn.tagName === 'A' && btn.getAttribute('href') && btn.getAttribute('href').indexOf('#') === 0 && btn.getAttribute('href').length > 1) return;
+                
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    var fields = {};
+                    var hasEmpty = false;
+                    
+                    inputs.forEach(function(input) {
+                        var val = input.value ? input.value.trim() : '';
+                        var placeholder = input.placeholder || '';
+                        
+                        if (input.tagName === 'SELECT') {
+                            val = input.options[input.selectedIndex].text;
+                            if (val === 'Select your market') val = '';
+                        }
+                        
+                        if (!val) {
+                            hasEmpty = true;
+                            input.style.borderColor = 'rgba(248,113,113,0.5)';
+                            setTimeout(function() { input.style.borderColor = ''; }, 2000);
+                        } else {
+                            fields[placeholder || input.name || 'field'] = val;
+                        }
+                    });
+                    
+                    if (hasEmpty) return;
+                    
+                    var btnSpan = btn.querySelector('span');
+                    var originalText = btnSpan ? btnSpan.textContent : '';
+                    var btnSvg = btn.querySelector('svg');
+                    if (btnSpan) btnSpan.textContent = 'Sending...';
+                    if (btnSvg) btnSvg.style.display = 'none';
+                    btn.style.pointerEvents = 'none';
+                    btn.style.opacity = '0.7';
+                    
+                    var formData = new FormData();
+                    for (var key in fields) {
+                        formData.append(key, fields[key]);
+                    }
+                    formData.append('_subject', 'New Demo Request — ' + (fields['Company name'] || 'Website'));
+                    formData.append('_template', 'table');
+                    formData.append('_captcha', 'false');
+                    formData.append('Page', document.title);
+                    
+                    fetch('https://formsubmit.co/ajax/christian@leviosai.io', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(function(res) { return res.json(); })
+                    .then(function() { showConfirmation(parent); })
+                    .catch(function() { showConfirmation(parent); });
+                });
+            });
+            
+            function showConfirmation(container) {
+                container.innerHTML = '<div style="text-align:center;padding:2rem 0;">' +
+                    '<div style="width:56px;height:56px;border-radius:50%;background:rgba(13,217,139,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">' +
+                    '<svg viewBox="0 0 24 24" style="width:28px;height:28px;color:#0DD98B;" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+                    '</div>' +
+                    '<h3 style="font-size:1.5rem;font-weight:700;color:#F2F2F2;margin-bottom:0.5rem;">Talk to you soon!</h3>' +
+                    '<p style="font-size:0.95rem;color:#A3A3A3;">We\u2019ll reach out within 24 hours to get you set up.</p>' +
+                    '</div>';
+            }
+        })();
+    </script>
+</body></html>

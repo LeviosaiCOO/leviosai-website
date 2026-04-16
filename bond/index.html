@@ -1,0 +1,639 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bond — The AI-Native CRM | Leviosai</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'void': '#0A0A0A',
+                        'void-light': '#0E0E0E',
+                        'card': '#121212',
+                        'bond': '#6366F1',
+                        'bond-light': '#8B8BF5',
+                        'bond-accent': '#B366D9',
+                        'text-primary': '#F2F2F2',
+                        'text-muted': '#A3A3A3',
+                        'text-dim': '#737373',
+                        'success': '#34D399',
+                        'warning': '#FBBF24',
+                        'danger': '#F87171',
+                        'catalyst': '#F97316',
+                        'solvent': '#0DD98B',
+                        'reactor': '#A855F7',
+                    },
+                    fontFamily: {
+                        display: ['"Outfit"', 'sans-serif'],
+                        body: ['"Space Grotesk"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * { box-sizing: border-box; }
+        body { background-color: #0A0A0A; color: #F2F2F2; overflow-x: hidden; }
+
+        .hero-mesh { position: fixed; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; }
+        .hero-mesh::before { content: ''; position: absolute; top: -25%; left: -15%; width: 70%; height: 70%; background: radial-gradient(ellipse at center, rgba(99,102,241,0.09) 0%, transparent 55%); animation: drift1 14s ease-in-out infinite alternate; }
+        .hero-mesh::after { content: ''; position: absolute; bottom: -20%; right: -10%; width: 60%; height: 60%; background: radial-gradient(ellipse at center, rgba(179,102,217,0.05) 0%, transparent 50%); animation: drift2 16s ease-in-out infinite alternate; }
+        .grid-overlay { position: fixed; inset: 0; background-image: linear-gradient(rgba(99,102,241,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.015) 1px, transparent 1px); background-size: 60px 60px; z-index: 0; pointer-events: none; }
+
+        @keyframes drift1 { 0% { transform: translate(0,0); } 100% { transform: translate(4%,6%); } }
+        @keyframes drift2 { 0% { transform: translate(0,0); } 100% { transform: translate(-5%,-4%); } }
+        @keyframes fadeUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+
+        .anim-fade-up { opacity: 0; animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .anim-fade-in { opacity: 0; animation: fadeIn 1s ease forwards; }
+
+        /* Bond logo — fused 'bo' chain link */
+        @keyframes linkPulse { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; } }
+        @keyframes linkGlow { 0%, 100% { filter: drop-shadow(0 0 3px rgba(99,102,241,0.3)); } 50% { filter: drop-shadow(0 0 8px rgba(99,102,241,0.5)); } }
+        @keyframes linkFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+        .bond-logo-mark { animation: linkFloat 4s ease-in-out infinite; }
+        .bond-logo-glow { animation: linkGlow 3s ease-in-out infinite; }
+        .bond-logo-pulse { animation: linkPulse 2.5s ease-in-out infinite; }
+
+        .gradient-text { background: linear-gradient(135deg, #6366F1 0%, #B366D9 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+        .cta-btn { position: relative; background: linear-gradient(135deg, #6366F1, #8B8BF5); transition: all 0.4s ease; overflow: hidden; }
+        .cta-btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, #8B8BF5, #B366D9); opacity: 0; transition: opacity 0.4s ease; }
+        .cta-btn:hover::before { opacity: 1; }
+        .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px -8px rgba(99,102,241,0.4); }
+        .cta-btn span, .cta-btn svg { position: relative; z-index: 1; }
+
+        .cta-btn-outline { border: 1px solid rgba(99,102,241,0.3); transition: all 0.3s ease; }
+        .cta-btn-outline:hover { border-color: rgba(99,102,241,0.6); background: rgba(99,102,241,0.05); }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0A0A0A; }
+        ::-webkit-scrollbar-thumb { background: #6366F1; border-radius: 2px; }
+
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        .feature-card { background: #121212; border: 1px solid rgba(99,102,241,0.06); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .feature-card:hover { border-color: rgba(99,102,241,0.18); transform: translateY(-3px); box-shadow: 0 16px 48px -12px rgba(99,102,241,0.10); }
+
+        /* Timeline connector */
+        .timeline-dot { position: relative; }
+        .timeline-dot::before { content: ''; position: absolute; left: 50%; top: 100%; width: 1px; height: calc(100% + 12px); background: linear-gradient(to bottom, rgba(99,102,241,0.3), transparent); transform: translateX(-50%); }
+        .timeline-dot:last-child::before { display: none; }
+            .nav-dropdown { display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); padding-top: 12px; }
+        .nav-parent:hover .nav-dropdown { display: block; }
+        .nav-dropdown-inner { background: rgba(18,18,18,0.95); border: 1px solid rgba(115,115,115,0.15); border-radius: 12px; padding: 8px; min-width: 220px; backdrop-filter: blur(20px); }
+        .nav-dropdown a { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; transition: background 0.2s; font-size: 14px; }
+        .nav-dropdown a:hover { background: rgba(115,115,115,0.1); }
+        .nav-dd-icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+            .mobile-menu { position: fixed; inset: 0; z-index: 100; background: rgba(10,10,15,0.98); backdrop-filter: blur(20px); display: none; flex-direction: column; justify-content: center; align-items: center; gap: 2rem; }
+        .mobile-menu.open { display: flex; }
+    </style>
+</head>
+<body class="min-h-screen w-screen relative font-body selection:bg-bond/20 selection:text-white">
+
+    <div class="hero-mesh"></div>
+    <div class="grid-overlay"></div>
+
+    <div class="relative z-10 min-h-screen w-full">
+
+        <!-- NAV -->
+        <header class="fixed top-0 left-0 right-0 z-50 px-6 md:px-10 py-5 flex justify-between items-center anim-fade-in" style="animation-delay:0.1s; background: linear-gradient(to bottom, rgba(10,10,10,0.97) 0%, rgba(10,10,10,0) 100%);">
+            <a href="/" class="flex items-center gap-2">
+                <svg viewBox="0 0 56 40" class="w-9 h-7 bond-logo-mark" style="overflow:visible;">
+                    <defs>
+                        <filter id="bondGlow"><feGaussianBlur stdDeviation="1.5" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                    </defs>
+                    <g class="bond-logo-glow">
+                        <!-- Fused chain link — two interlocking rounded rects -->
+                        <rect x="4" y="8" width="24" height="24" rx="12" fill="none" stroke="#6366F1" stroke-width="2.5" class="bond-logo-pulse"/>
+                        <rect x="20" y="8" width="24" height="24" rx="12" fill="none" stroke="#B366D9" stroke-width="2.5" class="bond-logo-pulse" style="animation-delay:0.3s;"/>
+                        <!-- Intersection glow -->
+                        <rect x="20" y="10" width="8" height="20" rx="4" fill="rgba(99,102,241,0.15)"/>
+                        <!-- Connection dots -->
+                        <circle cx="24" cy="14" r="1.5" fill="#8B8BF5" opacity="0.8"/>
+                        <circle cx="24" cy="26" r="1.5" fill="#8B8BF5" opacity="0.8"/>
+                    </g>
+                </svg>
+                <span class="font-display text-xl font-bold tracking-tight text-bond">bond</span>
+                <a href="/" class="hidden md:inline text-text-dim text-xs ml-2 hover:text-white transition-colors">by leviosai</a>
+            </a>
+            <nav class="hidden md:flex items-center gap-10">
+                <a href="/" class="text-sm text-text-muted hover:text-white transition-colors">Home</a>
+                <div class="relative nav-parent">
+                <button class="text-sm text-text-muted hover:text-white transition-colors flex items-center gap-1">Products<svg class="w-3.5 h-3.5 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+                <div class="nav-dropdown"><div class="nav-dropdown-inner">
+                    <a href="/catalyst/"><div class="nav-dd-icon" style="background:rgba(249,115,22,0.12);"><svg viewBox="0 0 24 24" class="w-4 h-4" style="color:#F97316;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><span class="text-sm text-white">Catalyst</span><p style="font-size:11px;" class="text-text-dim">Sales intelligence</p></div></a>
+                    <a href="/solvent/"><div class="nav-dd-icon" style="background:rgba(13,217,139,0.12);"><svg viewBox="0 0 24 24" class="w-4 h-4" style="color:#0DD98B;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><span class="text-sm text-white">Solvent</span><p style="font-size:11px;" class="text-text-dim">Permit Intelligence</p></div></a>
+                    <a href="/bond/"><div class="nav-dd-icon" style="background:rgba(99,102,241,0.12);"><svg viewBox="0 0 24 24" class="w-4 h-4" style="color:#6366F1;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><span class="text-sm text-white">Bond</span><p style="font-size:11px;" class="text-text-dim">AI-native CRM</p></div></a>
+                    <a href="/reactor/"><div class="nav-dd-icon" style="background:rgba(168,85,247,0.12);"><svg viewBox="0 0 24 24" class="w-4 h-4" style="color:#A855F7;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3"/></svg></div><div><span class="text-sm text-white">Reactor</span><p style="font-size:11px;" class="text-text-dim">Operations Intelligence</p></div></a>
+                </div></div>
+            </div>
+                <a href="/bond/pricing/" class="text-sm text-text-muted hover:text-white transition-colors">Pricing</a>
+                <a href="#demo" class="cta-btn px-5 py-2.5 rounded-full text-sm font-semibold text-white"><span>Request a Demo</span></a>
+            </nav>
+            <button id="mobile-toggle" class="md:hidden flex flex-col gap-1.5 z-[110]"><span class="w-6 h-px bg-white"></span><span class="w-4 h-px bg-white"></span></button>
+        </header>
+    <div class="mobile-menu" id="mobile-menu">
+        <a href="/" class="font-display text-3xl font-bold text-white">Home</a>
+        <a href="/catalyst/" class="font-display text-2xl text-text-muted hover:text-catalyst transition-colors">Catalyst</a>
+        <a href="/solvent/" class="font-display text-2xl text-text-muted hover:text-solvent transition-colors">Solvent</a>
+        <a href="/bond/" class="font-display text-2xl text-text-muted hover:text-bond transition-colors">Bond</a>
+        <a href="/reactor/" class="font-display text-2xl text-text-muted hover:text-reactor transition-colors">Reactor</a>
+        <a href="/pricing/" class="font-display text-2xl text-text-muted hover:text-white transition-colors">Pricing</a>
+        <a href="/team/" class="font-display text-2xl text-text-muted hover:text-white transition-colors">Team</a>
+    </div>
+
+
+        <!-- HERO -->
+        <section class="min-h-screen flex flex-col justify-center px-6 md:px-10 pt-28 pb-20 max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div class="space-y-8">
+                    <div class="anim-fade-up" style="animation-delay:0.2s">
+                        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-bond/20 bg-bond/5 mb-6">
+                            <svg viewBox="0 0 24 24" class="w-3.5 h-3.5 text-bond" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            <span class="font-mono text-[11px] text-bond tracking-wide">THE AI-NATIVE CRM</span>
+                        </div>
+                    </div>
+                    <h1 class="font-display text-5xl md:text-7xl font-extrabold leading-[0.93] tracking-tight anim-fade-up" style="animation-delay:0.35s">The CRM that<br>already knows<br><span class="gradient-text">everything.</span></h1>
+                    <p class="text-lg md:text-xl text-text-muted max-w-lg leading-relaxed anim-fade-up" style="animation-delay:0.5s">Bond isn't another CRM with AI bolted on. It's the connective tissue between Catalyst, Solvent, and Reactor — every customer interaction, every deal stage, every permit, every job update, in one living timeline. Zero manual data entry.</p>
+                    <div class="flex flex-col sm:flex-row gap-4 pt-2 anim-fade-up" style="animation-delay:0.65s">
+                        <a href="#demo" class="cta-btn px-8 py-4 rounded-full font-display text-sm font-semibold text-white tracking-wide flex items-center gap-3"><span>Request a Demo</span><svg viewBox="0 0 56 40" class="w-5 h-4" style="overflow:visible;"><rect x="4" y="8" width="24" height="24" rx="12" fill="none" stroke="currentColor" stroke-width="2.5"/><rect x="20" y="8" width="24" height="24" rx="12" fill="none" stroke="currentColor" stroke-width="2.5" opacity="0.7"/><circle cx="24" cy="14" r="1.5" fill="currentColor" opacity="0.8"/><circle cx="24" cy="26" r="1.5" fill="currentColor" opacity="0.8"/></svg></a>
+                        <a href="#timeline" class="cta-btn-outline px-8 py-4 rounded-full text-sm font-medium text-text-muted hover:text-white flex items-center gap-2">See the Timeline<svg viewBox="0 0 56 40" class="w-5 h-3.5" style="overflow:visible;"><rect x="4" y="8" width="24" height="24" rx="12" fill="none" stroke="currentColor" stroke-width="2.5"/><rect x="20" y="8" width="24" height="24" rx="12" fill="none" stroke="currentColor" stroke-width="2.5" opacity="0.7"/><circle cx="24" cy="14" r="1.5" fill="currentColor" opacity="0.6"/><circle cx="24" cy="26" r="1.5" fill="currentColor" opacity="0.6"/></svg></a>
+                    </div>
+                </div>
+
+                <!-- Hero visual: Full opportunity dashboard -->
+                <div class="anim-fade-in" style="animation-delay:0.8s">
+                    <div class="relative rounded-2xl border border-text-dim/15 bg-card p-4 overflow-hidden">
+                        <div class="absolute -top-20 -right-20 w-60 h-60 bg-bond/8 rounded-full blur-3xl pointer-events-none"></div>
+
+                        <!-- Dashboard header bar -->
+                        <div class="flex items-center justify-between mb-4 relative z-10">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-bond/15 flex items-center justify-center"><span class="font-display text-sm font-bold text-bond">SJ</span></div>
+                                <div>
+                                    <div class="font-display text-sm font-bold">Sarah Johnson — Solar Install</div>
+                                    <div class="font-mono text-[9px] text-text-dim">4821 Bayshore Blvd · Tampa, FL 33611 · Opportunity #OPP-2847</div>
+                                </div>
+                            </div>
+                            <div class="flex gap-1.5">
+                                <span class="px-2 py-1 rounded-md text-[8px] font-mono bg-success/15 text-success">Active</span>
+                                <span class="px-2 py-1 rounded-md text-[8px] font-mono bg-bond/15 text-bond">Score: 94</span>
+                            </div>
+                        </div>
+
+                        <!-- 4-panel grid pulling from each product -->
+                        <div class="grid grid-cols-2 gap-2 relative z-10">
+
+                            <!-- Panel 1: Catalyst — Deal info -->
+                            <div class="rounded-xl bg-void-light border border-catalyst/10 p-3">
+                                <div class="flex items-center gap-1.5 mb-2.5">
+                                    <div class="w-4 h-4 rounded bg-catalyst/15 flex items-center justify-center"><svg viewBox="0 0 24 24" class="w-2.5 h-2.5 text-catalyst" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div>
+                                    <span class="font-mono text-[8px] text-catalyst tracking-widest uppercase">Catalyst</span>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">Deal value</span><span class="font-mono text-[9px] text-white font-medium">$42,800</span></div>
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">System</span><span class="font-mono text-[9px] text-white">12.4 kW + battery</span></div>
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">Close date</span><span class="font-mono text-[9px] text-white">Feb 14, 2026</span></div>
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">Financing</span><span class="font-mono text-[9px] text-success">0% / 18mo approved</span></div>
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">Lead source</span><span class="font-mono text-[9px] text-text-muted">Google Ads</span></div>
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">Proposal views</span><span class="font-mono text-[9px] text-text-muted">7x (4m avg)</span></div>
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">Rep</span><span class="font-mono text-[9px] text-text-muted">Mike Torres</span></div>
+                                </div>
+                            </div>
+
+                            <!-- Panel 2: Solvent — Permit status -->
+                            <div class="rounded-xl bg-void-light border border-solvent/10 p-3">
+                                <div class="flex items-center gap-1.5 mb-2.5">
+                                    <div class="w-4 h-4 rounded bg-solvent/15 flex items-center justify-center"><svg viewBox="0 0 24 24" class="w-2.5 h-2.5 text-solvent" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
+                                    <span class="font-mono text-[8px] text-solvent tracking-widest uppercase">Solvent</span>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">AHJ</span><span class="font-mono text-[9px] text-white">Hillsborough County</span></div>
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">Permit #</span><span class="font-mono text-[9px] text-white">HBC-2026-04182</span></div>
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">Filed</span><span class="font-mono text-[9px] text-white">Feb 14, 2026</span></div>
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">Status</span><span class="font-mono text-[9px] text-solvent font-medium">Approved</span></div>
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">Turnaround</span><span class="font-mono text-[9px] text-solvent">9 days (avg 28)</span></div>
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">Corrections</span><span class="font-mono text-[9px] text-text-muted">1 (auto-fixed)</span></div>
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">Inspection</span><span class="font-mono text-[9px] text-warning">Scheduled Mar 20</span></div>
+                                </div>
+                            </div>
+
+                            <!-- Panel 3: Reactor — Job & crew -->
+                            <div class="rounded-xl bg-void-light border border-reactor/10 p-3">
+                                <div class="flex items-center gap-1.5 mb-2.5">
+                                    <div class="w-4 h-4 rounded bg-reactor/15 flex items-center justify-center"><svg viewBox="0 0 24 24" class="w-2.5 h-2.5 text-reactor" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37"/><circle cx="12" cy="12" r="3"/></svg></div>
+                                    <span class="font-mono text-[8px] text-reactor tracking-widest uppercase">Reactor</span>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">Crew</span><span class="font-mono text-[9px] text-white">Team Alpha (4 ppl)</span></div>
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">Start date</span><span class="font-mono text-[9px] text-white">Feb 25, 2026</span></div>
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">Est. completion</span><span class="font-mono text-[9px] text-white">Mar 18, 2026</span></div>
+                                    <div class="flex justify-between items-center"><span class="font-mono text-[9px] text-text-dim">Progress</span><div class="flex items-center gap-1.5"><div class="w-16 h-1.5 rounded-full bg-text-dim/15"><div class="h-full rounded-full bg-reactor" style="width:72%;"></div></div><span class="font-mono text-[8px] text-reactor">72%</span></div></div>
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">Labor hours</span><span class="font-mono text-[9px] text-success">62 of 96 (on track)</span></div>
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">Materials</span><span class="font-mono text-[9px] text-success">$18.2K of $18.6K</span></div>
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">Budget status</span><span class="font-mono text-[9px] text-success font-medium">On budget</span></div>
+                                </div>
+                            </div>
+
+                            <!-- Panel 4: Bond — Communications & AI -->
+                            <div class="rounded-xl bg-void-light border border-bond/10 p-3">
+                                <div class="flex items-center gap-1.5 mb-2.5">
+                                    <div class="w-4 h-4 rounded bg-bond/15 flex items-center justify-center"><svg viewBox="0 0 24 24" class="w-2.5 h-2.5 text-bond" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></div>
+                                    <span class="font-mono text-[8px] text-bond tracking-widest uppercase">Bond</span>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">Touchpoints</span><span class="font-mono text-[9px] text-white">14 total</span></div>
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">Calls</span><span class="font-mono text-[9px] text-text-muted">3 (12m total)</span></div>
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">Texts</span><span class="font-mono text-[9px] text-text-muted">6 sent / 4 received</span></div>
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">Emails</span><span class="font-mono text-[9px] text-text-muted">5 (2 auto-sent)</span></div>
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">Last contact</span><span class="font-mono text-[9px] text-white">Mar 10 (auto)</span></div>
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">NPS</span><span class="font-mono text-[9px] text-success font-medium">9/10</span></div>
+                                    <div class="flex justify-between"><span class="font-mono text-[9px] text-text-dim">Sentiment</span><span class="font-mono text-[9px] text-success">Very positive</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bottom: Stage progress bar + AI recommendation -->
+                        <div class="mt-3 relative z-10">
+                            <!-- Stage bar -->
+                            <div class="p-3 rounded-xl bg-void-light border border-text-dim/8 mb-2">
+                                <div class="flex items-center gap-1 mb-1.5">
+                                    <div class="flex-1 h-2 rounded-full bg-success"></div>
+                                    <div class="flex-1 h-2 rounded-full bg-success"></div>
+                                    <div class="flex-1 h-2 rounded-full bg-success"></div>
+                                    <div class="flex-1 h-2 rounded-full bg-reactor"></div>
+                                    <div class="flex-1 h-2 rounded-full bg-text-dim/15"></div>
+                                    <div class="flex-1 h-2 rounded-full bg-text-dim/15"></div>
+                                </div>
+                                <div class="flex justify-between"><span class="font-mono text-[7px] text-text-dim">Lead</span><span class="font-mono text-[7px] text-text-dim">Closed</span><span class="font-mono text-[7px] text-text-dim">Permit</span><span class="font-mono text-[7px] text-reactor">Install</span><span class="font-mono text-[7px] text-text-dim">Inspect</span><span class="font-mono text-[7px] text-text-dim">Complete</span></div>
+                            </div>
+                            <!-- AI suggestion -->
+                            <div class="p-2.5 rounded-xl bg-bond/[0.04] border border-bond/12 flex items-center gap-2.5">
+                                <div class="w-5 h-5 rounded-full bg-bond/15 flex items-center justify-center shrink-0"><svg viewBox="0 0 24 24" class="w-3 h-3 text-bond" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div>
+                                <span class="font-mono text-[9px] text-text-muted"><span class="text-bond font-medium">Bond AI:</span> NPS 9/10 + job completes in 8 days → Queue referral request + schedule post-install review with homeowner</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- KEY METRICS -->
+        <section class="border-y border-text-dim/10 py-16 px-6 md:px-10">
+            <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 reveal">
+                <div class="text-center"><div class="font-display text-4xl md:text-5xl font-extrabold gradient-text">0 hrs</div><p class="text-text-muted text-sm mt-2">Manual data entry per week</p></div>
+                <div class="text-center"><div class="font-display text-4xl md:text-5xl font-extrabold gradient-text">100%</div><p class="text-text-muted text-sm mt-2">Activity auto-logged</p></div>
+                <div class="text-center"><div class="font-display text-4xl md:text-5xl font-extrabold gradient-text">360°</div><p class="text-text-muted text-sm mt-2">Customer view across products</p></div>
+                <div class="text-center"><div class="font-display text-4xl md:text-5xl font-extrabold gradient-text">AI</div><p class="text-text-muted text-sm mt-2">Next-action recommendations</p></div>
+            </div>
+        </section>
+
+        <!-- UNIFIED TIMELINE -->
+        <section id="timeline" class="px-6 md:px-10 py-28 max-w-7xl mx-auto">
+            <div class="reveal text-center mb-20">
+                <span class="font-mono text-[11px] text-bond tracking-[0.3em] uppercase">UNIFIED TIMELINE</span>
+                <h2 class="font-display text-4xl md:text-6xl font-bold tracking-tight mt-4 mb-5">One customer.<br><span class="text-text-muted">One complete story.</span></h2>
+                <p class="text-text-muted text-lg max-w-2xl mx-auto">Every interaction across Catalyst, Solvent, and Reactor feeds into a single living timeline. No one on your team ever asks "what's the status?" again.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center reveal">
+                <div class="space-y-5">
+                    <h3 class="font-display text-3xl md:text-4xl font-bold tracking-tight">Every touchpoint.<br>Automatically captured.</h3>
+                    <p class="text-text-muted text-lg leading-relaxed max-w-md">When Catalyst sends a proposal, it shows up in the timeline. When Solvent files a permit, it's there. When Reactor dispatches a crew, it's logged. When Bond sends a customer update, that's recorded too. Your team never enters a single note.</p>
+                    <div class="space-y-3 pt-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 rounded-full bg-catalyst"></div>
+                            <span class="font-body text-sm text-text-muted"><span class="text-catalyst font-medium">Catalyst</span> — leads, proposals, follow-ups, closed deals</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 rounded-full bg-solvent"></div>
+                            <span class="font-body text-sm text-text-muted"><span class="text-solvent font-medium">Solvent</span> — permits filed, corrections, approvals</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 rounded-full bg-reactor"></div>
+                            <span class="font-body text-sm text-text-muted"><span class="text-reactor font-medium">Reactor</span> — scheduling, dispatch, job progress, completion</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 rounded-full bg-bond"></div>
+                            <span class="font-body text-sm text-text-muted"><span class="text-bond font-medium">Bond</span> — calls, texts, emails, customer updates, AI insights</span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="rounded-2xl border border-text-dim/10 bg-card p-6">
+                        <div class="flex items-center justify-between mb-5"><span class="font-mono text-[10px] text-bond tracking-widest uppercase">Customer Timeline</span><span class="font-mono text-[10px] text-text-dim">Sarah Johnson</span></div>
+                        <div class="relative">
+                            <!-- Timeline line -->
+                            <div class="absolute left-3 top-0 bottom-0 w-px bg-gradient-to-b from-catalyst via-solvent via-reactor to-bond opacity-20"></div>
+                            <div class="space-y-4 pl-10 relative">
+                                <div class="relative"><div class="absolute -left-[29px] w-6 h-6 rounded-full bg-catalyst/15 flex items-center justify-center"><div class="w-2 h-2 rounded-full bg-catalyst"></div></div><div class="font-mono text-[9px] text-text-dim">Feb 12 · Catalyst</div><div class="font-body text-xs text-text-muted mt-0.5">Lead captured from Google Ads · Scored 91/100</div></div>
+                                <div class="relative"><div class="absolute -left-[29px] w-6 h-6 rounded-full bg-catalyst/15 flex items-center justify-center"><div class="w-2 h-2 rounded-full bg-catalyst"></div></div><div class="font-mono text-[9px] text-text-dim">Feb 12 · Catalyst</div><div class="font-body text-xs text-text-muted mt-0.5">Proposal auto-sent · $28,400 full renovation</div></div>
+                                <div class="relative"><div class="absolute -left-[29px] w-6 h-6 rounded-full bg-bond/15 flex items-center justify-center"><div class="w-2 h-2 rounded-full bg-bond"></div></div><div class="font-mono text-[9px] text-text-dim">Feb 13 · Bond</div><div class="font-body text-xs text-text-muted mt-0.5">Customer called — 4m 32s — asked about financing</div></div>
+                                <div class="relative"><div class="absolute -left-[29px] w-6 h-6 rounded-full bg-catalyst/15 flex items-center justify-center"><div class="w-2 h-2 rounded-full bg-catalyst"></div></div><div class="font-mono text-[9px] text-text-dim">Feb 14 · Catalyst</div><div class="font-body text-xs text-text-muted mt-0.5">Deal closed · Contract signed</div></div>
+                                <div class="relative"><div class="absolute -left-[29px] w-6 h-6 rounded-full bg-solvent/15 flex items-center justify-center"><div class="w-2 h-2 rounded-full bg-solvent"></div></div><div class="font-mono text-[9px] text-text-dim">Feb 14 · Solvent</div><div class="font-body text-xs text-text-muted mt-0.5">Permit filed to Hillsborough County</div></div>
+                                <div class="relative"><div class="absolute -left-[29px] w-6 h-6 rounded-full bg-solvent/15 flex items-center justify-center"><div class="w-2 h-2 rounded-full bg-solvent"></div></div><div class="font-mono text-[9px] text-text-dim">Feb 23 · Solvent</div><div class="font-body text-xs text-text-muted mt-0.5">Permit approved (9 days)</div></div>
+                                <div class="relative"><div class="absolute -left-[29px] w-6 h-6 rounded-full bg-reactor/15 flex items-center justify-center"><div class="w-2 h-2 rounded-full bg-reactor"></div></div><div class="font-mono text-[9px] text-text-dim">Feb 25 · Reactor</div><div class="font-body text-xs text-text-muted mt-0.5">Team Alpha dispatched · Job started</div></div>
+                                <div class="relative"><div class="absolute -left-[29px] w-6 h-6 rounded-full bg-bond/15 flex items-center justify-center"><div class="w-2 h-2 rounded-full bg-bond"></div></div><div class="font-mono text-[9px] text-text-dim">Mar 10 · Bond</div><div class="font-body text-xs text-bond mt-0.5">Auto-sent: "Your project is 72% complete"</div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FEATURES -->
+        <section id="features" class="px-6 md:px-10 py-28 border-t border-text-dim/10">
+            <div class="max-w-7xl mx-auto">
+                <div class="reveal text-center mb-20">
+                    <span class="font-mono text-[11px] text-bond tracking-[0.3em] uppercase">WHAT BOND DOES</span>
+                    <h2 class="font-display text-4xl md:text-6xl font-bold tracking-tight mt-4 mb-5">Not another CRM.<br><span class="text-text-muted">The only CRM.</span></h2>
+                    <p class="text-text-muted text-lg max-w-2xl mx-auto">Built from scratch to work with AI — not retrofitted. Bond knows your customers better than you do because it sees everything.</p>
+                </div>
+
+                <!-- Feature 1: Smart Pipeline -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-28 reveal">
+                    <div class="order-2 lg:order-1">
+                        <div class="rounded-2xl border border-text-dim/10 bg-card p-6">
+                            <div class="flex items-center justify-between mb-4"><span class="font-mono text-[10px] text-bond tracking-widest uppercase">Smart Pipeline</span><span class="font-mono text-[10px] text-text-dim">$842K active</span></div>
+                            <div class="space-y-3">
+                                <div class="p-3 rounded-lg bg-void-light border border-bond/10">
+                                    <div class="flex items-center justify-between mb-2"><div class="font-body text-xs font-medium">Park Property — $34K</div><span class="px-2 py-0.5 rounded text-[8px] font-mono bg-bond/10 text-bond">Proposal sent</span></div>
+                                    <div class="p-2 rounded bg-bond/[0.04] border border-bond/8"><div class="font-mono text-[9px] text-bond">AI next action:</div><div class="font-mono text-[9px] text-text-muted mt-0.5">Opened proposal 4x in 2 days. Call now — high intent signal.</div></div>
+                                </div>
+                                <div class="p-3 rounded-lg bg-void-light border border-warning/10">
+                                    <div class="flex items-center justify-between mb-2"><div class="font-body text-xs font-medium">Lopez Family — $22K</div><span class="px-2 py-0.5 rounded text-[8px] font-mono bg-warning/10 text-warning">Stalling</span></div>
+                                    <div class="p-2 rounded bg-warning/[0.04] border border-warning/8"><div class="font-mono text-[9px] text-warning">AI next action:</div><div class="font-mono text-[9px] text-text-muted mt-0.5">No engagement in 6 days. Send updated pricing with seasonal discount.</div></div>
+                                </div>
+                                <div class="p-3 rounded-lg bg-void-light border border-success/10">
+                                    <div class="flex items-center justify-between mb-2"><div class="font-body text-xs font-medium">Nguyen Home — $41K</div><span class="px-2 py-0.5 rounded text-[8px] font-mono bg-success/10 text-success">Ready to close</span></div>
+                                    <div class="p-2 rounded bg-success/[0.04] border border-success/8"><div class="font-mono text-[9px] text-success">AI next action:</div><div class="font-mono text-[9px] text-text-muted mt-0.5">Financing approved. Send contract for e-signature today.</div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="order-1 lg:order-2 space-y-5">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-bond/10 border border-bond/15"><span class="font-mono text-[10px] text-bond tracking-wider">SMART PIPELINE</span></div>
+                        <h3 class="font-display text-3xl md:text-4xl font-bold tracking-tight">AI tells you<br>what to do next</h3>
+                        <p class="text-text-muted text-lg leading-relaxed max-w-md">Every deal in your pipeline has an AI-driven next action. Bond analyzes engagement signals, timing, and customer behavior to tell your reps exactly what to do and when — no guesswork, no deals falling through cracks.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 2: Comms Hub -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-28 reveal">
+                    <div class="space-y-5">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-bond-accent/10 border border-bond-accent/15"><span class="font-mono text-[10px] text-bond-accent tracking-wider">COMMUNICATION HUB</span></div>
+                        <h3 class="font-display text-3xl md:text-4xl font-bold tracking-tight">Every conversation.<br>One inbox.</h3>
+                        <p class="text-text-muted text-lg leading-relaxed max-w-md">Calls, texts, emails — all in one place for every customer. Bond auto-logs every interaction, transcribes calls, and summarizes conversations so your team has full context before they pick up the phone.</p>
+                    </div>
+                    <div>
+                        <div class="rounded-2xl border border-text-dim/10 bg-card p-6">
+                            <div class="flex items-center justify-between mb-4"><span class="font-mono text-[10px] text-bond-accent tracking-widest uppercase">Comms Hub</span><span class="font-mono text-[10px] text-text-dim">Sarah Johnson</span></div>
+                            <div class="space-y-2">
+                                <div class="flex items-start gap-3 p-3 rounded-lg bg-void-light border border-text-dim/8">
+                                    <div class="w-7 h-7 rounded-full bg-bond/10 flex items-center justify-center shrink-0"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5 text-bond" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg></div>
+                                    <div class="flex-1"><div class="flex items-center gap-2"><span class="font-body text-xs font-medium">Phone call</span><span class="font-mono text-[8px] text-text-dim">Feb 13 · 4m 32s</span></div><div class="font-mono text-[10px] text-text-muted mt-1">Asked about 0% financing options. Interested in starting before April.</div><div class="font-mono text-[9px] text-bond/70 mt-1 italic">Auto-transcribed & summarized</div></div>
+                                </div>
+                                <div class="flex items-start gap-3 p-3 rounded-lg bg-void-light border border-text-dim/8">
+                                    <div class="w-7 h-7 rounded-full bg-success/10 flex items-center justify-center shrink-0"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5 text-success" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></div>
+                                    <div class="flex-1"><div class="flex items-center gap-2"><span class="font-body text-xs font-medium">Text message</span><span class="font-mono text-[8px] text-text-dim">Feb 14</span></div><div class="font-mono text-[10px] text-text-muted mt-1">"Great news Sarah — your financing is approved at 0% for 18 months. Contract is ready to sign!"</div></div>
+                                </div>
+                                <div class="flex items-start gap-3 p-3 rounded-lg bg-void-light border border-text-dim/8">
+                                    <div class="w-7 h-7 rounded-full bg-bond-accent/10 flex items-center justify-center shrink-0"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5 text-bond-accent" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
+                                    <div class="flex-1"><div class="flex items-center gap-2"><span class="font-body text-xs font-medium">Email (auto)</span><span class="font-mono text-[8px] text-text-dim">Mar 10</span></div><div class="font-mono text-[10px] text-text-muted mt-1">Project update: "Your renovation is 72% complete — on track for March 18th."</div><div class="font-mono text-[9px] text-bond/70 mt-1 italic">Auto-sent by Bond</div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 3: AI Insights -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center reveal">
+                    <div class="order-2 lg:order-1">
+                        <div class="rounded-2xl border border-text-dim/10 bg-card p-6">
+                            <div class="flex items-center justify-between mb-4"><span class="font-mono text-[10px] text-bond tracking-widest uppercase">AI Insights</span><span class="font-mono text-[10px] text-text-dim">This month</span></div>
+                            <div class="grid grid-cols-2 gap-3 mb-4">
+                                <div class="p-4 rounded-xl bg-void-light border border-text-dim/8 relative overflow-hidden">
+                                    <div class="font-mono text-[9px] text-text-dim uppercase mb-1">Forecasted revenue</div>
+                                    <div class="font-display text-2xl font-bold">$312K</div>
+                                    <div class="font-mono text-[10px] text-success mt-1">89% confidence</div>
+                                </div>
+                                <div class="p-4 rounded-xl bg-void-light border border-text-dim/8 relative overflow-hidden">
+                                    <div class="font-mono text-[9px] text-text-dim uppercase mb-1">At-risk deals</div>
+                                    <div class="font-display text-2xl font-bold text-warning">3</div>
+                                    <div class="font-mono text-[10px] text-warning mt-1">$67K pipeline value</div>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="p-3 rounded-lg bg-bond/[0.03] border border-bond/10">
+                                    <div class="font-mono text-[9px] text-bond uppercase mb-1">Insight</div>
+                                    <div class="font-mono text-[10px] text-text-muted">Deals that get a follow-up within 2 hours of proposal open close at 3x the rate. 4 proposals were opened today with no follow-up yet.</div>
+                                </div>
+                                <div class="p-3 rounded-lg bg-success/[0.03] border border-success/10">
+                                    <div class="font-mono text-[9px] text-success uppercase mb-1">Opportunity</div>
+                                    <div class="font-mono text-[10px] text-text-muted">12 past customers haven't been contacted in 6+ months. Bond suggests a re-engagement campaign — estimated $180K in referral pipeline.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="order-1 lg:order-2 space-y-5">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-success/10 border border-success/15"><span class="font-mono text-[10px] text-success tracking-wider">AI INSIGHTS</span></div>
+                        <h3 class="font-display text-3xl md:text-4xl font-bold tracking-tight">See around corners<br>before problems hit</h3>
+                        <p class="text-text-muted text-lg leading-relaxed max-w-md">Bond doesn't just track what happened — it predicts what's coming. Revenue forecasting, at-risk deal alerts, re-engagement opportunities, and coaching insights based on patterns across your entire customer base.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONNECTIVE TISSUE -->
+        <section id="connective" class="px-6 md:px-10 py-28 border-t border-text-dim/10">
+            <div class="max-w-5xl mx-auto">
+                <div class="reveal text-center mb-16">
+                    <span class="font-mono text-[11px] text-bond-light tracking-[0.3em] uppercase">THE CONNECTIVE TISSUE</span>
+                    <h2 class="font-display text-4xl md:text-5xl font-bold tracking-tight mt-4">Bond is what makes<br><span class="gradient-text">Leviosai one operating system.</span></h2>
+                    <p class="text-text-muted text-lg max-w-2xl mx-auto mt-4">Without Bond, you have three great tools. With Bond, you have one intelligent system where every product makes the others smarter.</p>
+                </div>
+
+                <div class="reveal grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="feature-card rounded-2xl p-6 text-center">
+                        <div class="w-12 h-12 rounded-xl bg-catalyst/10 flex items-center justify-center mx-auto mb-4"><svg viewBox="0 0 24 24" class="w-6 h-6 text-catalyst" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div>
+                        <h4 class="font-display text-sm font-bold mb-2 flex items-center justify-center gap-2">Catalyst <svg viewBox="0 0 56 40" class="w-6 h-4 inline-block bond-logo-pulse" style="overflow:visible;"><rect x="4" y="8" width="24" height="24" rx="12" fill="none" stroke="#F97316" stroke-width="2.5" opacity="0.7"/><rect x="20" y="8" width="24" height="24" rx="12" fill="none" stroke="#6366F1" stroke-width="2.5" opacity="0.7"/><circle cx="24" cy="14" r="1.5" fill="#8B8BF5" opacity="0.8"/><circle cx="24" cy="26" r="1.5" fill="#8B8BF5" opacity="0.8"/></svg> Bond</h4>
+                        <p class="font-mono text-[10px] text-text-muted leading-relaxed">Every lead, proposal, and deal automatically populates the customer record. Reps never enter data — it's already there.</p>
+                    </div>
+                    <div class="feature-card rounded-2xl p-6 text-center">
+                        <div class="w-12 h-12 rounded-xl bg-solvent/10 flex items-center justify-center mx-auto mb-4"><svg viewBox="0 0 24 24" class="w-6 h-6 text-solvent" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
+                        <h4 class="font-display text-sm font-bold mb-2 flex items-center justify-center gap-2">Solvent <svg viewBox="0 0 56 40" class="w-6 h-4 inline-block bond-logo-pulse" style="overflow:visible;"><rect x="4" y="8" width="24" height="24" rx="12" fill="none" stroke="#0DD98B" stroke-width="2.5" opacity="0.7"/><rect x="20" y="8" width="24" height="24" rx="12" fill="none" stroke="#6366F1" stroke-width="2.5" opacity="0.7"/><circle cx="24" cy="14" r="1.5" fill="#8B8BF5" opacity="0.8"/><circle cx="24" cy="26" r="1.5" fill="#8B8BF5" opacity="0.8"/></svg> Bond</h4>
+                        <p class="font-mono text-[10px] text-text-muted leading-relaxed">Permit status, filing dates, and approvals are logged to the customer timeline. Bond auto-notifies customers on status changes.</p>
+                    </div>
+                    <div class="feature-card rounded-2xl p-6 text-center">
+                        <div class="w-12 h-12 rounded-xl bg-reactor/10 flex items-center justify-center mx-auto mb-4"><svg viewBox="0 0 24 24" class="w-6 h-6 text-reactor" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0"/><circle cx="12" cy="12" r="3"/></svg></div>
+                        <h4 class="font-display text-sm font-bold mb-2 flex items-center justify-center gap-2">Reactor <svg viewBox="0 0 56 40" class="w-6 h-4 inline-block bond-logo-pulse" style="overflow:visible;"><rect x="4" y="8" width="24" height="24" rx="12" fill="none" stroke="#A855F7" stroke-width="2.5" opacity="0.7"/><rect x="20" y="8" width="24" height="24" rx="12" fill="none" stroke="#6366F1" stroke-width="2.5" opacity="0.7"/><circle cx="24" cy="14" r="1.5" fill="#8B8BF5" opacity="0.8"/><circle cx="24" cy="26" r="1.5" fill="#8B8BF5" opacity="0.8"/></svg> Bond</h4>
+                        <p class="font-mono text-[10px] text-text-muted leading-relaxed">Job progress, crew updates, and completion milestones flow into the record. Customers get proactive updates without your team lifting a finger.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section id="demo" class="px-6 md:px-10 py-28 border-t border-text-dim/10 relative">
+            <div class="absolute inset-0 pointer-events-none overflow-hidden"><div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-bond/6 rounded-full blur-[100px]"></div></div>
+            <div class="max-w-3xl mx-auto text-center relative z-10 reveal">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-bond/20 bg-bond/5 mb-8"><span class="w-1.5 h-1.5 rounded-full bg-bond animate-pulse"></span><span class="font-mono text-[11px] text-bond tracking-wide">LIMITED EARLY ACCESS</span></div>
+                <h2 class="font-display text-4xl md:text-6xl font-bold tracking-tight mb-6">The last CRM<br><span class="gradient-text">you'll ever need.</span></h2>
+                <p class="text-text-muted text-lg max-w-xl mx-auto mb-10 leading-relaxed">See how Bond connects every part of your business into one living customer record. We'll walk through your actual workflow. 30 minutes, no pressure.</p>
+                <div class="max-w-md mx-auto space-y-4">
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input type="text" placeholder="Your name" class="flex-1 px-5 py-4 rounded-xl bg-card border border-text-dim/12 text-white placeholder:text-text-dim text-sm font-body focus:outline-none focus:border-bond/40 transition-colors">
+                        <input type="email" placeholder="Work email" class="flex-1 px-5 py-4 rounded-xl bg-card border border-text-dim/12 text-white placeholder:text-text-dim text-sm font-body focus:outline-none focus:border-bond/40 transition-colors">
+                    </div>
+                    <input type="text" placeholder="Company name" class="w-full px-5 py-4 rounded-xl bg-card border border-text-dim/12 text-white placeholder:text-text-dim text-sm font-body focus:outline-none focus:border-bond/40 transition-colors">
+                    <input type="text" placeholder="What CRM are you using today?" class="w-full px-5 py-4 rounded-xl bg-card border border-text-dim/12 text-white placeholder:text-text-dim text-sm font-body focus:outline-none focus:border-bond/40 transition-colors">
+                    <button class="cta-btn w-full py-4 rounded-xl font-display text-sm font-semibold text-white tracking-wide flex items-center justify-center gap-3"><span>Request a Demo</span><svg viewBox="0 0 56 40" class="w-5 h-4" style="overflow:visible;"><rect x="4" y="8" width="24" height="24" rx="12" fill="none" stroke="currentColor" stroke-width="2.5"/><rect x="20" y="8" width="24" height="24" rx="12" fill="none" stroke="currentColor" stroke-width="2.5" opacity="0.7"/><circle cx="24" cy="14" r="1.5" fill="currentColor" opacity="0.8"/><circle cx="24" cy="26" r="1.5" fill="currentColor" opacity="0.8"/></svg></button>
+                    <p class="font-mono text-[10px] text-text-dim tracking-wide">30-MIN WALKTHROUGH · YOUR WORKFLOW · NO COMMITMENT</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="px-6 md:px-10 py-10 border-t border-text-dim/10">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-2">
+                    <svg viewBox="0 0 56 40" class="w-6 h-5 bond-logo-mark" style="overflow:visible;">
+                        <rect x="4" y="8" width="24" height="24" rx="12" fill="none" stroke="#6366F1" stroke-width="2" class="bond-logo-pulse"/>
+                        <rect x="20" y="8" width="24" height="24" rx="12" fill="none" stroke="#B366D9" stroke-width="2" class="bond-logo-pulse" style="animation-delay:0.3s;"/>
+                        <circle cx="24" cy="14" r="1" fill="#8B8BF5" opacity="0.7"/>
+                        <circle cx="24" cy="26" r="1" fill="#8B8BF5" opacity="0.7"/>
+                    </svg>
+                    <span class="font-display text-sm font-semibold text-bond">bond</span>
+                    <a href="/" class="text-text-dim text-xs ml-2 hover:text-white transition-colors">leviosai</a><span class="text-text-dim text-xs">· © 2026</span>
+                </div>
+                <div class="flex gap-8 font-mono text-[10px] uppercase tracking-widest text-text-dim">
+                    <a href="/" class="hover:text-white transition-colors">Home</a>
+                    <a href="/#cta-section" class="hover:text-white transition-colors">Contact</a>
+                    <a href="/catalyst/" class="hover:text-white transition-colors">Catalyst</a>
+                    <a href="/solvent/" class="hover:text-white transition-colors">Solvent</a><a href="/bond/" class="hover:text-white transition-colors">Bond</a><a href="/reactor/" class="hover:text-white transition-colors">Reactor</a><a href="/privacy/" class="hover:text-white transition-colors">Privacy</a><a href="/terms/" class="hover:text-white transition-colors">Terms</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+
+
+    <script>
+        // Mobile menu
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        let menuOpen = false;
+        if (mobileToggle && mobileMenu) {
+            mobileToggle.addEventListener('click', () => {
+                menuOpen = !menuOpen;
+                if (menuOpen) {
+                    mobileMenu.classList.add('open');
+                } else {
+                    mobileMenu.classList.remove('open');
+                }
+            });
+            document.querySelectorAll('#mobile-menu a').forEach(a => {
+                a.addEventListener('click', () => {
+                    menuOpen = false;
+                    mobileMenu.classList.remove('open');
+                });
+            });
+        }
+    </script>
+
+    
+    <script>
+        // Form submission
+        (function() {
+            document.querySelectorAll('.cta-btn').forEach(function(btn) {
+                var parent = btn.closest('.space-y-4') || btn.closest('.max-w-md') || btn.closest('.max-w-3xl');
+                if (!parent) return;
+                var inputs = parent.querySelectorAll('input, select');
+                if (inputs.length === 0) return;
+                
+                // Only attach to buttons, not nav links
+                if (btn.tagName === 'A' && btn.getAttribute('href') && btn.getAttribute('href').indexOf('#') === 0 && btn.getAttribute('href').length > 1) return;
+                
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    var fields = {};
+                    var hasEmpty = false;
+                    
+                    inputs.forEach(function(input) {
+                        var val = input.value ? input.value.trim() : '';
+                        var placeholder = input.placeholder || '';
+                        
+                        if (input.tagName === 'SELECT') {
+                            val = input.options[input.selectedIndex].text;
+                            if (val === 'Select your market') val = '';
+                        }
+                        
+                        if (!val) {
+                            hasEmpty = true;
+                            input.style.borderColor = 'rgba(248,113,113,0.5)';
+                            setTimeout(function() { input.style.borderColor = ''; }, 2000);
+                        } else {
+                            fields[placeholder || input.name || 'field'] = val;
+                        }
+                    });
+                    
+                    if (hasEmpty) return;
+                    
+                    var btnSpan = btn.querySelector('span');
+                    var originalText = btnSpan ? btnSpan.textContent : '';
+                    var btnSvg = btn.querySelector('svg');
+                    if (btnSpan) btnSpan.textContent = 'Sending...';
+                    if (btnSvg) btnSvg.style.display = 'none';
+                    btn.style.pointerEvents = 'none';
+                    btn.style.opacity = '0.7';
+                    
+                    var formData = new FormData();
+                    for (var key in fields) {
+                        formData.append(key, fields[key]);
+                    }
+                    formData.append('_subject', 'New Demo Request — ' + (fields['Company name'] || 'Website'));
+                    formData.append('_template', 'table');
+                    formData.append('_captcha', 'false');
+                    formData.append('Page', document.title);
+                    
+                    fetch('https://formsubmit.co/ajax/christian@leviosai.io', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(function(res) { return res.json(); })
+                    .then(function() { showConfirmation(parent); })
+                    .catch(function() { showConfirmation(parent); });
+                });
+            });
+            
+            function showConfirmation(container) {
+                container.innerHTML = '<div style="text-align:center;padding:2rem 0;">' +
+                    '<div style="width:56px;height:56px;border-radius:50%;background:rgba(13,217,139,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">' +
+                    '<svg viewBox="0 0 24 24" style="width:28px;height:28px;color:#0DD98B;" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+                    '</div>' +
+                    '<h3 style="font-size:1.5rem;font-weight:700;color:#F2F2F2;margin-bottom:0.5rem;">Talk to you soon!</h3>' +
+                    '<p style="font-size:0.95rem;color:#A3A3A3;">We\u2019ll reach out within 24 hours to get you set up.</p>' +
+                    '</div>';
+            }
+        })();
+    </script>
+</body></html>

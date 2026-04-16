@@ -1,0 +1,685 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing | Leviosai — The AI Operating System for Home Services</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'void': '#0A0A0A',
+                        'void-light': '#0E0E0E',
+                        'card': '#121212',
+                        'card-hover': '#181818',
+                        'catalyst': '#F97316',
+                        'catalyst-light': '#F59E0B',
+                        'solvent': '#0DD98B',
+                        'solvent-light': '#3DE8A0',
+                        'bond': '#6366F1',
+                        'bond-light': '#8B8BF5',
+                        'reactor': '#A855F7',
+                        'reactor-light': '#C084FC',
+                        'text-primary': '#F2F2F2',
+                        'text-muted': '#A3A3A3',
+                        'text-dim': '#737373',
+                        'success': '#34D399',
+                        'warning': '#FBBF24',
+                    },
+                    fontFamily: {
+                        display: ['"Outfit"', 'sans-serif'],
+                        body: ['"Space Grotesk"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * { box-sizing: border-box; }
+        body { background-color: #0A0A0A; color: #F2F2F2; overflow-x: hidden; }
+
+        .bg-mesh { position: fixed; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; }
+        .bg-mesh::before { content: ''; position: absolute; top: -30%; left: -20%; width: 80%; height: 80%; background: radial-gradient(ellipse at center, rgba(249,115,22,0.08) 0%, transparent 55%); animation: drift1 14s ease-in-out infinite alternate; }
+        .bg-mesh::after { content: ''; position: absolute; bottom: -20%; right: -15%; width: 70%; height: 70%; background: radial-gradient(ellipse at center, rgba(245,158,11,0.05) 0%, transparent 50%); animation: drift2 16s ease-in-out infinite alternate; }
+        .grid-overlay { position: fixed; inset: 0; z-index: 1; pointer-events: none; background-image: linear-gradient(rgba(249,115,22,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(249,115,22,0.015) 1px, transparent 1px); background-size: 60px 60px; }
+
+        @keyframes drift1 { 0% { transform: translate(0,0); } 100% { transform: translate(4%,6%); } }
+        @keyframes drift2 { 0% { transform: translate(0,0); } 100% { transform: translate(-5%,-4%); } }
+        @keyframes fadeUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+        @keyframes orbit { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .anim-fade-up { opacity: 0; animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .anim-fade-in { opacity: 0; animation: fadeIn 1s ease forwards; }
+
+        .gradient-text { background: linear-gradient(135deg, #F97316 0%, #F59E0B 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .gradient-text-multi { background: linear-gradient(135deg, #F97316 0%, #A855F7 50%, #6366F1 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+        .cta-btn { position: relative; background: linear-gradient(135deg, #F97316, #F59E0B); transition: all 0.4s ease; overflow: hidden; }
+        .cta-btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, #F59E0B, #F97316); opacity: 0; transition: opacity 0.4s ease; }
+        .cta-btn:hover::before { opacity: 1; }
+        .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px -8px rgba(249,115,22,0.4); }
+        .cta-btn span, .cta-btn svg { position: relative; z-index: 1; }
+
+        .cta-btn-outline { border: 1px solid rgba(249,115,22,0.3); transition: all 0.3s ease; }
+        .cta-btn-outline:hover { border-color: rgba(249,115,22,0.6); background: rgba(249,115,22,0.05); }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0A0A0A; }
+        ::-webkit-scrollbar-thumb { background: #F97316; border-radius: 2px; }
+
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        .atom-ring { animation: orbit 8s linear infinite; transform-origin: center; }
+        .atom-ring:nth-child(2) { animation-duration: 10s; animation-direction: reverse; }
+        .atom-ring:nth-child(3) { animation-duration: 12s; }
+
+        .nav-dropdown { display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); padding-top: 12px; }
+        .nav-parent:hover .nav-dropdown { display: block; }
+        .nav-dropdown-inner { background: rgba(18,18,18,0.95); border: 1px solid rgba(115,115,115,0.15); border-radius: 12px; padding: 8px; min-width: 220px; backdrop-filter: blur(20px); }
+        .nav-dropdown a { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; transition: background 0.2s; font-size: 14px; }
+        .nav-dropdown a:hover { background: rgba(115,115,115,0.1); }
+        .nav-dd-icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+        .pricing-card { background: #121212; border: 1px solid rgba(115,115,115,0.1); transition: all 0.4s ease; }
+        .pricing-card:hover { border-color: rgba(249,115,22,0.2); }
+        .pricing-card-featured { border-color: rgba(249,115,22,0.25); background: linear-gradient(160deg, rgba(18,18,18,1) 0%, rgba(249,115,22,0.03) 100%); }
+
+        .fee-card { background: rgba(18,18,18,0.6); border: 1px solid rgba(115,115,115,0.08); transition: all 0.3s ease; }
+        .fee-card:hover { border-color: rgba(249,115,22,0.15); background: rgba(249,115,22,0.02); }
+
+        .example-row { transition: background-color 0.3s ease; }
+        .example-row:hover { background-color: rgba(249,115,22,0.03); }
+            .mobile-menu { position: fixed; inset: 0; z-index: 100; background: rgba(10,10,15,0.98); backdrop-filter: blur(20px); display: none; flex-direction: column; justify-content: center; align-items: center; gap: 2rem; }
+        .mobile-menu.open { display: flex; }
+    </style>
+</head>
+<body class="min-h-screen w-screen relative font-body selection:bg-catalyst/20 selection:text-white">
+
+    <div class="bg-mesh"></div>
+    <div class="grid-overlay"></div>
+
+    <div class="relative z-10 min-h-screen w-full">
+
+        <!-- NAV -->
+        <header class="fixed top-0 left-0 right-0 z-50 px-6 md:px-10 py-5 flex justify-between items-center anim-fade-in" style="animation-delay:0.1s; background: linear-gradient(to bottom, rgba(10,10,10,0.97) 0%, rgba(10,10,10,0) 100%);">
+            <a href="/" class="flex items-center gap-3">
+                <div class="w-9 h-9 relative"><svg viewBox="0 0 40 40" class="w-full h-full"><circle cx="20" cy="20" r="3" fill="#6366F1"/><ellipse cx="20" cy="20" rx="16" ry="6" fill="none" stroke="#0DD98B" stroke-width="1" opacity="0.7" class="atom-ring"/><ellipse cx="20" cy="20" rx="16" ry="6" fill="none" stroke="#A855F7" stroke-width="1" opacity="0.5" transform="rotate(60 20 20)" class="atom-ring"/><ellipse cx="20" cy="20" rx="16" ry="6" fill="none" stroke="#F97316" stroke-width="1" opacity="0.5" transform="rotate(-60 20 20)" class="atom-ring"/></svg></div>
+                <span class="font-display text-xl font-bold tracking-tight">leviosai</span>
+            </a>
+            <nav class="hidden md:flex items-center gap-10">
+                <a href="/" class="text-sm text-text-muted hover:text-white transition-colors">Home</a>
+                <div class="relative nav-parent">
+                <button class="text-sm text-text-muted hover:text-white transition-colors flex items-center gap-1">Products<svg class="w-3.5 h-3.5 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+                <div class="nav-dropdown"><div class="nav-dropdown-inner">
+                    <a href="/catalyst/"><div class="nav-dd-icon" style="background:rgba(249,115,22,0.12);"><svg viewBox="0 0 24 24" class="w-4 h-4" style="color:#F97316;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><span class="text-sm text-white">Catalyst</span><p style="font-size:11px;" class="text-text-dim">Sales intelligence</p></div></a>
+                    <a href="/solvent/"><div class="nav-dd-icon" style="background:rgba(13,217,139,0.12);"><svg viewBox="0 0 24 24" class="w-4 h-4" style="color:#0DD98B;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><span class="text-sm text-white">Solvent</span><p style="font-size:11px;" class="text-text-dim">Permit Intelligence</p></div></a>
+                    <a href="/bond/"><div class="nav-dd-icon" style="background:rgba(99,102,241,0.12);"><svg viewBox="0 0 24 24" class="w-4 h-4" style="color:#6366F1;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><span class="text-sm text-white">Bond</span><p style="font-size:11px;" class="text-text-dim">AI-native CRM</p></div></a>
+                    <a href="/reactor/"><div class="nav-dd-icon" style="background:rgba(168,85,247,0.12);"><svg viewBox="0 0 24 24" class="w-4 h-4" style="color:#A855F7;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3"/></svg></div><div><span class="text-sm text-white">Reactor</span><p style="font-size:11px;" class="text-text-dim">Operations Intelligence</p></div></a>
+                </div></div>
+            </div>
+                <a href="/pricing/" class="text-sm text-white font-medium">Pricing</a>
+                <a href="/team/" class="text-sm text-text-muted hover:text-white transition-colors">Team</a>
+                <a href="#quote" class="cta-btn px-5 py-2.5 rounded-full text-sm font-semibold text-void"><span>Get a Quote</span></a>
+            </nav>
+            <button id="mobile-toggle" class="md:hidden flex flex-col gap-1.5 z-[110]"><span class="w-6 h-px bg-white"></span><span class="w-4 h-px bg-white"></span></button>
+        </header>
+    <div class="mobile-menu" id="mobile-menu">
+        <a href="/" class="font-display text-3xl font-bold text-white">Home</a>
+        <a href="/catalyst/" class="font-display text-2xl text-text-muted hover:text-catalyst transition-colors">Catalyst</a>
+        <a href="/solvent/" class="font-display text-2xl text-text-muted hover:text-solvent transition-colors">Solvent</a>
+        <a href="/bond/" class="font-display text-2xl text-text-muted hover:text-bond transition-colors">Bond</a>
+        <a href="/reactor/" class="font-display text-2xl text-text-muted hover:text-reactor transition-colors">Reactor</a>
+        <a href="/pricing/" class="font-display text-2xl text-text-muted hover:text-white transition-colors">Pricing</a>
+        <a href="/team/" class="font-display text-2xl text-text-muted hover:text-white transition-colors">Team</a>
+    </div>
+
+
+
+        <!-- HERO -->
+        <section class="pt-36 pb-20 px-6 md:px-10 max-w-5xl mx-auto text-center">
+            <div class="anim-fade-up" style="animation-delay:0.2s">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-catalyst/20 bg-catalyst/5 mb-8">
+                    <span class="font-mono text-[11px] text-catalyst tracking-wide">TRANSPARENT PRICING</span>
+                </div>
+            </div>
+            <h1 class="font-display text-5xl md:text-7xl font-extrabold leading-[0.93] tracking-tight mb-6 anim-fade-up" style="animation-delay:0.35s">
+                Pay for results,<br><span class="gradient-text">not promises.</span>
+            </h1>
+            <p class="text-lg md:text-xl text-text-muted max-w-2xl mx-auto leading-relaxed anim-fade-up" style="animation-delay:0.5s">
+                Our pricing is built around performance. You pay when Catalyst books real appointments for your team — not for software you might use.
+            </p>
+        </section>
+
+
+        <!-- CATALYST PRICING -->
+        <section class="px-6 md:px-10 pb-28 max-w-6xl mx-auto">
+            <!-- Section label -->
+            <div class="reveal flex items-center gap-4 mb-12">
+                <div class="flex items-center gap-3">
+                    <svg viewBox="0 0 24 24" class="w-6 h-6 text-catalyst" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span class="font-display text-2xl font-bold">Catalyst</span>
+                    <span class="text-text-dim text-sm ml-1">— Sales Intelligence</span>
+                </div>
+                <div class="flex-1 h-px bg-text-dim/15"></div>
+            </div>
+
+            <!-- Three fee cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-16 reveal">
+                <!-- Per appointment -->
+                <div class="fee-card rounded-2xl p-7 relative overflow-hidden pricing-card-featured">
+                    <div class="absolute -top-16 -right-16 w-40 h-40 bg-catalyst/6 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="relative z-10">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-catalyst/10 border border-catalyst/15 mb-5">
+                            <span class="font-mono text-[10px] text-catalyst tracking-wider">PERFORMANCE FEE</span>
+                        </div>
+                        <div class="flex items-end gap-1 mb-2">
+                            <span class="font-display text-4xl font-extrabold text-catalyst">$400</span>
+                            <span class="text-text-dim text-[1.265rem] pb-1.5">– $500</span>
+                        </div>
+                        <p class="font-body text-sm text-text-muted mb-5">per booked appointment</p>
+                        <div class="w-full h-px bg-text-dim/10 mb-5"></div>
+                        <p class="text-sm text-text-dim leading-relaxed">You only pay when Catalyst delivers a real, qualified appointment to your sales team. No appointment, no charge.</p>
+                        <div class="mt-5 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-success/8 border border-success/10">
+                            <svg viewBox="0 0 24 24" class="w-3.5 h-3.5 text-success" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
+                            <span class="font-mono text-[10px] text-success">STARTING AT · VARIES BY TRADE</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Setup fee -->
+                <div class="fee-card rounded-2xl p-7">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-catalyst-light/10 border border-catalyst-light/15 mb-5">
+                        <span class="font-mono text-[10px] text-catalyst-light tracking-wider">ONE-TIME SETUP</span>
+                    </div>
+                    <div class="flex items-end gap-1 mb-2">
+                        <span class="font-display text-4xl font-extrabold">$2,500</span>
+                        <span class="text-text-dim text-[1.265rem] pb-1.5">+</span>
+                    </div>
+                    <p class="font-body text-sm text-text-muted mb-5">one-time onboarding</p>
+                    <div class="w-full h-px bg-text-dim/10 mb-5"></div>
+                    <div class="space-y-3">
+                        <div class="flex items-start gap-2.5">
+                            <svg viewBox="0 0 24 24" class="w-4 h-4 text-catalyst-light shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm text-text-muted">AI trained on your services, pricing & service area</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <svg viewBox="0 0 24 24" class="w-4 h-4 text-catalyst-light shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm text-text-muted">CRM & lead source integrations</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <svg viewBox="0 0 24 24" class="w-4 h-4 text-catalyst-light shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm text-text-muted">Proposal templates & branding</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <svg viewBox="0 0 24 24" class="w-4 h-4 text-catalyst-light shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm text-text-muted">Team onboarding & training</span>
+                        </div>
+                    </div>
+                    <div class="mt-5 font-mono text-[10px] text-text-dim">ENTERPRISE SETUPS AVAILABLE AT CUSTOM PRICING</div>
+                </div>
+
+                <!-- Monthly retainer -->
+                <div class="fee-card rounded-2xl p-7">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-text-dim/15 border border-text-dim/10 mb-5">
+                        <span class="font-mono text-[10px] text-text-muted tracking-wider">MONTHLY RETAINER</span>
+                    </div>
+                    <div class="flex items-end gap-1 mb-2">
+                        <span class="font-display text-4xl font-extrabold">$500</span>
+                        <span class="text-text-dim text-sm pb-1.5">– $1,000/mo</span>
+                    </div>
+                    <p class="font-body text-sm text-text-muted mb-5">ongoing platform & support</p>
+                    <div class="w-full h-px bg-text-dim/10 mb-5"></div>
+                    <div class="space-y-3">
+                        <div class="flex items-start gap-2.5">
+                            <svg viewBox="0 0 24 24" class="w-4 h-4 text-text-muted shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm text-text-muted">Unlimited AI lead scoring & qualification</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <svg viewBox="0 0 24 24" class="w-4 h-4 text-text-muted shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm text-text-muted">Automated follow-ups & nurture sequences</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <svg viewBox="0 0 24 24" class="w-4 h-4 text-text-muted shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm text-text-muted">Pipeline intelligence & deal alerts</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <svg viewBox="0 0 24 24" class="w-4 h-4 text-text-muted shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm text-text-muted">Dedicated success manager</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- EXAMPLE MONTH -->
+            <div class="reveal">
+                <div class="rounded-2xl border border-text-dim/10 bg-card overflow-hidden">
+                    <!-- Header -->
+                    <div class="px-8 py-6 border-b border-text-dim/8 flex items-center justify-between">
+                        <div>
+                            <div class="font-mono text-[10px] text-catalyst tracking-widest uppercase mb-1">EXAMPLE MONTH</div>
+                            <h3 class="font-display text-xl font-bold">What a typical month looks like</h3>
+                        </div>
+                        <div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-catalyst/8 border border-catalyst/10">
+                            <span class="font-mono text-[10px] text-catalyst">SOLAR CONTRACTOR · 3 REPS · FLORIDA</span>
+                        </div>
+                    </div>
+
+                    <!-- Scenario -->
+                    <div class="px-8 py-6">
+                        <!-- Assumptions -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                            <div class="p-4 rounded-xl bg-void-light border border-text-dim/8">
+                                <div class="font-mono text-[9px] text-text-dim uppercase mb-1.5">Appointments booked</div>
+                                <div class="font-display text-2xl font-bold">22</div>
+                                <div class="font-mono text-[10px] text-text-dim mt-0.5">by Catalyst AI</div>
+                            </div>
+                            <div class="p-4 rounded-xl bg-void-light border border-text-dim/8">
+                                <div class="font-mono text-[9px] text-text-dim uppercase mb-1.5">Close rate</div>
+                                <div class="font-display text-2xl font-bold">30%</div>
+                                <div class="font-mono text-[10px] text-text-dim mt-0.5">industry realistic</div>
+                            </div>
+                            <div class="p-4 rounded-xl bg-void-light border border-text-dim/8">
+                                <div class="font-mono text-[9px] text-text-dim uppercase mb-1.5">Avg job value</div>
+                                <div class="font-display text-2xl font-bold">$28K</div>
+                                <div class="font-mono text-[10px] text-text-dim mt-0.5">residential solar</div>
+                            </div>
+                            <div class="p-4 rounded-xl bg-void-light border border-text-dim/8">
+                                <div class="font-mono text-[9px] text-text-dim uppercase mb-1.5">Deals closed</div>
+                                <div class="font-display text-2xl font-bold text-success">6–7</div>
+                                <div class="font-mono text-[10px] text-text-dim mt-0.5">from booked appts</div>
+                            </div>
+                        </div>
+
+                        <!-- Cost breakdown -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <!-- Your cost -->
+                            <div>
+                                <div class="font-mono text-[10px] text-text-dim tracking-widest uppercase mb-4">YOUR COST THIS MONTH</div>
+                                <div class="space-y-0">
+                                    <div class="flex justify-between items-center py-3 border-b border-text-dim/6 example-row px-2 rounded">
+                                        <span class="text-sm text-text-muted">22 appointments × $400</span>
+                                        <span class="font-mono text-sm font-medium">$8,800</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-3 border-b border-text-dim/6 example-row px-2 rounded">
+                                        <span class="text-sm text-text-muted">Monthly retainer</span>
+                                        <span class="font-mono text-sm font-medium">$750</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-3 px-2">
+                                        <span class="text-sm font-medium text-white">Total Catalyst cost</span>
+                                        <span class="font-mono text-lg font-bold text-catalyst">$9,550</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Your revenue -->
+                            <div>
+                                <div class="font-mono text-[10px] text-text-dim tracking-widest uppercase mb-4">YOUR REVENUE THIS MONTH</div>
+                                <div class="space-y-0">
+                                    <div class="flex justify-between items-center py-3 border-b border-text-dim/6 example-row px-2 rounded">
+                                        <span class="text-sm text-text-muted">6.6 deals × $28,000 avg</span>
+                                        <span class="font-mono text-sm font-medium">$184,800</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-3 border-b border-text-dim/6 example-row px-2 rounded">
+                                        <span class="text-sm text-text-muted">Less: Catalyst cost</span>
+                                        <span class="font-mono text-sm font-medium text-text-dim">–$9,550</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-3 px-2">
+                                        <span class="text-sm font-medium text-white">Net revenue after Catalyst</span>
+                                        <span class="font-mono text-lg font-bold text-success">$175,250</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ROI callout -->
+                        <div class="mt-8 p-5 rounded-xl bg-catalyst/[0.04] border border-catalyst/12 flex flex-col md:flex-row items-center justify-between gap-4">
+                            <div class="flex items-center gap-4">
+                                <div class="w-14 h-14 rounded-full bg-catalyst/12 flex items-center justify-center shrink-0">
+                                    <span class="font-display text-xl font-extrabold text-catalyst">19x</span>
+                                </div>
+                                <div>
+                                    <div class="font-display text-lg font-bold">Return on Catalyst investment</div>
+                                    <div class="font-mono text-[11px] text-text-dim mt-0.5">Every $1 spent on Catalyst generates ~$19 in revenue</div>
+                                </div>
+                            </div>
+                            <div class="text-center md:text-right">
+                                <div class="font-mono text-[9px] text-text-dim uppercase mb-1">Cost per closed deal</div>
+                                <div class="font-display text-2xl font-bold text-catalyst">~$1,447</div>
+                                <div class="font-mono text-[10px] text-text-dim">vs. $28K avg job value</div>
+                            </div>
+                        </div>
+
+                        <!-- Fine print -->
+                        <div class="mt-5 font-mono text-[10px] text-text-dim text-center leading-relaxed">
+                            Example assumes 22 booked appointments at $400/each, $750/mo retainer, 30% close rate, and $28K average job value.<br>
+                            Actual results vary by trade, market, and lead quality. Setup fee not included in monthly calculation.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- WHAT'S INCLUDED -->
+        <section class="px-6 md:px-10 py-20 border-t border-text-dim/10">
+            <div class="max-w-5xl mx-auto">
+                <div class="reveal text-center mb-14">
+                    <span class="font-mono text-[11px] text-catalyst tracking-[0.3em] uppercase">WHAT'S INCLUDED</span>
+                    <h2 class="font-display text-3xl md:text-4xl font-bold tracking-tight mt-4">Everything your sales team needs.</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 reveal">
+                    <div class="fee-card rounded-xl p-5">
+                        <div class="w-9 h-9 rounded-lg bg-catalyst/10 flex items-center justify-center mb-4">
+                            <svg viewBox="0 0 24 24" class="w-4.5 h-4.5 text-catalyst" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                        <h4 class="font-display text-sm font-bold mb-1.5">AI lead scoring</h4>
+                        <p class="text-xs text-text-dim leading-relaxed">Every incoming lead scored and ranked in seconds based on your ideal customer profile.</p>
+                    </div>
+                    <div class="fee-card rounded-xl p-5">
+                        <div class="w-9 h-9 rounded-lg bg-catalyst/10 flex items-center justify-center mb-4">
+                            <svg viewBox="0 0 24 24" class="w-4.5 h-4.5 text-catalyst" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                        <h4 class="font-display text-sm font-bold mb-1.5">Auto-generated proposals</h4>
+                        <p class="text-xs text-text-dim leading-relaxed">Personalized proposals with pricing, scope, and financing — generated in 30 seconds.</p>
+                    </div>
+                    <div class="fee-card rounded-xl p-5">
+                        <div class="w-9 h-9 rounded-lg bg-catalyst/10 flex items-center justify-center mb-4">
+                            <svg viewBox="0 0 24 24" class="w-4.5 h-4.5 text-catalyst" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                        <h4 class="font-display text-sm font-bold mb-1.5">Smart follow-ups</h4>
+                        <p class="text-xs text-text-dim leading-relaxed">Behavior-triggered follow-ups based on what customers actually look at in your proposals.</p>
+                    </div>
+                    <div class="fee-card rounded-xl p-5">
+                        <div class="w-9 h-9 rounded-lg bg-catalyst/10 flex items-center justify-center mb-4">
+                            <svg viewBox="0 0 24 24" class="w-4.5 h-4.5 text-catalyst" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                        <h4 class="font-display text-sm font-bold mb-1.5">Pipeline intelligence</h4>
+                        <p class="text-xs text-text-dim leading-relaxed">Real-time visibility into your pipeline with AI-powered deal alerts and next-best-action recommendations.</p>
+                    </div>
+                    <div class="fee-card rounded-xl p-5">
+                        <div class="w-9 h-9 rounded-lg bg-catalyst/10 flex items-center justify-center mb-4">
+                            <svg viewBox="0 0 24 24" class="w-4.5 h-4.5 text-catalyst" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                        <h4 class="font-display text-sm font-bold mb-1.5">Dead lead revival</h4>
+                        <p class="text-xs text-text-dim leading-relaxed">AI re-engages cold leads from your database and turns forgotten contacts into booked appointments.</p>
+                    </div>
+                    <div class="fee-card rounded-xl p-5">
+                        <div class="w-9 h-9 rounded-lg bg-catalyst/10 flex items-center justify-center mb-4">
+                            <svg viewBox="0 0 24 24" class="w-4.5 h-4.5 text-catalyst" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                        <h4 class="font-display text-sm font-bold mb-1.5">Dedicated support</h4>
+                        <p class="text-xs text-text-dim leading-relaxed">A success manager who knows your business, monthly performance reviews, and ongoing optimization.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- MORE PRODUCTS COMING SOON -->
+        <section class="px-6 md:px-10 py-20 border-t border-text-dim/10">
+            <div class="max-w-5xl mx-auto">
+                <div class="reveal text-center mb-12">
+                    <span class="font-mono text-[11px] text-text-dim tracking-[0.3em] uppercase">EXPAND YOUR OPERATING SYSTEM</span>
+                    <h2 class="font-display text-3xl md:text-4xl font-bold tracking-tight mt-4">Add more AI agents as you grow.</h2>
+                    <p class="text-text-dim text-base max-w-xl mx-auto mt-3">Start with Catalyst, then expand into permitting, CRM, and operations — all from one platform.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 reveal">
+                    <div class="fee-card rounded-xl p-6 text-center">
+                        <div class="w-10 h-10 rounded-lg mx-auto mb-4 flex items-center justify-center" style="background:rgba(13,217,139,0.1);">
+                            <svg viewBox="0 0 24 24" class="w-5 h-5" style="color:#0DD98B;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                        <h4 class="font-display text-base font-bold mb-1" style="color:#0DD98B;">Solvent</h4>
+                        <p class="text-xs text-text-dim mb-4">Permit Intelligence</p>
+                        <div class="inline-flex px-3 py-1.5 rounded-full bg-text-dim/8 border border-text-dim/10">
+                            <span class="font-mono text-[10px] text-text-dim">PRICING COMING SOON</span>
+                        </div>
+                    </div>
+                    <div class="fee-card rounded-xl p-6 text-center">
+                        <div class="w-10 h-10 rounded-lg mx-auto mb-4 flex items-center justify-center" style="background:rgba(99,102,241,0.1);">
+                            <svg viewBox="0 0 24 24" class="w-5 h-5" style="color:#6366F1;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                        <h4 class="font-display text-base font-bold mb-1" style="color:#6366F1;">Bond</h4>
+                        <p class="text-xs text-text-dim mb-4">AI-native CRM</p>
+                        <div class="inline-flex px-3 py-1.5 rounded-full bg-text-dim/8 border border-text-dim/10">
+                            <span class="font-mono text-[10px] text-text-dim">PRICING COMING SOON</span>
+                        </div>
+                    </div>
+                    <div class="fee-card rounded-xl p-6 text-center">
+                        <div class="w-10 h-10 rounded-lg mx-auto mb-4 flex items-center justify-center" style="background:rgba(168,85,247,0.1);">
+                            <svg viewBox="0 0 24 24" class="w-5 h-5" style="color:#A855F7;" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3"/></svg>
+                        </div>
+                        <h4 class="font-display text-base font-bold mb-1" style="color:#A855F7;">Reactor</h4>
+                        <p class="text-xs text-text-dim mb-4">Operations Intelligence</p>
+                        <div class="inline-flex px-3 py-1.5 rounded-full bg-text-dim/8 border border-text-dim/10">
+                            <span class="font-mono text-[10px] text-text-dim">PRICING COMING SOON</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center reveal">
+                    <p class="text-sm text-text-dim">Multi-product discounts available when you add agents to your operating system. <a href="#quote" class="text-catalyst hover:underline">Talk to us</a> for bundle pricing.</p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- CTA / QUOTE -->
+        <section id="quote" class="px-6 md:px-10 py-28 border-t border-text-dim/10 relative">
+            <div class="absolute inset-0 pointer-events-none overflow-hidden"><div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-catalyst/6 rounded-full blur-[100px]"></div></div>
+            <div class="max-w-3xl mx-auto text-center relative z-10 reveal">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-catalyst/20 bg-catalyst/5 mb-8">
+                    <span class="w-1.5 h-1.5 rounded-full bg-catalyst animate-pulse"></span>
+                    <span class="font-mono text-[11px] text-catalyst tracking-wide">CUSTOM QUOTE IN 24 HOURS</span>
+                </div>
+                <h2 class="font-display text-4xl md:text-5xl font-bold tracking-tight mb-6">
+                    Get pricing for<br><span class="gradient-text">your business.</span>
+                </h2>
+                <p class="text-text-muted text-lg max-w-xl mx-auto mb-10 leading-relaxed">
+                    Tell us about your team and we'll build a custom quote. No pressure, no commitments — just the numbers.
+                </p>
+                <div class="max-w-md mx-auto space-y-4">
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input type="text" placeholder="Your name" class="flex-1 px-5 py-4 rounded-xl bg-card border border-text-dim/12 text-white placeholder:text-text-dim text-sm font-body focus:outline-none focus:border-catalyst/40 transition-colors">
+                        <input type="email" placeholder="Work email" class="flex-1 px-5 py-4 rounded-xl bg-card border border-text-dim/12 text-white placeholder:text-text-dim text-sm font-body focus:outline-none focus:border-catalyst/40 transition-colors">
+                    </div>
+                    <input type="text" placeholder="Company name" class="w-full px-5 py-4 rounded-xl bg-card border border-text-dim/12 text-white placeholder:text-text-dim text-sm font-body focus:outline-none focus:border-catalyst/40 transition-colors">
+                    <select class="w-full px-5 py-4 rounded-xl bg-card border border-text-dim/12 text-text-dim text-sm font-body focus:outline-none focus:border-catalyst/40 transition-colors appearance-none">
+                        <option>Select your trade</option>
+                        <option>Solar</option>
+                        <option>Roofing</option>
+                        <option>HVAC</option>
+                        <option>Electrical</option>
+                        <option>Plumbing</option>
+                        <option>General Contracting</option>
+                        <option>Other</option>
+                    </select>
+                    <input type="text" placeholder="How many sales reps on your team?" class="w-full px-5 py-4 rounded-xl bg-card border border-text-dim/12 text-white placeholder:text-text-dim text-sm font-body focus:outline-none focus:border-catalyst/40 transition-colors">
+                    <button class="cta-btn w-full py-4 rounded-xl font-display text-sm font-semibold text-void tracking-wide flex items-center justify-center gap-3">
+                        <span>Get My Custom Quote</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </button>
+                    <p class="font-mono text-[10px] text-text-dim tracking-wide">NO COMMITMENT · CUSTOM PRICING IN 24H · FREE CONSULTATION</p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- FAQ -->
+        <section class="px-6 md:px-10 py-20 border-t border-text-dim/10">
+            <div class="max-w-3xl mx-auto">
+                <div class="reveal text-center mb-14">
+                    <h2 class="font-display text-3xl font-bold tracking-tight">Common questions</h2>
+                </div>
+                <div class="space-y-0 reveal">
+                    <div class="py-6 border-b border-text-dim/8">
+                        <h4 class="font-display text-base font-semibold mb-2">What counts as a "booked appointment"?</h4>
+                        <p class="text-sm text-text-dim leading-relaxed">A qualified prospect who has confirmed a time to meet with your sales team — either in person, on a video call, or a phone consultation. We don't charge for no-shows or unqualified leads.</p>
+                    </div>
+                    <div class="py-6 border-b border-text-dim/8">
+                        <h4 class="font-display text-base font-semibold mb-2">Does the $400 per appointment apply to every trade?</h4>
+                        <p class="text-sm text-text-dim leading-relaxed">The per-appointment fee starts at $400 but may vary based on your trade, average job value, and market. We'll give you the exact number in your custom quote.</p>
+                    </div>
+                    <div class="py-6 border-b border-text-dim/8">
+                        <h4 class="font-display text-base font-semibold mb-2">What's included in the setup fee?</h4>
+                        <p class="text-sm text-text-dim leading-relaxed">Everything needed to get your Sales Intelligence running: training the AI on your services and pricing, integrating with your existing lead sources and CRM, building branded proposal templates, and onboarding your team. Most companies are live within 2 weeks.</p>
+                    </div>
+                    <div class="py-6 border-b border-text-dim/8">
+                        <h4 class="font-display text-base font-semibold mb-2">Is there a minimum commitment?</h4>
+                        <p class="text-sm text-text-dim leading-relaxed">We ask for a 3-month initial commitment so both sides have enough time to optimize performance. After that, it's month-to-month — you stay because the results speak for themselves.</p>
+                    </div>
+                    <div class="py-6 border-b border-text-dim/8">
+                        <h4 class="font-display text-base font-semibold mb-2">Can I add Solvent, Bond, or Reactor later?</h4>
+                        <p class="text-sm text-text-dim leading-relaxed">Absolutely. Most customers start with Catalyst and expand into additional products within 3 months. Multi-product pricing is available — ask about bundle discounts.</p>
+                    </div>
+                    <div class="py-6">
+                        <h4 class="font-display text-base font-semibold mb-2">What if I have a large enterprise operation?</h4>
+                        <p class="text-sm text-text-dim leading-relaxed">We work with operations of all sizes. For companies with 10+ reps, multiple locations, or complex needs, we offer custom enterprise packages with dedicated support, custom integrations, and volume pricing.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- FOOTER -->
+        <footer class="px-6 md:px-10 py-10 border-t border-text-dim/10">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-3">
+                    <a href="/" class="flex items-center gap-2">
+                        <div class="w-7 h-7 relative"><svg viewBox="0 0 40 40" class="w-full h-full"><circle cx="20" cy="20" r="3" fill="#6366F1"/><ellipse cx="20" cy="20" rx="14" ry="5" fill="none" stroke="#0DD98B" stroke-width="1" opacity="0.5"/><ellipse cx="20" cy="20" rx="14" ry="5" fill="none" stroke="#A855F7" stroke-width="1" opacity="0.4" transform="rotate(60 20 20)"/><ellipse cx="20" cy="20" rx="14" ry="5" fill="none" stroke="#F97316" stroke-width="1" opacity="0.4" transform="rotate(-60 20 20)"/></svg></div>
+                        <span class="font-display text-sm font-semibold">leviosai</span>
+                    </a>
+                    <span class="text-text-dim text-xs ml-2">© 2026</span>
+                </div>
+                <div class="flex gap-8 font-mono text-[10px] uppercase tracking-widest text-text-dim">
+                    <a href="/" class="hover:text-white transition-colors">Home</a>
+                    <a href="/catalyst/" class="hover:text-white transition-colors">Catalyst</a>
+                    <a href="/solvent/" class="hover:text-white transition-colors">Solvent</a>
+                    <a href="/bond/" class="hover:text-white transition-colors">Bond</a>
+                    <a href="/reactor/" class="hover:text-white transition-colors">Reactor</a><a href="/privacy/" class="hover:text-white transition-colors">Privacy</a><a href="/terms/" class="hover:text-white transition-colors">Terms</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+
+
+    <script>
+        // Mobile menu
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        let menuOpen = false;
+        if (mobileToggle && mobileMenu) {
+            mobileToggle.addEventListener('click', () => {
+                menuOpen = !menuOpen;
+                if (menuOpen) {
+                    mobileMenu.classList.add('open');
+                } else {
+                    mobileMenu.classList.remove('open');
+                }
+            });
+            document.querySelectorAll('#mobile-menu a').forEach(a => {
+                a.addEventListener('click', () => {
+                    menuOpen = false;
+                    mobileMenu.classList.remove('open');
+                });
+            });
+        }
+    </script>
+
+    
+    <script>
+        // Form submission
+        (function() {
+            document.querySelectorAll('.cta-btn').forEach(function(btn) {
+                var parent = btn.closest('.space-y-4') || btn.closest('.max-w-md') || btn.closest('.max-w-3xl');
+                if (!parent) return;
+                var inputs = parent.querySelectorAll('input, select');
+                if (inputs.length === 0) return;
+                
+                // Only attach to buttons, not nav links
+                if (btn.tagName === 'A' && btn.getAttribute('href') && btn.getAttribute('href').indexOf('#') === 0 && btn.getAttribute('href').length > 1) return;
+                
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    var fields = {};
+                    var hasEmpty = false;
+                    
+                    inputs.forEach(function(input) {
+                        var val = input.value ? input.value.trim() : '';
+                        var placeholder = input.placeholder || '';
+                        
+                        if (input.tagName === 'SELECT') {
+                            val = input.options[input.selectedIndex].text;
+                            if (val === 'Select your market') val = '';
+                        }
+                        
+                        if (!val) {
+                            hasEmpty = true;
+                            input.style.borderColor = 'rgba(248,113,113,0.5)';
+                            setTimeout(function() { input.style.borderColor = ''; }, 2000);
+                        } else {
+                            fields[placeholder || input.name || 'field'] = val;
+                        }
+                    });
+                    
+                    if (hasEmpty) return;
+                    
+                    var btnSpan = btn.querySelector('span');
+                    var originalText = btnSpan ? btnSpan.textContent : '';
+                    var btnSvg = btn.querySelector('svg');
+                    if (btnSpan) btnSpan.textContent = 'Sending...';
+                    if (btnSvg) btnSvg.style.display = 'none';
+                    btn.style.pointerEvents = 'none';
+                    btn.style.opacity = '0.7';
+                    
+                    var formData = new FormData();
+                    for (var key in fields) {
+                        formData.append(key, fields[key]);
+                    }
+                    formData.append('_subject', 'New Demo Request — ' + (fields['Company name'] || 'Website'));
+                    formData.append('_template', 'table');
+                    formData.append('_captcha', 'false');
+                    formData.append('Page', document.title);
+                    
+                    fetch('https://formsubmit.co/ajax/christian@leviosai.io', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(function(res) { return res.json(); })
+                    .then(function() { showConfirmation(parent); })
+                    .catch(function() { showConfirmation(parent); });
+                });
+            });
+            
+            function showConfirmation(container) {
+                container.innerHTML = '<div style="text-align:center;padding:2rem 0;">' +
+                    '<div style="width:56px;height:56px;border-radius:50%;background:rgba(13,217,139,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">' +
+                    '<svg viewBox="0 0 24 24" style="width:28px;height:28px;color:#0DD98B;" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+                    '</div>' +
+                    '<h3 style="font-size:1.5rem;font-weight:700;color:#F2F2F2;margin-bottom:0.5rem;">Talk to you soon!</h3>' +
+                    '<p style="font-size:0.95rem;color:#A3A3A3;">We\u2019ll reach out within 24 hours to get you set up.</p>' +
+                    '</div>';
+            }
+        })();
+    </script>
+</body></html>
