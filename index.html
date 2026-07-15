@@ -8,24 +8,149 @@
     <title>Leviosa Labs · Stop losing jobs you already won.</title>
     <meta
       name="description"
-      content="Leviosa Labs builds the AI operating system for home services and construction. Catalyst closes. Solvent clears. Reactor executes. Bond remembers. One drop starts the reaction."
+      content="The AI operating system for home services and construction. Catalyst closes deals, Solvent clears permits, Reactor runs operations, Bond remembers every customer."
     />
+    <link rel="canonical" href="https://leviosalabs.io/" />
+    <meta property="og:site_name" content="Leviosa Labs" />
     <meta property="og:title" content="Leviosa Labs · Stop losing jobs you already won." />
     <meta
       property="og:description"
-      content="Catalyst closes. Solvent clears. Reactor executes. Bond remembers. One drop starts the reaction."
+      content="The AI operating system for home services and construction. Catalyst closes. Solvent clears. Reactor executes. Bond remembers."
     />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://leviosalabs.io/" />
+    <meta property="og:image" content="https://leviosalabs.io/hero-drop.jpg" />
+    <meta property="og:image:width" content="1600" />
+    <meta property="og:image:height" content="904" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Leviosa Labs · Stop losing jobs you already won." />
+    <meta
+      name="twitter:description"
+      content="The AI operating system for home services and construction. Catalyst closes. Solvent clears. Reactor executes. Bond remembers."
+    />
+    <meta name="twitter:image" content="https://leviosalabs.io/hero-drop.jpg" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://leviosalabs.io/#organization",
+            "name": "Leviosa Labs",
+            "url": "https://leviosalabs.io/",
+            "logo": "https://leviosalabs.io/leviosa-monogram.png",
+            "description": "Leviosa Labs builds Chain Reaction, the AI operating system for home services and construction businesses: Catalyst (sales intelligence), Solvent (permit intelligence), Reactor (operations intelligence), and Bond (customer intelligence)."
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://leviosalabs.io/#website",
+            "name": "Leviosa Labs",
+            "url": "https://leviosalabs.io/",
+            "publisher": { "@id": "https://leviosalabs.io/#organization" }
+          },
+          {
+            "@type": "SoftwareApplication",
+            "name": "Chain Reaction",
+            "applicationCategory": "BusinessApplication",
+            "operatingSystem": "Web",
+            "url": "https://leviosalabs.io/",
+            "publisher": { "@id": "https://leviosalabs.io/#organization" },
+            "description": "AI operating system for home services and construction: lead response and proposals (Catalyst), permit assembly and filing (Solvent), crew scheduling and job tracking (Reactor), and a self-maintaining customer record (Bond).",
+            "offers": { "@type": "Offer", "url": "https://leviosalabs.io/pricing" }
+          }
+        ]
+      }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
-    <script type="module" crossorigin src="/assets/index-n_CJUFV5.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-Cg1Pf_rr.css">
+    <style>
+      /* Static preloader — paints before the app bundle loads, matching the
+         loader on the product pages. Removed by its own inline script. */
+      #ldr {
+        position: fixed;
+        inset: 0;
+        z-index: 300;
+        background: #0a0a0a;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 28px;
+        transition: opacity 0.55s cubic-bezier(0.62, 0.05, 0.01, 0.99), visibility 0.55s;
+      }
+      #ldr.done {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      #ldr img {
+        width: 78px;
+        height: auto;
+      }
+      #ldr .line {
+        width: 170px;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.16);
+        overflow: hidden;
+      }
+      #ldr .fill {
+        height: 100%;
+        width: 0;
+        background: linear-gradient(108deg, #10d9af, #4f6bf0, #8b3df2, #e0399c, #fb8d5c);
+        transition: width 1.1s cubic-bezier(0.62, 0.05, 0.01, 0.99);
+      }
+      #ldr .word {
+        font-family: 'IBM Plex Mono', ui-monospace, monospace;
+        font-size: 10px;
+        font-weight: 400;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #6b7f99;
+      }
+    </style>
+    <script type="module" crossorigin src="/assets/index-DHL6sYgu.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DzstWXcd.css">
   </head>
   <body>
+    <div id="ldr" aria-hidden="true">
+      <img src="/favicon.png" alt="" />
+      <div class="line"><div class="fill" id="ldr-fill"></div></div>
+      <span class="word" id="ldr-word">Distilling</span>
+    </div>
+    <script>
+      (function () {
+        var ldr = document.getElementById('ldr')
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          ldr.remove()
+          return
+        }
+        document.body.style.overflow = 'hidden'
+        var words = ['Distilling', 'Synthesizing', 'Catalyzing']
+        var wordEl = document.getElementById('ldr-word')
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            document.getElementById('ldr-fill').style.width = '100%'
+          })
+        })
+        var i = 0
+        var iv = setInterval(function () {
+          i++
+          if (i < words.length) wordEl.textContent = words[i]
+        }, 420)
+        setTimeout(function () {
+          clearInterval(iv)
+          ldr.classList.add('done')
+          document.body.style.overflow = ''
+          setTimeout(function () {
+            ldr.remove()
+          }, 700)
+        }, 1350)
+      })()
+    </script>
     <div id="root"></div>
   </body>
 </html>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://leviosalabs.io/</loc><priority>1.0</priority></url>
+  <url><loc>https://leviosalabs.io/catalyst</loc><priority>0.9</priority></url>
+  <url><loc>https://leviosalabs.io/solvent</loc><priority>0.9</priority></url>
+  <url><loc>https://leviosalabs.io/reactor</loc><priority>0.9</priority></url>
+  <url><loc>https://leviosalabs.io/bond</loc><priority>0.9</priority></url>
+  <url><loc>https://leviosalabs.io/pricing</loc><priority>0.8</priority></url>
+  <url><loc>https://leviosalabs.io/catalyst/pricing</loc><priority>0.6</priority></url>
+  <url><loc>https://leviosalabs.io/solvent/pricing</loc><priority>0.6</priority></url>
+  <url><loc>https://leviosalabs.io/reactor/pricing</loc><priority>0.6</priority></url>
+  <url><loc>https://leviosalabs.io/bond/pricing</loc><priority>0.6</priority></url>
+  <url><loc>https://leviosalabs.io/team</loc><priority>0.5</priority></url>
+  <url><loc>https://leviosalabs.io/privacy</loc><priority>0.2</priority></url>
+  <url><loc>https://leviosalabs.io/terms</loc><priority>0.2</priority></url>
+</urlset>

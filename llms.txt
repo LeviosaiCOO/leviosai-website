@@ -1,0 +1,21 @@
+# Leviosa Labs
+
+> Leviosa Labs builds Chain Reaction, the AI operating system for home services and construction businesses in the United States. Four products cover the full job lifecycle: Catalyst (sales intelligence), Solvent (permit intelligence), Reactor (operations intelligence), and Bond (customer intelligence). Each product works alone; together they hand work to each other automatically, from first lead to finished job.
+
+Leviosa Labs serves home services business owners, general contractors, and construction companies. The core problem it solves: these businesses run on disconnected tools, so slow replies, stalled permits, and missed handoffs quietly lose customers they already won.
+
+## Products
+
+- [Catalyst · Sales Intelligence](https://leviosalabs.io/catalyst): Scores every lead in seconds, builds proposals in 28 seconds, and revives dead pipelines. Sub-30-day sales cycles and 2x proposals per rep.
+- [Solvent · Permit Intelligence](https://leviosalabs.io/solvent): Assembles, files, and auto-corrects permits across 2,400+ jurisdictions, with corrections answered in 4 minutes. 96% first-pass approval, 85% faster turnaround.
+- [Reactor · Operations Intelligence](https://leviosalabs.io/reactor): Schedules crews, tracks inventory and budgets, and re-optimizes the day the moment anything changes. 98% on-time dispatch, 2.4x jobs per month.
+- [Bond · Customer Intelligence](https://leviosalabs.io/bond): Every call, permit, and job update flows into one living customer record. Zero hours of manual data entry per week, 360-degree customer view.
+
+## Pricing
+
+- [Pricing](https://leviosalabs.io/pricing): Plans for each product and the full Chain Reaction suite.
+
+## Company
+
+- [Team](https://leviosalabs.io/team): Who builds Leviosa Labs.
+- [Homepage](https://leviosalabs.io/): Product story and demo request.
