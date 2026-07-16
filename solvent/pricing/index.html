@@ -129,50 +129,7 @@
         <!-- NAV (identical to solvent main page with Pricing link added) -->
         <header class="fixed top-0 left-0 right-0 z-50 px-6 md:px-10 py-5 flex justify-between items-center anim-fade-in" style="animation-delay:0.1s; background: linear-gradient(to bottom, rgba(10,10,10,0.97) 0%, rgba(10,10,10,0) 100%);">
             <a href="/solvent/" class="flex items-center gap-2">
-                <svg viewBox="0 0 56 56" class="w-8 h-8" style="overflow:visible;">
-                    <defs>
-                        <linearGradient id="dropMain" x1="0" y1="0" x2="0.3" y2="1">
-                            <stop offset="0%" stop-color="#3DE8A0"/>
-                            <stop offset="40%" stop-color="#0DD98B"/>
-                            <stop offset="100%" stop-color="#08A86A"/>
-                        </linearGradient>
-                        <linearGradient id="dropInner" x1="0.2" y1="0" x2="0.8" y2="1">
-                            <stop offset="0%" stop-color="#5FFFC0"/>
-                            <stop offset="100%" stop-color="#0DD98B" stop-opacity="0.4"/>
-                        </linearGradient>
-                        <linearGradient id="dropHighlight" x1="0" y1="0" x2="1" y2="1">
-                            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.5"/>
-                            <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
-                        </linearGradient>
-                        <linearGradient id="dropEdge" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#3DE8A0" stop-opacity="0.8"/>
-                            <stop offset="100%" stop-color="#08A86A" stop-opacity="0.3"/>
-                        </linearGradient>
-                        <filter id="dropGlow">
-                            <feGaussianBlur stdDeviation="2" result="glow"/>
-                            <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
-                        </filter>
-                    </defs>
-                    <circle class="droplet-ripple-1" cx="28" cy="44" fill="none" stroke="#0DD98B" stroke-width="1"/>
-                    <circle class="droplet-ripple-2" cx="28" cy="44" fill="none" stroke="#3DE8A0" stroke-width="0.8"/>
-                    <circle class="droplet-ripple-3" cx="28" cy="44" fill="none" stroke="#5FFFC0" stroke-width="0.5"/>
-                    <g class="droplet-body" filter="url(#dropGlow)">
-                        <path d="M28 4C28 4 11 24 11 34C11 42.8 18.6 50 28 50C37.4 50 45 42.8 45 34C45 24 28 4 28 4Z" fill="url(#dropMain)"/>
-                        <path d="M28 6C28 6 13 24.5 13 34C13 41.7 19.7 48 28 48C36.3 48 43 41.7 43 34C43 24.5 28 6 28 6Z" fill="none" stroke="url(#dropEdge)" stroke-width="0.6"/>
-                        <path d="M28 12C28 12 17 26 17 33.5C17 39.8 21.9 45 28 45C34.1 45 39 39.8 39 33.5C39 26 28 12 28 12Z" fill="url(#dropInner)" class="droplet-pulse"/>
-                        <ellipse class="droplet-core-flare" cx="28" cy="32" rx="8" ry="10" fill="url(#dropHighlight)" opacity="0.15"/>
-                        <ellipse class="droplet-inner" cx="22" cy="28" rx="4.5" ry="6" fill="white" opacity="0.35" transform="rotate(-18 22 28)"/>
-                        <ellipse cx="24" cy="24" rx="1.8" ry="2.5" fill="white" opacity="0.5" transform="rotate(-12 24 24)"/>
-                        <g class="droplet-caustic" opacity="0.3">
-                            <path d="M30 35Q33 32 35 36Q33 38 30 35Z" fill="#A8F0D4"/>
-                            <path d="M25 38Q28 36 29 39Q27 41 25 38Z" fill="#A8F0D4" opacity="0.6"/>
-                        </g>
-                        <circle class="droplet-bubble-1" cx="32" cy="36" r="1" fill="white" opacity="0.4"/>
-                        <circle class="droplet-bubble-2" cx="25" cy="40" r="0.7" fill="white" opacity="0.3"/>
-                        <circle class="droplet-bubble-1" cx="30" cy="42" r="0.5" fill="white" opacity="0.25"/>
-                        <path d="M18 43Q23 46 28 46Q33 46 38 43" fill="none" stroke="#3DE8A0" stroke-width="0.4" opacity="0.4"/>
-                    </g>
-                </svg>
+                <img src="/leviosa-monogram.png" alt="Leviosa Labs" style="height:30px;width:auto;display:block"/>
                 <span class="font-display text-lg font-bold tracking-tight text-solvent">solvent</span>
                 <a href="/" class="hidden md:inline text-text-dim text-xs ml-2 hover:text-white transition-colors">by leviosai</a>
             </a>
@@ -391,28 +348,7 @@
         <footer class="px-6 md:px-10 py-10 border-t border-text-dim/10">
             <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
                 <div class="flex items-center gap-2">
-                    <svg viewBox="0 0 56 56" class="w-6 h-6" style="overflow:visible;">
-                        <defs>
-                            <linearGradient id="dropMainF" x1="0" y1="0" x2="0.3" y2="1">
-                                <stop offset="0%" stop-color="#3DE8A0"/>
-                                <stop offset="40%" stop-color="#0DD98B"/>
-                                <stop offset="100%" stop-color="#08A86A"/>
-                            </linearGradient>
-                            <linearGradient id="dropInnerF" x1="0.2" y1="0" x2="0.8" y2="1">
-                                <stop offset="0%" stop-color="#5FFFC0"/>
-                                <stop offset="100%" stop-color="#0DD98B" stop-opacity="0.4"/>
-                            </linearGradient>
-                        </defs>
-                        <circle class="droplet-ripple-1" cx="28" cy="44" fill="none" stroke="#0DD98B" stroke-width="0.8"/>
-                        <circle class="droplet-ripple-2" cx="28" cy="44" fill="none" stroke="#3DE8A0" stroke-width="0.5"/>
-                        <g class="droplet-body">
-                            <path d="M28 4C28 4 11 24 11 34C11 42.8 18.6 50 28 50C37.4 50 45 42.8 45 34C45 24 28 4 28 4Z" fill="url(#dropMainF)"/>
-                            <path d="M28 12C28 12 17 26 17 33.5C17 39.8 21.9 45 28 45C34.1 45 39 39.8 39 33.5C39 26 28 12 28 12Z" fill="url(#dropInnerF)" class="droplet-pulse"/>
-                            <ellipse class="droplet-inner" cx="22" cy="28" rx="4" ry="5.5" fill="white" opacity="0.3" transform="rotate(-18 22 28)"/>
-                            <ellipse cx="24" cy="24" rx="1.5" ry="2" fill="white" opacity="0.45" transform="rotate(-12 24 24)"/>
-                            <circle class="droplet-bubble-1" cx="32" cy="36" r="0.8" fill="white" opacity="0.35"/>
-                        </g>
-                    </svg>
+                    <img src="/leviosa-monogram.png" alt="Leviosa Labs" style="height:24px;width:auto;display:block"/>
                     <span class="font-display text-sm font-semibold text-solvent">solvent</span>
                     <a href="/" class="text-text-dim text-xs ml-2 hover:text-white transition-colors">leviosai</a><span class="text-text-dim text-xs">· © 2026</span>
                 </div>
