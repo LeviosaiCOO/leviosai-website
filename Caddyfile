@@ -37,13 +37,13 @@
 
 	# Cache policy: hashed bundles cache forever, media for an hour,
 	# HTML/docs always revalidate (etag 304s keep it cheap).
-	@assets path /assets/*
+	@assets path /assets/* /_next/static/*
 	header @assets Cache-Control "public, max-age=31536000, immutable"
 
-	@media path *.jpg *.jpeg *.png *.webp *.mp4 *.ico
+	@media path *.jpg *.jpeg *.png *.webp *.mp4 *.ico *.avif *.m4a *.woff2
 	header @media Cache-Control "public, max-age=3600"
 
-	@pages not path /assets/* *.jpg *.jpeg *.png *.webp *.mp4 *.ico
+	@pages not path /assets/* /_next/static/* *.jpg *.jpeg *.png *.webp *.mp4 *.ico *.avif *.m4a *.woff2
 	header @pages Cache-Control "no-cache"
 
 	root * .
